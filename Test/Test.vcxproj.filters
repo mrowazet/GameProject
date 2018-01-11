@@ -1,17 +1,24 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
     <Filter Include="Header Files">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    <Filter Include="Modules">
+      <UniqueIdentifier>{56de6c97-6fff-4ac9-8e66-6c36a197e86b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Modules\DevTestModuleTest">
+      <UniqueIdentifier>{ba9c9e5a-5e6a-4fa3-bb45-2c333ce69c81}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Modules\DevTestModuleTest\Suits">
+      <UniqueIdentifier>{a47a7622-9b0f-4b5b-93a1-d8d2e4216467}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Modules\DevTestModuleTest\Mocks">
+      <UniqueIdentifier>{45de9e2d-bf58-42c4-a3f3-98615795f06b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
 </Project>
