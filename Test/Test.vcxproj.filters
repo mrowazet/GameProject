@@ -20,12 +20,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="DevTestClassTestSuite.cpp">
+    <ClCompile Include="Modules\DevTestModulesTest\Suits\DevTestClassTestSuite.cpp">
       <Filter>Modules\DevTestModuleTest\Suits</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DevTestClassMock.hpp">
+    <ClInclude Include="Modules\DevTestModulesTest\Mocks\DevTestClassMock.hpp">
       <Filter>Modules\DevTestModuleTest\Mocks</Filter>
     </ClInclude>
   </ItemGroup>

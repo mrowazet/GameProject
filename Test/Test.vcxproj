@@ -82,11 +82,11 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)Externals\googleTest\Include;$(SolutionDir)Externals\googleTest\Include\gtest;$(SolutionDir)Externals\googleTest\Include\gmock;$(SolutionDir)GameProject\Main\Modules\DevTestModule;$(SolutionDir)GameProject\Main\Modules\DevTestModule\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Externals\googleTest\Include;$(SolutionDir)Externals\googleTest\Include\gtest;$(SolutionDir)Externals\googleTest\Include\gmock;$(SolutionDir)GameProject\Main\Modules\DevTestModule;$(SolutionDir)GameProject\Main\Modules\DevTestModule\Include;$(SolutionDir)Test\Modules\DevTestModulesTest\Mocks;$(SolutionDir)Test\Modules\DevTestModulesTest\Suits;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <AdditionalLibraryDirectories>D:\GameProject\GameProject\Externals\googleTest\lib\debug;$(SolutionDir)GameProject\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>D:\GameProject\GameProject\Externals\googleTest\lib\debugLib;$(SolutionDir)GameProject\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>gmock_main.lib;gmock.lib;DevTestClass;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -117,11 +117,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="DevTestClassTestSuite.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Modules\DevTestModulesTest\Suits\DevTestClassTestSuite.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DevTestClassMock.hpp" />
+    <ClInclude Include="Modules\DevTestModulesTest\Mocks\DevTestClassMock.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
