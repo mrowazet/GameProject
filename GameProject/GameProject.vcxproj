@@ -23,6 +23,7 @@
     <ClCompile Include="Main\Modules\DevTestModule\Source\DevTestClass.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Main\Modules\DevTestModule\DevTestModule.hpp" />
     <ClInclude Include="Main\Modules\DevTestModule\Include\DevTestClass.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -89,7 +90,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)GameProject\Main\Modules\DevTestModule\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)GameProject\Main\Modules\DevTestModule;$(SolutionDir)GameProject\Main\Modules\DevTestModule\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

@@ -1,10 +1,10 @@
 #include <iostream>
-#include "DevTestClass.hpp"
+#include "DevTestModule.hpp"
 
 int main(int argc, char* argv[])
 {
 
-	DevTest test;
+	DevTestClass test;
 	test.sayHello();
 
 	return 0;

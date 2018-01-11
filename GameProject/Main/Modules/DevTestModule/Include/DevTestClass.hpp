@@ -1,7 +1,10 @@
 #pragma once
 
-class DevTest
+class DevTestClass
 {
 public:
-	virtual void sayHello();
+	virtual void sayHello() const;
+	virtual int getInt() const;
+
+	static constexpr int VALUE = 1;
 };

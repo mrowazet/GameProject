@@ -24,5 +24,8 @@
     <ClInclude Include="Main\Modules\DevTestModule\Include\DevTestClass.hpp">
       <Filter>Modules\DevTestModule\Include</Filter>
     </ClInclude>
+    <ClInclude Include="Main\Modules\DevTestModule\DevTestModule.hpp">
+      <Filter>Modules\DevTestModule</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
