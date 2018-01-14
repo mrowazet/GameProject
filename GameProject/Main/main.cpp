@@ -1,6 +1,7 @@
 #include <iostream>
 #include "DevTestModule.hpp"
 #include <SFML\Graphics.hpp>
+#include <Box2D\Box2D.h>
 
 int main(int argc, char* argv[])
 {
