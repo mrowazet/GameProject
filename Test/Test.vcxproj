@@ -82,12 +82,12 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>D:\GameProject\GameProject\Externals\sfml\Include;$(SolutionDir)Externals\googleTest\Include;$(SolutionDir)Externals\googleTest\Include\gtest;$(SolutionDir)Externals\googleTest\Include\gmock;$(SolutionDir)GameProject\Main\Modules\DevTestModule;$(SolutionDir)GameProject\Main\Modules\DevTestModule\Include;$(SolutionDir)Test\Modules\DevTestModulesTest\Mocks;$(SolutionDir)Test\Modules\DevTestModulesTest\Suits;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Externals\sfml\Include;$(SolutionDir)Externals\googleTest\Include;$(SolutionDir)Externals\googleTest\Include\gtest;$(SolutionDir)Externals\googleTest\Include\gmock;$(SolutionDir)GameProject\Main\Modules\DevTestModule;$(SolutionDir)GameProject\Main\Modules\DevTestModule\Include;$(SolutionDir)Test\Modules\DevTestModulesTest\Mocks;$(SolutionDir)Test\Modules\DevTestModulesTest\Suits;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>SFML_STATIC;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <AdditionalLibraryDirectories>$(SolutionDir)Externals\sfml\lib\debugLib;$(SolutionDir)Externals\sfml\lib\commonLib;$(SolutionDir)Externals\googleTest\lib;$(SolutionDir)GameProject\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Externals\sfml\lib\debugLib;$(SolutionDir)Externals\sfml\lib\commonLib;$(SolutionDir)Externals\googleTest\lib\debugLib;$(SolutionDir)GameProject\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>opengl32.lib;freetype.lib;jpeg.lib;winmm.lib;gdi32.lib;openal32.lib;flac.lib;vorbisenc.lib;vorbisfile.lib;vorbis.lib;ogg.lib;sfml-graphics-s-d.lib;sfml-window-s-d.lib;sfml-audio-s-d.lib;sfml-system-s-d.lib;gmock_main.lib;gmock.lib;DevTestClass;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
