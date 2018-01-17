@@ -23,6 +23,7 @@
     <ClCompile Include="Main\Modules\DevTestModule\Source\DevTestClass.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Main\Core\MemoryMgmt\MemoryMgmt.hpp" />
     <ClInclude Include="Main\Modules\DevTestModule\DevTestModule.hpp" />
     <ClInclude Include="Main\Modules\DevTestModule\Include\DevTestClass.hpp" />
   </ItemGroup>
@@ -90,7 +91,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)Externals\box2d\Include;$(SolutionDir)Externals\sfml\Include;$(SolutionDir)GameProject\Main\Modules\DevTestModule;$(SolutionDir)GameProject\Main\Modules\DevTestModule\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)GameProject\Main\Core\MemoryMgmt\Include;$(SolutionDir)GameProject\Main\Core\MemoryMgmt;$(SolutionDir)Externals\box2d\Include;$(SolutionDir)Externals\sfml\Include;$(SolutionDir)GameProject\Main\Modules\DevTestModule;$(SolutionDir)GameProject\Main\Modules\DevTestModule\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>SFML_STATIC;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -119,7 +120,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)Externals\box2d\Include;$(SolutionDir)Externals\sfml\Include;$(SolutionDir)GameProject\Main\Modules\DevTestModule;$(SolutionDir)GameProject\Main\Modules\DevTestModule\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)GameProject\Main\Core\MemoryMgmt\Include;$(SolutionDir)GameProject\Main\Core\MemoryMgmt;$(SolutionDir)Externals\box2d\Include;$(SolutionDir)Externals\sfml\Include;$(SolutionDir)GameProject\Main\Modules\DevTestModule;$(SolutionDir)GameProject\Main\Modules\DevTestModule\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>SFML_STATIC;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
