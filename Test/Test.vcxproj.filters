@@ -17,11 +17,20 @@
     <Filter Include="Modules\DevTestModuleTest\Mocks">
       <UniqueIdentifier>{45de9e2d-bf58-42c4-a3f3-98615795f06b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core">
+      <UniqueIdentifier>{5730d8e8-2d45-4e32-9a62-744504774146}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Modules\DevTestModulesTest\Suits\DevTestClassTestSuite.cpp">
       <Filter>Modules\DevTestModuleTest\Suits</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Suits\EntityTestSuite.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Suits\PoolTestSuite.cpp">
+      <Filter>Core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

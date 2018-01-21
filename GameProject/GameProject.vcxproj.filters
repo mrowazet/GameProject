@@ -25,6 +25,12 @@
     <Filter Include="Core\MemoryMgmt\Source">
       <UniqueIdentifier>{6f816b7a-99d5-4a80-8bdf-6daa5b2df196}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\Include">
+      <UniqueIdentifier>{e0df7242-e84c-44eb-a4df-7db8d6277e31}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Source">
+      <UniqueIdentifier>{46096575-2eb8-47ed-9fe8-e2f3b654dafd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main\Modules\DevTestModule\Source\DevTestClass.cpp">
@@ -41,6 +47,27 @@
     </ClInclude>
     <ClInclude Include="Main\Core\MemoryMgmt\MemoryMgmt.hpp">
       <Filter>Core\MemoryMgmt</Filter>
+    </ClInclude>
+    <ClInclude Include="Main\Core\Types.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Main\Core\Include\Entity.h">
+      <Filter>Core\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Main\Core\Constants.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Main\Core\Include\Component.h">
+      <Filter>Core\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Main\Core\Include\System.h">
+      <Filter>Core\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Main\Core\Core.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Main\Core\MemoryMgmt\Include\Pool.h">
+      <Filter>Core\MemoryMgmt\Include</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
