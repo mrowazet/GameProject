@@ -82,7 +82,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)Externals\box2d\Include;$(SolutionDir)Externals\sfml\Include;$(SolutionDir)Externals\googleTest\Include;$(SolutionDir)Externals\googleTest\Include\gtest;$(SolutionDir)Externals\googleTest\Include\gmock;$(SolutionDir)GameProject\Main\Modules\DevTestModule;$(SolutionDir)GameProject\Main\Modules\DevTestModule\Include;$(SolutionDir)Test\Modules\DevTestModulesTest\Mocks;$(SolutionDir)Test\Modules\DevTestModulesTest\Suits;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)GameProject\Main\Core\MemoryMgmt\Include;$(SolutionDir)GameProject\Main\Core\MemoryMgmt;$(SolutionDir)Externals\box2d\Include;$(SolutionDir)Externals\sfml\Include;$(SolutionDir)Externals\googleTest\Include;$(SolutionDir)Externals\googleTest\Include\gtest;$(SolutionDir)Externals\googleTest\Include\gmock;$(SolutionDir)GameProject\Main\Modules\DevTestModule;$(SolutionDir)GameProject\Main\Modules\DevTestModule\Include;$(SolutionDir)Test\Modules\DevTestModulesTest\Mocks;$(SolutionDir)Test\Modules\DevTestModulesTest\Suits;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>SFML_STATIC;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>

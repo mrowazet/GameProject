@@ -13,6 +13,18 @@
     <Filter Include="Modules\DevTestModule\Source">
       <UniqueIdentifier>{2dfd9e84-4b7e-4af9-867e-0504eb975bb0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core">
+      <UniqueIdentifier>{d1689b8f-9428-430d-89da-1d0843efcf3f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\MemoryMgmt">
+      <UniqueIdentifier>{c30539cb-96e5-4ae5-93b8-3b3b10522ac3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\MemoryMgmt\Include">
+      <UniqueIdentifier>{5d6d80ce-cb0b-43c2-bed8-61710deeadd6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\MemoryMgmt\Source">
+      <UniqueIdentifier>{6f816b7a-99d5-4a80-8bdf-6daa5b2df196}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main\Modules\DevTestModule\Source\DevTestClass.cpp">
@@ -26,6 +38,9 @@
     </ClInclude>
     <ClInclude Include="Main\Modules\DevTestModule\DevTestModule.hpp">
       <Filter>Modules\DevTestModule</Filter>
+    </ClInclude>
+    <ClInclude Include="Main\Core\MemoryMgmt\MemoryMgmt.hpp">
+      <Filter>Core\MemoryMgmt</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
