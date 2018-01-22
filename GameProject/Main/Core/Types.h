@@ -4,7 +4,7 @@ namespace engine
 {
 	struct Entity;
 	struct Component;
-	struct System;
+	class System;
 
 	using EntityId = unsigned int;
 

@@ -22,6 +22,7 @@ class Pool
 {
 public:
 	Pool() = default;
+	Pool(const Pool&) = delete;
 	virtual ~Pool() = default;
 
 	virtual ElementType& allocate() = 0;
@@ -39,6 +40,7 @@ class ContinuousPoolForwardIterator
 {
 private:
 	friend class Pool<ElementType>;
+	friend class ContinuousPool<ElementType>;
 
 	ContinuousPoolForwardIterator(ElementType& p_element)
 	{
@@ -59,12 +61,12 @@ public:
 		return *m_poolElement;
 	}
 
-	ElementType& operator->()
+	ElementType* operator->()
 	{
 		return m_poolElement;
 	}
 
-	const ElementType& operator->() const
+	const ElementType* operator->() const
 	{
 
 		return m_poolElement;
@@ -108,7 +110,7 @@ public:
 		return m_poolElement == p_iter.m_poolElement;
 	}
 
-	ContinuousPoolForwardIterator<ElementType>& operator=(const ContinuousPoolForwardIterator& p_iter)
+	ContinuousPoolForwardIterator<ElementType>& operator=(const ContinuousPoolForwardIterator<ElementType>& p_iter)
 	{
 		m_poolElement = p_iter.m_poolElement;
 		return *this;
@@ -161,14 +163,35 @@ public:
 		std::memcpy(l_element, m_positionAfterLastElement, ELEMENT_SIZE);
 	}
 
+	PoolSize maxSize() const
+	{
+		return MAX_NR_OF_ELEMENTS;
+	}
+
+	u32 size() const
+	{
+		return m_nrOfStoredElements;
+	}
+
+	void clear()
+	{
+		m_positionAfterLastElement = getPtrToBeginning();
+		m_nrOfStoredElements = 0u;
+	}
+
+	bool isEmpty() const
+	{
+		return m_nrOfStoredElements == 0u;
+	}
+
 	ContinuousPoolForwardIterator<ElementType> begin()
 	{
-		return ContinuousPoolForwardIterator<ElementType>(getPtrToBeginning());
+		return ContinuousPoolForwardIterator<ElementType>(*getPtrToBeginning());
 	}
 
 	ContinuousPoolForwardConstIterator<ElementType> cbegin() const
 	{
-		return ContinuousPoolForwardConstIterator<ElementType>(getPtrToBeginning());
+		return ContinuousPoolForwardConstIterator<ElementType>(*getPtrToBeginning());
 	}
 
 	ContinuousPoolForwardIterator<ElementType> end()
@@ -183,7 +206,7 @@ public:
 
 private:
 	static const int ELEMENT_SIZE = sizeof(ElementType);
-	const u32 MAX_NR_OF_ELEMENTS;
+	const PoolSize MAX_NR_OF_ELEMENTS;
 
 	std::unique_ptr<core::MemoryPool> m_memoryPool;
 	u32 m_nrOfStoredElements = 0u;
@@ -203,14 +226,9 @@ private:
 		m_positionAfterLastElement = getPtrToBeginning();
 	}
 	
-	ElementType* getPtrToBeginning()
+	ElementType* getPtrToBeginning() const
 	{
 		return reinterpret_cast<ElementType*>(&(m_memoryPool->at(0)));
-	}
-
-	const ElementType* getPtrToBeginning() const
-	{
-		return getPtrToBeginning();
 	}
 };
 

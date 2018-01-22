@@ -8,16 +8,164 @@ using namespace engine;
 
 namespace
 {
+	const PoolSize POOL_SIZE	= 10u;
 
+	const u32 NO_ELEMENTS		= 0u;
+	const u32 ONE_ELEMENT		= 1u;
+	const u32 TWO_ELEMENTS		= 2u;
+	const u32 THREE_ELEMENTS	= 3u;
+
+	const EntityId ENTITY_ID_1	= 1u;
+	const EntityId ENTITY_ID_2	= 2u;
+	const EntityId ENTITY_ID_3	= 3u;
+	const EntityId ENTITY_ID_4	= 4u;
 }
 
 class PoolTestSuite : public Test
 {
 public:
-	PoolTestSuite() = default;
+	PoolTestSuite()
+		:m_pool(POOL_SIZE)
+	{
+	}
+
+protected:
+	void addThreeElementsToPool();
+	Entity& addElementToPool(EntityId p_entityId);
+
+	ContinuousPool<Entity> m_pool;
 };
 
-TEST_F(PoolTestSuite, test)
+void PoolTestSuite::addThreeElementsToPool()
 {
-	ContinuousPool<Entity> l_pool(10);
+	addElementToPool(ENTITY_ID_1);
+	addElementToPool(ENTITY_ID_2);
+	addElementToPool(ENTITY_ID_3);
 }
+
+Entity& PoolTestSuite::addElementToPool(EntityId p_entityId)
+{
+	auto& l_element = m_pool.allocate();
+	l_element.id = p_entityId;
+
+	return l_element;
+}
+
+TEST_F(PoolTestSuite, ConstructorAllocatesEnoughMemoryForNumberOfElements)
+{
+	EXPECT_EQ(POOL_SIZE, m_pool.maxSize());
+}
+
+TEST_F(PoolTestSuite, PoolIsEmptyAfterInitialization)
+{
+	EXPECT_EQ(NO_ELEMENTS, m_pool.size());
+	EXPECT_TRUE(m_pool.isEmpty());
+}
+
+TEST_F(PoolTestSuite, ClearResetsInternalData)
+{
+	addThreeElementsToPool();
+	ASSERT_EQ(THREE_ELEMENTS, m_pool.size());
+	ASSERT_FALSE(m_pool.isEmpty());
+
+	m_pool.clear();
+
+	EXPECT_EQ(NO_ELEMENTS, m_pool.size());
+	EXPECT_TRUE(m_pool.isEmpty());
+}
+
+TEST_F(PoolTestSuite, BeginAndEndIterAreEqualIfPoolIsEmpty)
+{
+	ASSERT_TRUE(m_pool.isEmpty());
+
+	auto l_begin = m_pool.begin();
+	auto l_end = m_pool.end();
+
+	EXPECT_EQ(l_begin, l_end);
+}
+
+TEST_F(PoolTestSuite, CanIterateOverPoolUsingIterator)
+{
+	addThreeElementsToPool();
+
+	auto l_iter = m_pool.begin();
+
+	EXPECT_EQ(ENTITY_ID_1, l_iter->id);
+
+	++l_iter;
+	EXPECT_EQ(ENTITY_ID_2, l_iter->id);
+
+	++l_iter;
+	EXPECT_EQ(ENTITY_ID_3, l_iter->id);
+}
+
+TEST_F(PoolTestSuite, CanUseRangeBasedForLoopToIterateOverPool)
+{
+	addThreeElementsToPool();
+	u32 l_nrOfLoops = 0u;
+
+	for (auto l_element : m_pool)
+	{
+		l_nrOfLoops++;
+	}
+
+	EXPECT_EQ(THREE_ELEMENTS, l_nrOfLoops);
+}
+
+TEST_F(PoolTestSuite, ElementCanBeAddedToPool)
+{
+	m_pool.allocate();
+
+	EXPECT_EQ(ONE_ELEMENT, m_pool.size());
+	EXPECT_FALSE(m_pool.isEmpty());
+}
+
+TEST_F(PoolTestSuite, ElementsAreCorrectlyAddedToPool)
+{
+	auto& l_element1 = addElementToPool(ENTITY_ID_1);
+	auto& l_element2 = addElementToPool(ENTITY_ID_2);
+
+	EXPECT_EQ(ENTITY_ID_1, l_element1.id);
+	EXPECT_EQ(ENTITY_ID_2, l_element2.id);
+
+	auto l_addres1 = reinterpret_cast<std::uintptr_t>(&l_element1);
+	auto l_addres2 = reinterpret_cast<std::uintptr_t>(&l_element2);
+	auto l_elementSizeInPool = l_addres2 - l_addres1;
+
+	EXPECT_EQ(sizeof(Entity), l_elementSizeInPool);
+}
+
+TEST_F(PoolTestSuite, ElementCanBeRemoveFromPool)
+{
+	auto& l_elementToRemove = addElementToPool(ENTITY_ID_1);
+	addElementToPool(ENTITY_ID_2);
+
+	ASSERT_EQ(TWO_ELEMENTS, m_pool.size());
+	m_pool.deallocate(l_elementToRemove);
+
+	EXPECT_EQ(ONE_ELEMENT, m_pool.size());
+}
+
+TEST_F(PoolTestSuite, ElementsAreCorrectlyLocatedInPoolAfterAddRemoveAddSequence)
+{
+	auto& l_elementOnPosition0 = addElementToPool(ENTITY_ID_1);
+	auto& l_elementOnPosition1 = addElementToPool(ENTITY_ID_2);
+	auto& l_elementOnPosition2 = addElementToPool(ENTITY_ID_3);
+
+	m_pool.deallocate(l_elementOnPosition0);
+	addElementToPool(ENTITY_ID_4);
+
+	//Note: references still point to the same address on memory but internal struct of data 
+	//		has changed so we can check if order of elements is correctly organized
+
+	EXPECT_EQ(ENTITY_ID_3, l_elementOnPosition0.id);
+	EXPECT_EQ(ENTITY_ID_2, l_elementOnPosition1.id);
+	EXPECT_EQ(ENTITY_ID_4, l_elementOnPosition2.id);
+}
+
+TEST_F(PoolTestSuite, PossibleToUseConstForwardIter)
+{
+	//todo assure that value cant be changed by const iter
+}
+
+
