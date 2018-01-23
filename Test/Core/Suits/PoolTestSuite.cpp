@@ -19,6 +19,8 @@ namespace
 	const EntityId ENTITY_ID_2	= 2u;
 	const EntityId ENTITY_ID_3	= 3u;
 	const EntityId ENTITY_ID_4	= 4u;
+
+	const u32 ITER_OFFSET		= 2u;
 }
 
 class PoolTestSuite : public Test
@@ -163,9 +165,103 @@ TEST_F(PoolTestSuite, ElementsAreCorrectlyLocatedInPoolAfterAddRemoveAddSequence
 	EXPECT_EQ(ENTITY_ID_4, l_elementOnPosition2.id);
 }
 
-TEST_F(PoolTestSuite, PossibleToUseConstForwardIter)
+TEST_F(PoolTestSuite, IteratorCanBeMovedWithOperatorPlusEqual)
 {
-	//todo assure that value cant be changed by const iter
+	addThreeElementsToPool();
+
+	auto l_iter = m_pool.begin();
+	l_iter += ITER_OFFSET;
+
+	EXPECT_EQ(ENTITY_ID_3, l_iter->id);
 }
+
+TEST_F(PoolTestSuite, NewIterCanBeCreatedByOperatorPlus)
+{
+	addThreeElementsToPool();
+
+	auto l_begin = m_pool.begin();
+	auto l_iter = l_begin + ITER_OFFSET;
+
+	EXPECT_EQ(ENTITY_ID_1, l_begin->id);
+	EXPECT_EQ(ENTITY_ID_3, l_iter->id);
+}
+
+TEST_F(PoolTestSuite, ConstItersCanBeCreated)
+{
+	auto l_cbegin = m_pool.cbegin();
+	auto l_cend = m_pool.cend();
+}
+
+TEST_F(PoolTestSuite, ConstIterCanBeUsed)
+{
+	addThreeElementsToPool();
+
+	auto l_cbegin = m_pool.cbegin();
+
+	EXPECT_EQ(ENTITY_ID_1, (*l_cbegin).id);
+	EXPECT_EQ(ENTITY_ID_1, l_cbegin->id);
+}
+
+TEST_F(PoolTestSuite, PrefixPostfixIncrementationCanBeUsedWithConstIter)
+{
+	addThreeElementsToPool();
+
+	auto l_cbegin = m_pool.cbegin();
+
+	++l_cbegin;
+	EXPECT_EQ(ENTITY_ID_2, l_cbegin->id);
+
+	l_cbegin++;
+	EXPECT_EQ(ENTITY_ID_3, l_cbegin->id);
+}
+
+TEST_F(PoolTestSuite, ConstIterAreEqualsIfPoolIsEmpty)
+{
+	auto l_cbegin = m_pool.cbegin();
+	auto l_cend = m_pool.cend();
+
+	EXPECT_EQ(l_cbegin, l_cend);
+
+	l_cbegin++;
+	EXPECT_NE(l_cbegin, l_cend);
+}
+
+TEST_F(PoolTestSuite, ConstIteratorCanBeMovedWithOperatorPlusEqual)
+{
+	addThreeElementsToPool();
+
+	auto l_citer = m_pool.cbegin();
+	l_citer += ITER_OFFSET;
+
+	EXPECT_EQ(ENTITY_ID_3, l_citer->id);
+}
+
+TEST_F(PoolTestSuite, NewConstIterCanBeCreatedByOperatorPlus)
+{
+	addThreeElementsToPool();
+
+	auto l_cbegin = m_pool.cbegin();
+	auto l_citer = l_cbegin + ITER_OFFSET;
+
+	EXPECT_EQ(ENTITY_ID_1, l_cbegin->id);
+	EXPECT_EQ(ENTITY_ID_3, l_citer->id);
+}
+
+TEST_F(PoolTestSuite, CanUseRangeBasedForLoopToIterateOverPoolUsingConstIter)
+{
+	addThreeElementsToPool();
+	u32 l_nrOfLoops = 0u;
+
+	const auto& l_pool = m_pool;
+
+	for (const auto& l_element : l_pool)
+	{
+		l_nrOfLoops++;
+	}
+
+	EXPECT_EQ(THREE_ELEMENTS, l_nrOfLoops);
+}
+
+
 
 

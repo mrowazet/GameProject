@@ -39,7 +39,6 @@ template<typename ElementType>
 class ContinuousPoolForwardIterator
 {
 private:
-	friend class Pool<ElementType>;
 	friend class ContinuousPool<ElementType>;
 
 	ContinuousPoolForwardIterator(ElementType& p_element)
@@ -100,6 +99,26 @@ public:
 		return l_iter;
 	}
 
+	ContinuousPoolForwardIterator<ElementType>& operator+=(u32 p_offset)
+	{
+		m_poolElement += p_offset;
+		return *this;
+	}
+
+	const ContinuousPoolForwardIterator<ElementType>& operator+=(u32 p_offset) const
+	{
+		m_poolElement += p_offset;
+		return *this;
+	}
+
+	ContinuousPoolForwardIterator<ElementType> operator+(u32 p_offset) const
+	{
+		ElementType* l_elementAddress = m_poolElement + p_offset;
+		ContinuousPoolForwardIterator<ElementType> l_iter(*l_elementAddress);
+		
+		return l_iter;
+	}
+
 	bool operator!=(const ContinuousPoolForwardIterator<ElementType>& p_iter) const
 	{
 		return m_poolElement != p_iter.m_poolElement;
@@ -121,8 +140,103 @@ private:
 
 };
 
-template<typename ElementType>
-using ContinuousPoolForwardConstIterator = const ContinuousPoolForwardIterator<ElementType>;
+
+template<typename TypedContinuousPoolForwardIterator>
+class ContinuousPoolForwardConstIterator
+{
+private:
+	template<typename ElementType>
+	friend class ContinuousPool;
+
+	ContinuousPoolForwardConstIterator(const TypedContinuousPoolForwardIterator& p_iter)
+		:m_iter(p_iter)
+	{
+
+	}
+
+public:
+	ContinuousPoolForwardConstIterator(const ContinuousPoolForwardConstIterator&) = default;
+	~ContinuousPoolForwardConstIterator() = default;
+
+	auto&& operator*() const
+	{
+		return *m_iter;
+	}
+
+	auto&& operator->() const
+	{
+		return m_iter;
+	}
+
+	ContinuousPoolForwardConstIterator<TypedContinuousPoolForwardIterator>& operator++()
+	{
+		m_iter++;
+		return *this;
+	}
+
+	const ContinuousPoolForwardConstIterator<TypedContinuousPoolForwardIterator>& operator++() const
+	{
+		m_iter++;
+		return *this;
+	}
+
+	ContinuousPoolForwardConstIterator<TypedContinuousPoolForwardIterator> operator++(int)
+	{
+		TypedContinuousPoolForwardIterator l_iter(m_iter);
+		m_iter++;
+
+		return l_iter;
+	}
+
+	const ContinuousPoolForwardConstIterator<TypedContinuousPoolForwardIterator> operator++(int) const
+	{
+		TypedContinuousPoolForwardIterator l_iter(m_iter);
+		m_iter++;
+
+		return l_iter;
+	}
+
+	ContinuousPoolForwardConstIterator<TypedContinuousPoolForwardIterator>& operator+=(u32 p_offset)
+	{
+		m_iter += p_offset;
+		return *this;
+	}
+
+	const ContinuousPoolForwardConstIterator<TypedContinuousPoolForwardIterator>& operator+=(u32 p_offset) const
+	{
+		m_iter += p_offset;
+		return *this;
+	}
+
+	ContinuousPoolForwardConstIterator<TypedContinuousPoolForwardIterator> operator+(u32 p_offset) const
+	{
+		TypedContinuousPoolForwardIterator l_iter(m_iter);
+		l_iter += p_offset;
+
+		ContinuousPoolForwardConstIterator<TypedContinuousPoolForwardIterator>l_citer (l_iter);
+
+		return l_citer;
+	}
+
+	ContinuousPoolForwardConstIterator<TypedContinuousPoolForwardIterator>& operator=(const ContinuousPoolForwardConstIterator<TypedContinuousPoolForwardIterator>& p_iter)
+	{
+		l_iter = p_iter;
+		return *this;
+	}
+
+	bool operator!=(const ContinuousPoolForwardConstIterator<TypedContinuousPoolForwardIterator>& p_iter) const
+	{
+		return m_iter != p_iter.m_iter;
+	}
+
+	bool operator==(const ContinuousPoolForwardConstIterator<TypedContinuousPoolForwardIterator>& p_iter) const
+	{
+		return m_iter == p_iter.m_iter;
+	}
+
+private:
+	const TypedContinuousPoolForwardIterator m_iter;
+};
 
 
 template<typename ElementType>
@@ -189,9 +303,19 @@ public:
 		return ContinuousPoolForwardIterator<ElementType>(*getPtrToBeginning());
 	}
 
-	ContinuousPoolForwardConstIterator<ElementType> cbegin() const
+	ContinuousPoolForwardConstIterator<ContinuousPoolForwardIterator<ElementType>> begin() const
 	{
-		return ContinuousPoolForwardConstIterator<ElementType>(*getPtrToBeginning());
+		return ContinuousPoolForwardConstIterator<ContinuousPoolForwardIterator<ElementType>>(*getPtrToBeginning());
+	}
+
+	ContinuousPoolForwardConstIterator<ContinuousPoolForwardIterator<ElementType>> cbegin() const
+	{
+		return ContinuousPoolForwardConstIterator<ContinuousPoolForwardIterator<ElementType>>(*getPtrToBeginning());
+	}
+
+	ContinuousPoolForwardConstIterator<ContinuousPoolForwardIterator<ElementType>> end() const
+	{
+		return ContinuousPoolForwardConstIterator<ContinuousPoolForwardIterator<ElementType>>(*m_positionAfterLastElement);
 	}
 
 	ContinuousPoolForwardIterator<ElementType> end()
@@ -199,9 +323,9 @@ public:
 		return ContinuousPoolForwardIterator<ElementType>(*m_positionAfterLastElement);
 	}
 
-	ContinuousPoolForwardConstIterator<ElementType> cend() const
+	ContinuousPoolForwardConstIterator<ContinuousPoolForwardIterator<ElementType>> cend() const
 	{
-		return ContinuousPoolForwardConstIterator<ElementType>(*m_positionAfterLastElement);
+		return ContinuousPoolForwardConstIterator<ContinuousPoolForwardIterator<ElementType>>(*m_positionAfterLastElement);
 	}
 
 private:
