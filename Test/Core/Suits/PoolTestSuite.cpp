@@ -275,6 +275,11 @@ TEST_F(PoolTestSuite, CanUseRangeBasedForLoopToIterateOverPoolUsingConstIter)
 	EXPECT_EQ(THREE_ELEMENTS, l_nrOfLoops);
 }
 
+TEST_F(PoolTestSuite, CanForwardArgumentsToCtorWhenAllocate)
+{
+	auto& l_element = m_pool.allocate(ENTITY_ID_4);
+	EXPECT_EQ(ENTITY_ID_4, l_element.id);
+}
 
 
 

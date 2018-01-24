@@ -14,48 +14,13 @@ namespace core
 {
 	using MemoryAllocationUnit = unsigned int;
 	using MemoryPool = std::vector<MemoryAllocationUnit>;
-
 }
-
-template<typename ElementType>
-class Pool
-{
-public:
-	Pool() = default;
-	Pool(const Pool&) = delete;
-	virtual ~Pool() = default;
-
-	virtual ElementType& allocate() = 0;
-	virtual void deallocate(ElementType& p_element) = 0;
-
-	virtual bool isEmpty() const = 0;
-	virtual PoolSize maxSize() const = 0;
-	virtual u32 size() const = 0;
-	virtual void clear() = 0;
-
-	//todo begin end cbegin cend
-	//todo parent class for iterators?
-};
 
 template<typename>
 class ContinuousPool;
 
 template<typename ElementType>
-class PoolIterator
-{
-public:
-	PoolIterator() = default;
-	~PoolIterator() = default;
-
-	virtual ElementType& operator*() = 0;
-	virtual const ElementType& operator*() const = 0;
-
-	virtual ElementType* operator->() = 0;
-	virtual const ElementType* operator->() const = 0;
-};
-
-template<typename ElementType>
-class ContinuousPoolForwardIterator : public PoolIterator<ElementType>
+class ContinuousPoolForwardIterator
 {
 private:
 	template<typename ElementType>
@@ -72,22 +37,22 @@ public:
 	ContinuousPoolForwardIterator(const ContinuousPoolForwardIterator&) = default;
 	~ContinuousPoolForwardIterator() = default;
 
-	ElementType& operator*() override
+	ElementType& operator*()
 	{
 		return *m_poolElement;
 	}
 
-	const ElementType& operator*() const override
+	const ElementType& operator*() const
 	{
 		return *m_poolElement;
 	}
 
-	ElementType* operator->() override
+	ElementType* operator->()
 	{
 		return m_poolElement;
 	}
 
-	const ElementType* operator->() const override
+	const ElementType* operator->() const
 	{
 
 		return m_poolElement;
@@ -260,9 +225,8 @@ private:
 	const TypedContinuousPoolForwardIterator m_iter;
 };
 
-
 template<typename ElementType>
-class ContinuousPool : public Pool<ElementType>
+class ContinuousPool
 {
 public:
 	using Iter = ContinuousPoolForwardIterator<ElementType>;
@@ -276,15 +240,16 @@ public:
 
 		m_positionAfterLastElement = getPtrToBeginning();
 
-		if (p_useDefaultInit)
+		if(p_useDefaultInit)
 			initElements();
 	}
 
-	ElementType& allocate() override
+	template<typename ...Args>
+	ElementType& allocate(Args&&... args)
 	{
 		ElementType* l_newElement = nullptr;
 
-		l_newElement = new (m_positionAfterLastElement) ElementType();
+		l_newElement = new (m_positionAfterLastElement) ElementType(std::forward<Args>(args)...);
 
 		m_positionAfterLastElement++;
 		m_nrOfStoredElements++;
@@ -292,7 +257,7 @@ public:
 		return *l_newElement;
 	}
 
-	void deallocate(ElementType& p_element) override
+	void deallocate(ElementType& p_element)
 	{
 		ElementType* l_element = &p_element;
 
@@ -302,7 +267,7 @@ public:
 		std::memcpy(l_element, m_positionAfterLastElement, ELEMENT_SIZE);
 	}
 
-	PoolSize maxSize() const override
+	PoolSize maxSize() const
 	{
 		return MAX_NR_OF_ELEMENTS;
 	}
@@ -312,13 +277,13 @@ public:
 		return m_nrOfStoredElements;
 	}
 
-	void clear() override
+	void clear()
 	{
 		m_positionAfterLastElement = getPtrToBeginning();
 		m_nrOfStoredElements = 0u;
 	}
 
-	bool isEmpty() const override
+	bool isEmpty() const
 	{
 		return m_nrOfStoredElements == 0u;
 	}
@@ -362,13 +327,14 @@ private:
 
 	ElementType* m_positionAfterLastElement = nullptr;
 
-	void initElements()
+	template<typename ...Args>
+	void initElements(Args&&... args)
 	{
 		ElementType* l_element = nullptr;
 
 		for (auto i = 0u; i < MAX_NR_OF_ELEMENTS; i++)
 		{
-			l_element = new (m_positionAfterLastElement) ElementType();
+			l_element = new (m_positionAfterLastElement) ElementType(std::forward<Args>(args)...);
 			m_positionAfterLastElement++;
 		}
 
