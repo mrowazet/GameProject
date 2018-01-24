@@ -202,6 +202,19 @@ TEST_F(PoolTestSuite, ConstIterCanBeUsed)
 	EXPECT_EQ(ENTITY_ID_1, l_cbegin->id);
 }
 
+TEST_F(PoolTestSuite, ElementIsNotCopiedWhenIterReturned)
+{
+	addThreeElementsToPool();
+
+	auto l_cbegin = m_pool.cbegin();
+	auto l_begin = m_pool.begin();
+
+	l_begin->id = ENTITY_ID_4;
+
+	EXPECT_EQ(ENTITY_ID_4, (*l_cbegin).id);
+	EXPECT_EQ(ENTITY_ID_4, l_cbegin->id);
+}
+
 TEST_F(PoolTestSuite, PrefixPostfixIncrementationCanBeUsedWithConstIter)
 {
 	addThreeElementsToPool();

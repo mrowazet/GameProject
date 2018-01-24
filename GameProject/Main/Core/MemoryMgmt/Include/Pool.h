@@ -180,12 +180,12 @@ public:
 	ContinuousPoolForwardConstIterator(const ContinuousPoolForwardConstIterator&) = default;
 	~ContinuousPoolForwardConstIterator() = default;
 
-	auto&& operator*() const
+	auto operator*() const
 	{
 		return *m_iter;
 	}
 
-	auto&& operator->() const
+	auto operator->() const
 	{
 		return m_iter;
 	}
