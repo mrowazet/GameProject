@@ -232,16 +232,10 @@ public:
 	using Iter = ContinuousPoolForwardIterator<ElementType>;
 	using CIter = ContinuousPoolForwardConstIterator<ContinuousPoolForwardIterator<ElementType>>;
 
-	ContinuousPool(PoolSize p_size, bool p_useDefaultInit = true)
+	ContinuousPool(PoolSize p_size)
 		:MAX_NR_OF_ELEMENTS(p_size)
 	{
-		m_memoryPool = std::make_unique<core::MemoryPool>();
-		m_memoryPool->resize(p_size * (ELEMENT_SIZE / sizeof(core::MemoryAllocationUnit)));
-
-		m_positionAfterLastElement = getPtrToBeginning();
-
-		if(p_useDefaultInit)
-			initElements();
+		initPool();
 	}
 
 	template<typename ...Args>
@@ -327,16 +321,10 @@ private:
 
 	ElementType* m_positionAfterLastElement = nullptr;
 
-	template<typename ...Args>
-	void initElements(Args&&... args)
+	void initPool()
 	{
-		ElementType* l_element = nullptr;
-
-		for (auto i = 0u; i < MAX_NR_OF_ELEMENTS; i++)
-		{
-			l_element = new (m_positionAfterLastElement) ElementType(std::forward<Args>(args)...);
-			m_positionAfterLastElement++;
-		}
+		m_memoryPool = std::make_unique<core::MemoryPool>();
+		m_memoryPool->resize(MAX_NR_OF_ELEMENTS * (ELEMENT_SIZE / sizeof(core::MemoryAllocationUnit)));
 
 		m_positionAfterLastElement = getPtrToBeginning();
 	}
