@@ -12,7 +12,7 @@ namespace engine
 
 namespace core
 {
-	using MemoryAllocationUnit = unsigned int;
+	using MemoryAllocationUnit = std::uintptr_t;
 	using MemoryPool = std::vector<MemoryAllocationUnit>;
 }
 
@@ -236,6 +236,7 @@ public:
 		:MAX_NR_OF_ELEMENTS(p_size)
 	{
 		initPool();
+		assert(isDataAligned());
 	}
 
 	template<typename ...Args>
@@ -258,7 +259,8 @@ public:
 		m_positionAfterLastElement--;
 		m_nrOfStoredElements--;
 
-		std::memcpy(l_element, m_positionAfterLastElement, ELEMENT_SIZE);
+		if(l_element != m_positionAfterLastElement)
+			std::memcpy(l_element, m_positionAfterLastElement, ELEMENT_SIZE);
 	}
 
 	PoolSize maxSize() const
@@ -272,6 +274,11 @@ public:
 	}
 
 	void clear()
+	{
+
+	}
+
+	void reset()
 	{
 		m_positionAfterLastElement = getPtrToBeginning();
 		m_nrOfStoredElements = 0u;
@@ -332,6 +339,14 @@ private:
 	ElementType* getPtrToBeginning() const
 	{
 		return reinterpret_cast<ElementType*>(&(m_memoryPool->at(0)));
+	}
+
+	bool isDataAligned()
+	{
+		auto l_dataBeginning = getPtrToBeginning();
+		auto l_alignedPtr = reinterpret_cast<const core::MemoryAllocationUnit>(l_dataBeginning);
+
+		return !(l_alignedPtr % alignof(ElementType));
 	}
 };
 

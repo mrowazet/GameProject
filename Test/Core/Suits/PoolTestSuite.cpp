@@ -10,6 +10,7 @@ namespace
 {
 	const PoolSize POOL_SIZE	= 10u;
 
+	const u32 ZERO				= 0u;
 	const u32 NO_ELEMENTS		= 0u;
 	const u32 ONE_ELEMENT		= 1u;
 	const u32 TWO_ELEMENTS		= 2u;
@@ -21,6 +22,29 @@ namespace
 	const EntityId ENTITY_ID_4	= 4u;
 
 	const u32 ITER_OFFSET		= 2u;
+
+	constexpr unsigned int ALIGNMENT1024 = 1024u;
+	struct alignas(ALIGNMENT1024) Aligned1024 
+	{
+	};
+
+	class DtorCounter
+	{
+	public:
+		DtorCounter(unsigned int& p_destructionsCounter)
+			:m_counter(p_destructionsCounter)
+		{
+
+		}
+
+		~DtorCounter()
+		{
+			m_counter++;
+		}
+
+	private:
+		unsigned int& m_counter;
+	};
 }
 
 class PoolTestSuite : public Test
@@ -64,16 +88,22 @@ TEST_F(PoolTestSuite, PoolIsEmptyAfterInitialization)
 	EXPECT_TRUE(m_pool.isEmpty());
 }
 
-TEST_F(PoolTestSuite, ClearResetsInternalData)
+TEST_F(PoolTestSuite, ResetShouldClearInternalDataWithoutCallingDtors)
 {
-	addThreeElementsToPool();
-	ASSERT_EQ(THREE_ELEMENTS, m_pool.size());
-	ASSERT_FALSE(m_pool.isEmpty());
+	ContinuousPool<DtorCounter> l_pool(POOL_SIZE);
+	auto l_destructions = 0u;
 
-	m_pool.clear();
+	l_pool.allocate(l_destructions);
+	l_pool.allocate(l_destructions);
 
-	EXPECT_EQ(NO_ELEMENTS, m_pool.size());
-	EXPECT_TRUE(m_pool.isEmpty());
+	ASSERT_EQ(TWO_ELEMENTS, l_pool.size());
+	ASSERT_FALSE(l_pool.isEmpty());
+
+	l_pool.reset();
+
+	EXPECT_EQ(NO_ELEMENTS, l_pool.size());
+	EXPECT_TRUE(l_pool.isEmpty());
+	EXPECT_EQ(ZERO, l_destructions);
 }
 
 TEST_F(PoolTestSuite, BeginAndEndIterAreEqualIfPoolIsEmpty)
@@ -280,3 +310,23 @@ TEST_F(PoolTestSuite, CanForwardArgumentsToCtorWhenAllocate)
 	auto& l_element = m_pool.allocate(ENTITY_ID_4);
 	EXPECT_EQ(ENTITY_ID_4, l_element.id);
 }
+
+TEST_F(PoolTestSuite, ShouldDeathIfDataNotAligned)
+{
+	EXPECT_DEATH(ContinuousPool<Aligned1024> l_pool(POOL_SIZE), "");
+}
+
+//TEST_F(PoolTestSuite, DealocateShouldCallClassDtor)
+//{
+//	ContinuousPool<DtorCounter> l_pool(POOL_SIZE);
+//	auto l_destructions = 0u;
+//
+//	auto& l_element = l_pool.allocate(l_destructions);
+//
+//	EXPECT_EQ(ONE_ELEMENT, l_destructions);
+//}
+//
+//TEST_F(PoolTestSuite, ClearShouldCallDtorsOnAllObjectsAndClearInternalData)
+//{
+//
+//}
