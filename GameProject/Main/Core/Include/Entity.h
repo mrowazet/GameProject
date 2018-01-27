@@ -9,6 +9,7 @@ struct Entity final
 {
 	Entity() = default;
 	~Entity() = default;
+	Entity(const Entity&) = default;
 
 	Entity(EntityId p_id)
 		:id(p_id)

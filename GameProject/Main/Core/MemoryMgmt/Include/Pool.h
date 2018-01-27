@@ -239,6 +239,11 @@ public:
 		assert(isDataAligned());
 	}
 
+	~ContinuousPool()
+	{
+		clear();
+	}
+
 	template<typename ...Args>
 	ElementType& allocate(Args&&... args)
 	{
@@ -253,8 +258,9 @@ public:
 	}
 
 	void deallocate(ElementType& p_element)
-	{
+	{	
 		ElementType* l_element = &p_element;
+		p_element.~ElementType();
 
 		m_positionAfterLastElement--;
 		m_nrOfStoredElements--;
@@ -275,7 +281,10 @@ public:
 
 	void clear()
 	{
+		for (auto& element : *this)
+			element.~ElementType();
 
+		reset();
 	}
 
 	void reset()
@@ -287,6 +296,19 @@ public:
 	bool isEmpty() const
 	{
 		return m_nrOfStoredElements == 0u;
+	}
+
+	bool isMyObject(const ElementType& p_element)
+	{
+		for (const auto& element : *this)
+		{
+			if (&element == &p_element)
+			{
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	Iter begin()

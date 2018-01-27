@@ -34,7 +34,6 @@ namespace
 		DtorCounter(unsigned int& p_destructionsCounter)
 			:m_counter(p_destructionsCounter)
 		{
-
 		}
 
 		~DtorCounter()
@@ -316,17 +315,70 @@ TEST_F(PoolTestSuite, ShouldDeathIfDataNotAligned)
 	EXPECT_DEATH(ContinuousPool<Aligned1024> l_pool(POOL_SIZE), "");
 }
 
-//TEST_F(PoolTestSuite, DealocateShouldCallClassDtor)
-//{
-//	ContinuousPool<DtorCounter> l_pool(POOL_SIZE);
-//	auto l_destructions = 0u;
-//
-//	auto& l_element = l_pool.allocate(l_destructions);
-//
-//	EXPECT_EQ(ONE_ELEMENT, l_destructions);
-//}
-//
-//TEST_F(PoolTestSuite, ClearShouldCallDtorsOnAllObjectsAndClearInternalData)
-//{
-//
-//}
+TEST_F(PoolTestSuite, DealocateShouldCallClassDtor)
+{
+	ContinuousPool<DtorCounter> l_pool(POOL_SIZE);
+	auto l_destructions = 0u;
+
+	auto& l_element = l_pool.allocate(l_destructions);
+	l_pool.deallocate(l_element);
+
+	EXPECT_EQ(ONE_ELEMENT, l_destructions);
+}
+
+TEST_F(PoolTestSuite, ClearShouldCallDtorsOnAllObjectsAndClearInternalData)
+{
+	ContinuousPool<DtorCounter> l_pool(POOL_SIZE);
+	auto l_destructions = 0u;
+
+	l_pool.allocate(l_destructions);
+	l_pool.allocate(l_destructions);
+	l_pool.allocate(l_destructions);
+
+	l_pool.clear();
+
+	EXPECT_EQ(THREE_ELEMENTS, l_destructions);
+	EXPECT_EQ(ZERO, l_pool.size());
+
+}
+
+TEST_F(PoolTestSuite, PoolDestructorShouldCallClear)
+{
+	auto l_pool = std::make_unique<ContinuousPool<DtorCounter>>(POOL_SIZE);
+	auto l_destructions = 0u;
+	
+	l_pool->allocate(l_destructions);
+	l_pool.reset();
+
+	EXPECT_EQ(ONE_ELEMENT, l_destructions);
+}
+
+class Testowa
+{
+public:
+	Testowa()
+	{
+		std::cout << "\nkonstrukcja \n";
+	}
+
+	Testowa(const Testowa&)
+	{
+		std::cout << "\nkopiowanie \n";
+	}
+
+	~Testowa()
+	{
+		std::cout << "\ndestrukcja \n";
+	}
+
+	int* a;
+};
+
+TEST_F(PoolTestSuite, isMyElementReturnsCorrectValues)
+{
+	auto& l_myElement = m_pool.allocate();
+	Entity l_otherObject;
+
+	EXPECT_TRUE(m_pool.isMyObject(l_myElement));
+	EXPECT_FALSE(m_pool.isMyObject(l_otherObject));
+}
