@@ -135,7 +135,7 @@ TEST_F(PoolTestSuite, CanUseRangeBasedForLoopToIterateOverPool)
 	addThreeElementsToPool();
 	u32 l_nrOfLoops = 0u;
 
-	for (auto l_element : m_pool)
+	for (auto& l_element : m_pool)
 	{
 		l_nrOfLoops++;
 	}
@@ -352,27 +352,6 @@ TEST_F(PoolTestSuite, PoolDestructorShouldCallClear)
 
 	EXPECT_EQ(ONE_ELEMENT, l_destructions);
 }
-
-class Testowa
-{
-public:
-	Testowa()
-	{
-		std::cout << "\nkonstrukcja \n";
-	}
-
-	Testowa(const Testowa&)
-	{
-		std::cout << "\nkopiowanie \n";
-	}
-
-	~Testowa()
-	{
-		std::cout << "\ndestrukcja \n";
-	}
-
-	int* a;
-};
 
 TEST_F(PoolTestSuite, isMyElementReturnsCorrectValues)
 {

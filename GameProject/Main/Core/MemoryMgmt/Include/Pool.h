@@ -145,14 +145,14 @@ public:
 	ContinuousPoolForwardConstIterator(const ContinuousPoolForwardConstIterator&) = default;
 	~ContinuousPoolForwardConstIterator() = default;
 
-	auto operator*() const
+	auto&& operator*() const
 	{
 		return *m_iter;
 	}
 
-	auto operator->() const
+	auto&& operator->() const
 	{
-		return m_iter;
+		return m_iter.operator->();
 	}
 
 	CIter& operator++()
@@ -298,7 +298,7 @@ public:
 		return m_nrOfStoredElements == 0u;
 	}
 
-	bool isMyObject(const ElementType& p_element)
+	bool isMyObject(const ElementType& p_element) const
 	{
 		for (const auto& element : *this)
 		{
