@@ -150,7 +150,7 @@ public:
 		return *m_iter;
 	}
 
-	auto&& operator->() const
+	const auto operator->() const
 	{
 		return m_iter.operator->();
 	}

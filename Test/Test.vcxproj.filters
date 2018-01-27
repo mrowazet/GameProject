@@ -20,6 +20,9 @@
     <Filter Include="Core">
       <UniqueIdentifier>{5730d8e8-2d45-4e32-9a62-744504774146}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Tools">
+      <UniqueIdentifier>{dca4c097-e8a8-4745-a143-f66171805e82}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -32,10 +35,16 @@
     <ClCompile Include="Core\Suits\PoolTestSuite.cpp">
       <Filter>Core</Filter>
     </ClCompile>
+    <ClCompile Include="Core\Suits\ContinuousPoolPerformanceTestSuite.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Modules\DevTestModulesTest\Mocks\DevTestClassMock.hpp">
       <Filter>Modules\DevTestModuleTest\Mocks</Filter>
+    </ClInclude>
+    <ClInclude Include="Tools\Stopwatch.h">
+      <Filter>Tools</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
