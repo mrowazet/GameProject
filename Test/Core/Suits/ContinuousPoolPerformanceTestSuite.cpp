@@ -1,7 +1,7 @@
 #include <gtest\gtest.h>
 #include <gmock\gmock.h>
 #include "Core.h"
-//#include "Stopwatch.h"
+#include "Stopwatch.h"
 
 using namespace testing;
 using namespace engine;
@@ -15,17 +15,21 @@ class ContinuousPoolPerformanceTestSuite : public Test
 {
 public:
 	ContinuousPoolPerformanceTestSuite()
-		:m_pool(POOL_SIZE)
 	{
 
 	}
 
-protected:
-	ContinuousPool<Entity> m_pool;
-	//testTool::Stopwatch m_stopwatch;
-};
+	void startStopwatch()
+	{
+		m_stopwatch.start();
+	}
 
-TEST_F(ContinuousPoolPerformanceTestSuite, aaa)
-{
-	m_stopwatch.start();
-}
+	void stopStopwatch()
+	{
+		m_stopwatch.stop();
+		std::cout << "\n Measured time: " << m_stopwatch.getElapsedTime().count() << "ms \n";
+	}
+
+protected:
+	testTool::Stopwatch m_stopwatch;
+};

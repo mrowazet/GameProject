@@ -1,9 +1,12 @@
 #pragma once
 #include <iostream>
 #include <chrono>
+#include "Core.h"
 
 namespace testTool
 {
+
+using namespace std::chrono;
 
 class Stopwatch
 {
@@ -14,22 +17,23 @@ public:
 
 	void start()
 	{
-
+		m_timestamp = system_clock::now();
 	}
 
 	void stop()
 	{
-
+		auto l_elapsedTime = system_clock::now() - m_timestamp;
+		m_elapsedTime = duration_cast<milliseconds>(l_elapsedTime);
 	}
 
-	std::chrono::milliseconds getElapsedTime() const
+	milliseconds getElapsedTime() const
 	{
-
+		return m_elapsedTime;
 	}
 
 public:
-	std::chrono::microseconds m_timestamp;
-	std::chrono::milliseconds m_elapsedTime;
+	system_clock::time_point m_timestamp;
+	milliseconds m_elapsedTime;
 };
 
 
