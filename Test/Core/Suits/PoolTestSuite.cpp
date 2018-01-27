@@ -238,10 +238,14 @@ TEST_F(PoolTestSuite, ElementIsNotCopiedWhenIterReturned)
 	auto l_cbegin = m_pool.cbegin();
 	auto l_begin = m_pool.begin();
 
+	l_begin->id = ENTITY_ID_3;
+	const auto& l_element = *l_cbegin;
+
 	l_begin->id = ENTITY_ID_4;
 
 	EXPECT_EQ(ENTITY_ID_4, (*l_cbegin).id);
 	EXPECT_EQ(ENTITY_ID_4, l_cbegin->id);
+	EXPECT_EQ(ENTITY_ID_4, l_element.id);
 }
 
 TEST_F(PoolTestSuite, PrefixPostfixIncrementationCanBeUsedWithConstIter)
