@@ -34,6 +34,7 @@ public:
 public:
 	system_clock::time_point m_timestamp;
 	milliseconds m_elapsedTime;
+
 };
 
 

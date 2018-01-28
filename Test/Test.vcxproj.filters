@@ -46,5 +46,8 @@
     <ClInclude Include="Tools\Stopwatch.h">
       <Filter>Tools</Filter>
     </ClInclude>
+    <ClInclude Include="Tools\TestEnities.h">
+      <Filter>Tools</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

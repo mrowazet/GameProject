@@ -127,6 +127,7 @@
   <ItemGroup>
     <ClInclude Include="Modules\DevTestModulesTest\Mocks\DevTestClassMock.hpp" />
     <ClInclude Include="Tools\Stopwatch.h" />
+    <ClInclude Include="Tools\TestEnities.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

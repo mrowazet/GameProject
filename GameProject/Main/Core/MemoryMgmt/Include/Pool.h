@@ -239,6 +239,9 @@ public:
 		assert(isDataAligned());
 	}
 
+	ContinuousPool(const ContinuousPool<ElementType>&) = delete;
+	ContinuousPool(ContinuousPool<ElementType>&&) = default;
+
 	~ContinuousPool()
 	{
 		clear();
