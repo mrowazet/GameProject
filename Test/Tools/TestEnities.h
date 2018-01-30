@@ -4,6 +4,11 @@ namespace testEntity
 {
 	using Byte = char;
 
+	struct Entity4
+	{
+		Byte content[4];
+	};
+
 	struct Entity8
 	{
 		Byte content[8];

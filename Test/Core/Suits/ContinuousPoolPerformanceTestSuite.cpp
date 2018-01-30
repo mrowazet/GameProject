@@ -13,12 +13,13 @@ namespace
 {
 	const bool ENABLED = true;
 	const bool DISABLED = false;
-	const bool COMPARE_WITH_SMART_PTRS = true;
 
 	const PoolSize POOL_SIZE = 10000u;
 	const u32 LOOPS = 100u;
 
 	//TESTS:
+	const bool COMPARE_WITH_SMART_PTRS = DISABLED;
+
 	const bool allocateWholePoolAndClear = DISABLED;
 	const bool allocateWholePoolAndReset = DISABLED;
 }

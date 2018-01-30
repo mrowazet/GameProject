@@ -235,6 +235,7 @@ public:
 	ContinuousPool(PoolSize p_size)
 		:MAX_NR_OF_ELEMENTS(p_size)
 	{
+		assert(isElementSizeEnough());
 		initPool();
 		assert(isDataAligned());
 	}
@@ -364,6 +365,11 @@ private:
 	ElementType* getPtrToBeginning() const
 	{
 		return reinterpret_cast<ElementType*>(&(m_memoryPool->at(0)));
+	}
+
+	bool isElementSizeEnough()
+	{
+		return sizeof(ElementType) >= sizeof(core::MemoryAllocationUnit);
 	}
 
 	bool isDataAligned()

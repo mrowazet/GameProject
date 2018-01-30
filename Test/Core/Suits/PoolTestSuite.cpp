@@ -1,6 +1,7 @@
 #pragma once
 #include <gtest\gtest.h>
 #include <gmock\gmock.h>
+#include "TestEnities.h"
 #include "Core.h"
 
 using namespace testing;
@@ -317,6 +318,11 @@ TEST_F(PoolTestSuite, CanForwardArgumentsToCtorWhenAllocate)
 TEST_F(PoolTestSuite, ShouldDeathIfDataNotAligned)
 {
 	EXPECT_DEATH(ContinuousPool<Aligned1024> l_pool(POOL_SIZE), "");
+}
+
+TEST_F(PoolTestSuite, ShuldDeathIfDataSizeTooSmall)
+{
+	EXPECT_DEATH(ContinuousPool<testEntity::Entity4> l_pool(POOL_SIZE), "");
 }
 
 TEST_F(PoolTestSuite, DealocateShouldCallClassDtor)
