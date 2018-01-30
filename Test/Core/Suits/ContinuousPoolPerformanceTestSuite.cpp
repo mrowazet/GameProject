@@ -19,8 +19,8 @@ namespace
 	const u32 LOOPS = 100u;
 
 	//TESTS:
-	const bool allocateWholePoolAndClear = ENABLED;
-	const bool allocateWholePoolAndReset = ENABLED;
+	const bool allocateWholePoolAndClear = DISABLED;
+	const bool allocateWholePoolAndReset = DISABLED;
 }
 
 class ContinuousPoolPerformanceTestSuite : public Test
@@ -89,7 +89,6 @@ public:
 	template<typename T>
 	void measureActionOnCreatedVector(std::function<void(std::vector<T>&)> p_function)
 	{
-		std::cout << "Size of tested entity: " << sizeof(T) << "\n";
 		auto l_vector = createVector<T>();
 
 		startStopwatch();
@@ -98,12 +97,15 @@ public:
 	}
 	
 	template<typename T>
-	auto allocateAllElementsInVector()
+	auto allocateAllElementsInVectorAndThenDeallocate()
 	{
 		auto l_function = [](auto& p_vector)
 		{
 			for (int i = 0u; i < POOL_SIZE; i++)
 				p_vector[0].reset(new T());
+
+			for (int i = 0u; i < POOL_SIZE; i++)
+				p_vector[0].reset();
 		};
 		
 		return l_function;
@@ -137,8 +139,23 @@ TEST_F(ContinuousPoolPerformanceTestSuite, allocateWholePoolAndClear)
 	if (!COMPARE_WITH_SMART_PTRS)
 		return;
 
-	measureActionOnCreatedVector<std::shared_ptr<Entity8>>(allocateAllElementsInVector<Entity8>());
-	measureActionOnCreatedVector<std::unique_ptr<Entity8>>(allocateAllElementsInVector<Entity8>());
+	std::cout << "std::shared_ptr: \n";
+	measureActionOnCreatedVector<std::shared_ptr<Entity8>>(allocateAllElementsInVectorAndThenDeallocate<Entity8>());
+	measureActionOnCreatedVector<std::shared_ptr<Entity16>>(allocateAllElementsInVectorAndThenDeallocate<Entity16>());
+	measureActionOnCreatedVector<std::shared_ptr<Entity32>>(allocateAllElementsInVectorAndThenDeallocate<Entity32>());
+	measureActionOnCreatedVector<std::shared_ptr<Entity64>>(allocateAllElementsInVectorAndThenDeallocate<Entity64>());
+	measureActionOnCreatedVector<std::shared_ptr<Entity128>>(allocateAllElementsInVectorAndThenDeallocate<Entity128>());
+	measureActionOnCreatedVector<std::shared_ptr<Entity256>>(allocateAllElementsInVectorAndThenDeallocate<Entity256>());
+	measureActionOnCreatedVector<std::shared_ptr<Entity512>>(allocateAllElementsInVectorAndThenDeallocate<Entity512>());
+
+	std::cout << "std::unique_ptr: \n";
+	measureActionOnCreatedVector<std::unique_ptr<Entity8>>(allocateAllElementsInVectorAndThenDeallocate<Entity8>());
+	measureActionOnCreatedVector<std::unique_ptr<Entity16>>(allocateAllElementsInVectorAndThenDeallocate<Entity16>());
+	measureActionOnCreatedVector<std::unique_ptr<Entity32>>(allocateAllElementsInVectorAndThenDeallocate<Entity32>());
+	measureActionOnCreatedVector<std::unique_ptr<Entity64>>(allocateAllElementsInVectorAndThenDeallocate<Entity64>());
+	measureActionOnCreatedVector<std::unique_ptr<Entity128>>(allocateAllElementsInVectorAndThenDeallocate<Entity128>());
+	measureActionOnCreatedVector<std::unique_ptr<Entity256>>(allocateAllElementsInVectorAndThenDeallocate<Entity256>());
+	measureActionOnCreatedVector<std::unique_ptr<Entity512>>(allocateAllElementsInVectorAndThenDeallocate<Entity512>());
 }
 
 TEST_F(ContinuousPoolPerformanceTestSuite, allocateWholePoolAndReset)
