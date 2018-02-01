@@ -2,6 +2,7 @@
 
 namespace testEntity
 {
+	const long long PRE_INITED_VALUE = 99;
 	using Byte = char;
 
 	struct Entity4
@@ -42,5 +43,10 @@ namespace testEntity
 	struct Entity512
 	{
 		Byte content[512];
+	};
+
+	struct PreInitedEntity
+	{
+		long long value = PRE_INITED_VALUE;
 	};
 }

@@ -126,6 +126,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Modules\DevTestModulesTest\Mocks\DevTestClassMock.hpp" />
+    <ClInclude Include="Tools\HelperClasses.h" />
     <ClInclude Include="Tools\Stopwatch.h" />
     <ClInclude Include="Tools\TestEnities.h" />
   </ItemGroup>

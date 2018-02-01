@@ -2,9 +2,11 @@
 #include <gtest\gtest.h>
 #include <gmock\gmock.h>
 #include "TestEnities.h"
+#include "HelperClasses.h"
 #include "Core.h"
 
 using namespace testing;
+using namespace testTool;
 using namespace engine;
 
 namespace
@@ -28,23 +30,6 @@ namespace
 	struct alignas(ALIGNMENT1024) Aligned1024 
 	{
 	};
-
-	class DtorCounter
-	{
-	public:
-		DtorCounter(unsigned int& p_destructionsCounter)
-			:m_counter(p_destructionsCounter)
-		{
-		}
-
-		~DtorCounter()
-		{
-			m_counter++;
-		}
-
-	private:
-		unsigned int& m_counter;
-	};
 }
 
 class PoolTestSuite : public Test
@@ -60,6 +45,7 @@ protected:
 	Entity& addElementToPool(EntityId p_entityId);
 
 	ContinuousPool<Entity> m_pool;
+	CtorDtorCounter m_counters;
 };
 
 void PoolTestSuite::addThreeElementsToPool()
@@ -90,11 +76,10 @@ TEST_F(PoolTestSuite, PoolIsEmptyAfterInitialization)
 
 TEST_F(PoolTestSuite, ResetShouldClearInternalDataWithoutCallingDtors)
 {
-	ContinuousPool<DtorCounter> l_pool(POOL_SIZE);
-	auto l_destructions = 0u;
+	ContinuousPool<TestEntity> l_pool(POOL_SIZE);
 
-	l_pool.allocate(l_destructions);
-	l_pool.allocate(l_destructions);
+	l_pool.allocate(m_counters);
+	l_pool.allocate(m_counters);
 
 	ASSERT_EQ(TWO_ELEMENTS, l_pool.size());
 	ASSERT_FALSE(l_pool.isEmpty());
@@ -103,7 +88,7 @@ TEST_F(PoolTestSuite, ResetShouldClearInternalDataWithoutCallingDtors)
 
 	EXPECT_EQ(NO_ELEMENTS, l_pool.size());
 	EXPECT_TRUE(l_pool.isEmpty());
-	EXPECT_EQ(ZERO, l_destructions);
+	EXPECT_EQ(ZERO, m_counters.getDtorCounter());
 }
 
 TEST_F(PoolTestSuite, BeginAndEndIterAreEqualIfPoolIsEmpty)
@@ -327,40 +312,37 @@ TEST_F(PoolTestSuite, ShuldDeathIfDataSizeTooSmall)
 
 TEST_F(PoolTestSuite, DealocateShouldCallClassDtor)
 {
-	ContinuousPool<DtorCounter> l_pool(POOL_SIZE);
-	auto l_destructions = 0u;
+	ContinuousPool<TestEntity> l_pool(POOL_SIZE);
 
-	auto& l_element = l_pool.allocate(l_destructions);
+	auto& l_element = l_pool.allocate(m_counters);
 	l_pool.deallocate(l_element);
 
-	EXPECT_EQ(ONE_ELEMENT, l_destructions);
+	EXPECT_EQ(ONE_ELEMENT, m_counters.getDtorCounter());
 }
 
 TEST_F(PoolTestSuite, ClearShouldCallDtorsOnAllObjectsAndClearInternalData)
 {
-	ContinuousPool<DtorCounter> l_pool(POOL_SIZE);
-	auto l_destructions = 0u;
+	ContinuousPool<TestEntity> l_pool(POOL_SIZE);
 
-	l_pool.allocate(l_destructions);
-	l_pool.allocate(l_destructions);
-	l_pool.allocate(l_destructions);
+	l_pool.allocate(m_counters);
+	l_pool.allocate(m_counters);
+	l_pool.allocate(m_counters);
 
 	l_pool.clear();
 
-	EXPECT_EQ(THREE_ELEMENTS, l_destructions);
+	EXPECT_EQ(THREE_ELEMENTS, m_counters.getDtorCounter());
 	EXPECT_EQ(ZERO, l_pool.size());
 
 }
 
 TEST_F(PoolTestSuite, PoolDestructorShouldCallClear)
 {
-	auto l_pool = std::make_unique<ContinuousPool<DtorCounter>>(POOL_SIZE);
-	auto l_destructions = 0u;
+	auto l_pool = std::make_unique<ContinuousPool<TestEntity>>(POOL_SIZE);
 	
-	l_pool->allocate(l_destructions);
+	l_pool->allocate(m_counters);
 	l_pool.reset();
 
-	EXPECT_EQ(ONE_ELEMENT, l_destructions);
+	EXPECT_EQ(ONE_ELEMENT, m_counters.getDtorCounter());
 }
 
 TEST_F(PoolTestSuite, isMyElementReturnsCorrectValues)
@@ -371,3 +353,21 @@ TEST_F(PoolTestSuite, isMyElementReturnsCorrectValues)
 	EXPECT_TRUE(m_pool.isMyObject(l_myElement));
 	EXPECT_FALSE(m_pool.isMyObject(l_otherObject));
 }
+
+//TEST_F(PoolTestSuite, possibleToGetNextElementWithoutCallingCtor)
+//{
+//
+//}
+
+//TEST_F(PoolTestSuite, elementsAreNotPreInitedByDefault)
+//{
+//	auto l_pool = ContinuousPool<TestEntity>(POOL_SIZE);
+//	EXPECT_EQ(ZERO, m_counters.getCtorCounter());
+//}
+
+//TEST_F(PoolTestSuite, elementsArePreConsturctedWhenCtorWithPreInitIsUsed)
+//{
+//	auto l_pool = ContinuousPool<TestEntity>(POOL_SIZE);
+//	EXPECT_EQ(POOL_SIZE, m_counters.getCtorCounter());
+//	EXPECT_TRUE(l_pool.isEmpty());
+//}
