@@ -238,11 +238,12 @@ public:
 	using Iter = ContinuousPoolForwardIterator<ElementType>;
 	using CIter = ContinuousPoolForwardConstIterator<ContinuousPoolForwardIterator<ElementType>>;
 
-	ContinuousPool(PoolSize p_size, InitMode p_initMode = InitMode::NO_PRE_INIT)
+	template<typename ...Args>
+	ContinuousPool(PoolSize p_size, InitMode p_initMode = InitMode::NO_PRE_INIT, Args&&... args)
 		:MAX_NR_OF_ELEMENTS(p_size)
 	{
 		assert(isElementSizeEnough());
-		initPool(p_initMode);
+		initPool(p_initMode, std::forward<Args>(args)...);
 		assert(isDataAligned());
 	}
 
@@ -281,13 +282,23 @@ public:
 
 	ElementType& getNext()
 	{
-		ElementType* l_nextElement = nullptr;
-		return l_nextElement;
+		ElementType* l_nextElement = m_positionAfterLastElement;
+
+		m_positionAfterLastElement++;
+		m_nrOfStoredElements++;
+
+		return *l_nextElement;
 	}
 
 	void takeBack(ElementType& p_element)
 	{
+		ElementType* l_element = &p_element;
 
+		m_positionAfterLastElement--;
+		m_nrOfStoredElements--;
+
+		if (l_element != m_positionAfterLastElement)
+			std::memcpy(l_element, m_positionAfterLastElement, ELEMENT_SIZE);
 	}
 
 	PoolSize maxSize() const
@@ -371,7 +382,8 @@ private:
 
 	ElementType* m_positionAfterLastElement = nullptr;
 
-	void initPool(InitMode p_initMode)
+	template<typename ...Args>
+	void initPool(InitMode p_initMode, Args&&... args)
 	{
 		m_memoryPool = std::make_unique<core::MemoryPool>();
 		m_memoryPool->resize(MAX_NR_OF_ELEMENTS * (ELEMENT_SIZE / sizeof(core::MemoryAllocationUnit)));
@@ -380,15 +392,16 @@ private:
 
 		if (p_initMode == InitMode::PRE_INIT)
 		{
-			preInitPoolElements();
+			preInitPoolElements(std::forward<Args>(args)...);
 		}
 	}
 
-	void preInitPoolElements()
+	template<typename ...Args>
+	void preInitPoolElements(Args&&... args)
 	{
 		for (auto i = 0u; i < MAX_NR_OF_ELEMENTS; i++)
 		{
-			//allocate();
+			allocate(std::forward<Args>(args)...);
 		}
 
 		reset();

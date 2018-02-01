@@ -29,21 +29,30 @@ private:
 class TestEntity
 {
 public:
-	TestEntity(CtorDtorCounter& p_counters)
-		:m_counters(p_counters)
+	TestEntity() = default;
+
+	TestEntity(CtorDtorCounter& p_counters, u32 p_id = 0u)
+		:m_counters(&p_counters),
+		 m_id(p_id)
 	{
-		auto& l_counter = m_counters.getCtorCounter();
+		auto& l_counter = m_counters->getCtorCounter();
 		l_counter++;
 	}
 
 	~TestEntity()
 	{
-		auto& l_counter = m_counters.getDtorCounter();
+		auto& l_counter = m_counters->getDtorCounter();
 		l_counter++;
 	}
 
+	u32 getId() const
+	{
+		return m_id;
+	}
+
 private:
-	CtorDtorCounter& m_counters;
+	u32 m_id = 0u;
+	CtorDtorCounter* m_counters = nullptr;
 };
 
 }

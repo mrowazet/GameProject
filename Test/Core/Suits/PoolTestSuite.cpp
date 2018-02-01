@@ -354,20 +354,51 @@ TEST_F(PoolTestSuite, isMyElementReturnsCorrectValues)
 	EXPECT_FALSE(m_pool.isMyObject(l_otherObject));
 }
 
-//TEST_F(PoolTestSuite, possibleToGetNextElementWithoutCallingCtor)
-//{
-//
-//}
+TEST_F(PoolTestSuite, elementsAreNotPreInitedByDefault)
+{
+	auto l_pool = ContinuousPool<TestEntity>(POOL_SIZE);
+	EXPECT_EQ(ZERO, m_counters.getCtorCounter());
+}
 
-//TEST_F(PoolTestSuite, elementsAreNotPreInitedByDefault)
-//{
-//	auto l_pool = ContinuousPool<TestEntity>(POOL_SIZE);
-//	EXPECT_EQ(ZERO, m_counters.getCtorCounter());
-//}
+TEST_F(PoolTestSuite, elementsArePreConsturctedWhenCtorWithPreInitIsUsed)
+{
+	auto l_pool = ContinuousPool<TestEntity>(POOL_SIZE, InitMode::PRE_INIT, m_counters);
+	EXPECT_EQ(POOL_SIZE, m_counters.getCtorCounter());
+	EXPECT_TRUE(l_pool.isEmpty());
+}
 
-//TEST_F(PoolTestSuite, elementsArePreConsturctedWhenCtorWithPreInitIsUsed)
-//{
-//	auto l_pool = ContinuousPool<TestEntity>(POOL_SIZE);
-//	EXPECT_EQ(POOL_SIZE, m_counters.getCtorCounter());
-//	EXPECT_TRUE(l_pool.isEmpty());
-//}
+TEST_F(PoolTestSuite, possibleToGetNextElementWithoutCallingCtor)
+{
+	auto l_pool = ContinuousPool<TestEntity>(POOL_SIZE, InitMode::PRE_INIT, m_counters);
+
+	auto& l_element1 = l_pool.getNext();
+	auto& l_element2 = l_pool.getNext();
+
+	EXPECT_EQ(POOL_SIZE, m_counters.getCtorCounter());
+	EXPECT_FALSE(l_pool.isEmpty());
+	EXPECT_EQ(TWO_ELEMENTS, l_pool.size());
+
+	auto l_addres1 = reinterpret_cast<std::uintptr_t>(&l_element1);
+	auto l_addres2 = reinterpret_cast<std::uintptr_t>(&l_element2);
+	auto l_elementSizeInPool = l_addres2 - l_addres1;
+
+	EXPECT_EQ(sizeof(TestEntity), l_elementSizeInPool);
+}
+
+TEST_F(PoolTestSuite, possibleToReturnElementWithoutCallingDtor)
+{
+	auto l_pool = ContinuousPool<TestEntity>(POOL_SIZE);
+
+	auto& l_element1 = l_pool.allocate(m_counters, ENTITY_ID_1);
+	auto& l_element2 = l_pool.allocate(m_counters, ENTITY_ID_2);
+
+	ASSERT_EQ(TWO_ELEMENTS, l_pool.size());
+	ASSERT_EQ(TWO_ELEMENTS, m_counters.getCtorCounter());
+
+	l_pool.takeBack(l_element1);
+
+	// l_elements1 still point to first position in pool where elements from second position should be move
+	EXPECT_EQ(ONE_ELEMENT, l_pool.size());
+	EXPECT_EQ(ZERO, m_counters.getDtorCounter());
+	EXPECT_EQ(ENTITY_ID_2, l_element1.getId());
+}
