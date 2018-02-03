@@ -477,3 +477,12 @@ TEST_F(PoolTestSuite, NewConstIterCanBeCreatedByOperatorMinus)
 	EXPECT_EQ(ENTITY_ID_3, l_cend->id);
 	EXPECT_EQ(ENTITY_ID_1, l_citer->id);
 }
+
+TEST_F(PoolTestSuite, it)
+{
+	auto citer = m_pool.cbegin();
+
+	auto i = ++citer;
+
+	//i->id = 9;
+}

@@ -54,7 +54,6 @@ public:
 
 	const ElementType* operator->() const
 	{
-
 		return m_poolElement;
 	}
 
@@ -170,7 +169,7 @@ public:
 
 	CIter operator++(int)
 	{
-		TypedContinuousPoolIterator l_iter(m_iter);
+		CIter l_iter(m_iter);
 		m_iter++;
 
 		return l_iter;
@@ -184,7 +183,7 @@ public:
 
 	CIter operator--(int)
 	{
-		TypedContinuousPoolIterator l_iter(m_iter);
+		CIter l_iter(m_iter);
 		m_iter--;
 
 		return l_iter;
@@ -204,22 +203,12 @@ public:
 
 	CIter operator+(u32 p_offset) const
 	{
-		TypedContinuousPoolIterator l_iter(m_iter);
-		l_iter += p_offset;
-
-		CIter l_citer (l_iter);
-
-		return l_citer;
+		return CIter(m_iter + p_offset);
 	}
 
 	CIter operator-(u32 p_offset) const
 	{
-		TypedContinuousPoolIterator l_iter(m_iter);
-		l_iter -= p_offset;
-
-		CIter l_citer(l_iter);
-
-		return l_citer;
+		return CIter(m_iter - p_offset);
 	}
 
 	CIter& operator=(const CIter& p_iter)
