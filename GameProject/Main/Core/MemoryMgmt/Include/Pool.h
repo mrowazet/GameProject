@@ -20,22 +20,22 @@ template<typename>
 class ContinuousPool;
 
 template<typename ElementType>
-class ContinuousPoolForwardIterator
+class ContinuousPoolIterator
 {
 private:
 	template<typename ElementType>
 	friend class ContinuousPool;
 
-	ContinuousPoolForwardIterator(ElementType& p_element)
+	ContinuousPoolIterator(ElementType& p_element)
 	{
 		m_poolElement = &p_element;
 	}
 
 public:
-	using Iter = ContinuousPoolForwardIterator<ElementType>;
+	using Iter = ContinuousPoolIterator<ElementType>;
 
-	ContinuousPoolForwardIterator(const ContinuousPoolForwardIterator&) = default;
-	~ContinuousPoolForwardIterator() = default;
+	ContinuousPoolIterator(const ContinuousPoolIterator&) = default;
+	~ContinuousPoolIterator() = default;
 
 	ElementType& operator*()
 	{
@@ -86,6 +86,34 @@ public:
 		return l_iter;
 	}
 
+	Iter& operator--()
+	{
+		m_poolElement--;
+		return *this;
+	}
+
+	const Iter& operator--() const
+	{
+		m_poolElement--;
+		return *this;
+	}
+
+	Iter operator--(int)
+	{
+		Iter l_iter(*this);
+		m_poolElement--;
+
+		return l_iter;
+	}
+
+	const Iter operator--(int) const
+	{
+		Iter l_iter(*this);
+		m_poolElement--;
+
+		return l_iter;
+	}
+
 	Iter& operator+=(u32 p_offset)
 	{
 		m_poolElement += p_offset;
@@ -98,11 +126,31 @@ public:
 		return *this;
 	}
 
+	Iter& operator-=(u32 p_offset)
+	{
+		m_poolElement -= p_offset;
+		return *this;
+	}
+
+	const Iter& operator-=(u32 p_offset) const
+	{
+		m_poolElement -= p_offset;
+		return *this;
+	}
+
 	Iter operator+(u32 p_offset) const
 	{
 		ElementType* l_elementAddress = m_poolElement + p_offset;
 		Iter l_iter(*l_elementAddress);
 		
+		return l_iter;
+	}
+
+	Iter operator-(u32 p_offset) const
+	{
+		ElementType* l_elementAddress = m_poolElement - p_offset;
+		Iter l_iter(*l_elementAddress);
+
 		return l_iter;
 	}
 
@@ -126,23 +174,23 @@ private:
 	mutable ElementType* m_poolElement = nullptr;
 };
 
-template<typename TypedContinuousPoolForwardIterator>
-class ContinuousPoolForwardConstIterator
+template<typename TypedContinuousPoolIterator>
+class ContinuousPoolConstIterator
 {
 private:
 	template<typename ElementType>
 	friend class ContinuousPool;
 
-	ContinuousPoolForwardConstIterator(const TypedContinuousPoolForwardIterator& p_iter)
+	ContinuousPoolConstIterator(const TypedContinuousPoolIterator& p_iter)
 		:m_iter(p_iter)
 	{
 	}
 
 public:
-	using CIter = ContinuousPoolForwardConstIterator<TypedContinuousPoolForwardIterator>;
+	using CIter = ContinuousPoolConstIterator<TypedContinuousPoolIterator>;
 
-	ContinuousPoolForwardConstIterator(const ContinuousPoolForwardConstIterator&) = default;
-	~ContinuousPoolForwardConstIterator() = default;
+	ContinuousPoolConstIterator(const ContinuousPoolConstIterator&) = default;
+	~ContinuousPoolConstIterator() = default;
 
 	auto&& operator*() const
 	{
@@ -168,7 +216,7 @@ public:
 
 	CIter operator++(int)
 	{
-		TypedContinuousPoolForwardIterator l_iter(m_iter);
+		TypedContinuousPoolIterator l_iter(m_iter);
 		m_iter++;
 
 		return l_iter;
@@ -176,8 +224,36 @@ public:
 
 	const CIter operator++(int) const
 	{
-		TypedContinuousPoolForwardIterator l_iter(m_iter);
+		TypedContinuousPoolIterator l_iter(m_iter);
 		m_iter++;
+
+		return l_iter;
+	}
+
+	CIter& operator--()
+	{
+		m_iter--;
+		return *this;
+	}
+
+	const CIter& operator--() const
+	{
+		m_iter--;
+		return *this;
+	}
+
+	CIter operator--(int)
+	{
+		TypedContinuousPoolIterator l_iter(m_iter);
+		m_iter--;
+
+		return l_iter;
+	}
+
+	const CIter operator--(int) const
+	{
+		TypedContinuousPoolIterator l_iter(m_iter);
+		m_iter--;
 
 		return l_iter;
 	}
@@ -194,12 +270,34 @@ public:
 		return *this;
 	}
 
+	CIter& operator-=(u32 p_offset)
+	{
+		m_iter -= p_offset;
+		return *this;
+	}
+
+	const CIter& operator-=(u32 p_offset) const
+	{
+		m_iter -= p_offset;
+		return *this;
+	}
+
 	CIter operator+(u32 p_offset) const
 	{
-		TypedContinuousPoolForwardIterator l_iter(m_iter);
+		TypedContinuousPoolIterator l_iter(m_iter);
 		l_iter += p_offset;
 
 		CIter l_citer (l_iter);
+
+		return l_citer;
+	}
+
+	CIter operator-(u32 p_offset) const
+	{
+		TypedContinuousPoolIterator l_iter(m_iter);
+		l_iter -= p_offset;
+
+		CIter l_citer(l_iter);
 
 		return l_citer;
 	}
@@ -221,7 +319,7 @@ public:
 	}
 
 private:
-	const TypedContinuousPoolForwardIterator m_iter;
+	const TypedContinuousPoolIterator m_iter;
 };
 
 enum class InitMode
@@ -234,8 +332,8 @@ template<typename ElementType>
 class ContinuousPool
 {
 public:
-	using Iter = ContinuousPoolForwardIterator<ElementType>;
-	using CIter = ContinuousPoolForwardConstIterator<ContinuousPoolForwardIterator<ElementType>>;
+	using Iter = ContinuousPoolIterator<ElementType>;
+	using CIter = ContinuousPoolConstIterator<ContinuousPoolIterator<ElementType>>;
 
 	template<typename ...Args>
 	ContinuousPool(PoolSize p_size, InitMode p_initMode = InitMode::NO_PRE_INIT, Args&&... args)

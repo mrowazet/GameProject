@@ -402,3 +402,78 @@ TEST_F(PoolTestSuite, possibleToReturnElementWithoutCallingDtor)
 	EXPECT_EQ(ZERO, m_counters.getDtorCounter());
 	EXPECT_EQ(ENTITY_ID_2, l_element1.getId());
 }
+
+TEST_F(PoolTestSuite, CanIterateBackOverPoolUsingIterator)
+{
+	addThreeElementsToPool();
+
+	auto l_iter = m_pool.end();
+
+	--l_iter;
+	EXPECT_EQ(ENTITY_ID_3, l_iter->id);
+
+	--l_iter;
+	EXPECT_EQ(ENTITY_ID_2, l_iter->id);
+
+	l_iter--;
+	EXPECT_EQ(ENTITY_ID_1, l_iter->id);
+}
+
+TEST_F(PoolTestSuite, IteratorCanBeMovedWithOperatorMinusEqual)
+{
+	addThreeElementsToPool();
+
+	auto l_iter = m_pool.end();
+	l_iter -= ITER_OFFSET;
+
+	EXPECT_EQ(ENTITY_ID_2, l_iter->id);
+}
+
+TEST_F(PoolTestSuite, NewIterCanBeCreatedByOperatorMinus)
+{
+	addThreeElementsToPool();
+
+	auto l_end = m_pool.end();
+	--l_end;
+
+	auto l_iter = l_end - ITER_OFFSET;
+
+	EXPECT_EQ(ENTITY_ID_3, l_end->id);
+	EXPECT_EQ(ENTITY_ID_1, l_iter->id);
+}
+
+TEST_F(PoolTestSuite, PrefixPostfixDecrementationCanBeUsedWithConstIter)
+{
+	addThreeElementsToPool();
+
+	auto l_cend = m_pool.cend();
+
+	--l_cend;
+	EXPECT_EQ(ENTITY_ID_3, l_cend->id);
+
+	l_cend--;
+	EXPECT_EQ(ENTITY_ID_2, l_cend->id);
+}
+
+TEST_F(PoolTestSuite, ConstIteratorCanBeMovedWithOperatorMinusEqual)
+{
+	addThreeElementsToPool();
+
+	auto l_citer = m_pool.cend();
+	l_citer -= ITER_OFFSET;
+
+	EXPECT_EQ(ENTITY_ID_2, l_citer->id);
+}
+
+TEST_F(PoolTestSuite, NewConstIterCanBeCreatedByOperatorMinus)
+{
+	addThreeElementsToPool();
+
+	auto l_cend = m_pool.cend();
+	--l_cend;
+
+	auto l_citer = l_cend - ITER_OFFSET;
+
+	EXPECT_EQ(ENTITY_ID_3, l_cend->id);
+	EXPECT_EQ(ENTITY_ID_1, l_citer->id);
+}
