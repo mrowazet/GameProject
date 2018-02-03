@@ -21,9 +21,15 @@ public:
 		return m_dtorCounter;
 	}
 
+	u32& getCopyCounter()
+	{
+		return m_copyCounter;
+	}
+
 private:
 	u32 m_ctorCounter = 0u;
 	u32 m_dtorCounter = 0u;
+	u32 m_copyCounter = 0u;
 };
 
 class TestEntity
@@ -36,6 +42,15 @@ public:
 		 m_id(p_id)
 	{
 		auto& l_counter = m_counters->getCtorCounter();
+		l_counter++;
+	}
+
+	TestEntity(const TestEntity& p_testEntity)
+	{
+		m_id = p_testEntity.m_id;
+		m_counters = p_testEntity.m_counters;
+
+		auto& l_counter = m_counters->getCopyCounter();
 		l_counter++;
 	}
 

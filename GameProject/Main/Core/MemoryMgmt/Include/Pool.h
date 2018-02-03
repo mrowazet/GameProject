@@ -124,7 +124,6 @@ public:
 
 private:
 	mutable ElementType* m_poolElement = nullptr;
-
 };
 
 template<typename TypedContinuousPoolForwardIterator>
@@ -243,8 +242,16 @@ public:
 		:MAX_NR_OF_ELEMENTS(p_size)
 	{
 		assert(isElementSizeEnough());
-		initPool(p_initMode, std::forward<Args>(args)...);
+		initMemory();
 		assert(isDataAligned());
+
+		if (p_initMode == InitMode::PRE_INIT)
+		{
+			reset();
+			preInitPoolElements(std::forward<Args>(args)...);
+		}	
+
+		reset();
 	}
 
 	ContinuousPool(const ContinuousPool<ElementType>&) = delete;
@@ -258,26 +265,16 @@ public:
 	template<typename ...Args>
 	ElementType& allocate(Args&&... args)
 	{
-		ElementType* l_newElement = nullptr;
+		ElementType* l_nextElement = &getNext();
+		new (l_nextElement) ElementType(std::forward<Args>(args)...);
 
-		l_newElement = new (m_positionAfterLastElement) ElementType(std::forward<Args>(args)...);
-
-		m_positionAfterLastElement++;
-		m_nrOfStoredElements++;
-
-		return *l_newElement;
+		return *l_nextElement;
 	}
 
 	void deallocate(ElementType& p_element)
 	{	
-		ElementType* l_element = &p_element;
 		p_element.~ElementType();
-
-		m_positionAfterLastElement--;
-		m_nrOfStoredElements--;
-
-		if(l_element != m_positionAfterLastElement)
-			std::memcpy(l_element, m_positionAfterLastElement, ELEMENT_SIZE);
+		takeBack(p_element);
 	}
 
 	ElementType& getNext()
@@ -350,7 +347,7 @@ public:
 
 	CIter begin() const
 	{
-		return CIter(*getPtrToBeginning());
+		return cbegin();
 	}
 
 	CIter cbegin() const
@@ -365,7 +362,7 @@ public:
 
 	CIter end() const
 	{
-		return CIter(*m_positionAfterLastElement);
+		return cend();
 	}
 
 	CIter cend() const
@@ -382,18 +379,10 @@ private:
 
 	ElementType* m_positionAfterLastElement = nullptr;
 
-	template<typename ...Args>
-	void initPool(InitMode p_initMode, Args&&... args)
+	void initMemory()
 	{
 		m_memoryPool = std::make_unique<core::MemoryPool>();
 		m_memoryPool->resize(MAX_NR_OF_ELEMENTS * (ELEMENT_SIZE / sizeof(core::MemoryAllocationUnit)));
-
-		m_positionAfterLastElement = getPtrToBeginning();
-
-		if (p_initMode == InitMode::PRE_INIT)
-		{
-			preInitPoolElements(std::forward<Args>(args)...);
-		}
 	}
 
 	template<typename ...Args>
@@ -403,8 +392,6 @@ private:
 		{
 			allocate(std::forward<Args>(args)...);
 		}
-
-		reset();
 	}
 	
 	ElementType* getPtrToBeginning() const
