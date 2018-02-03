@@ -64,21 +64,7 @@ public:
 		return *this;
 	}
 
-	const Iter& operator++() const
-	{
-		m_poolElement++;
-		return *this;
-	}
-
 	Iter operator++(int)
-	{
-		Iter l_iter(*this);
-		m_poolElement++;
-
-		return l_iter;
-	}
-
-	const Iter operator++(int) const
 	{
 		Iter l_iter(*this);
 		m_poolElement++;
@@ -92,21 +78,7 @@ public:
 		return *this;
 	}
 
-	const Iter& operator--() const
-	{
-		m_poolElement--;
-		return *this;
-	}
-
 	Iter operator--(int)
-	{
-		Iter l_iter(*this);
-		m_poolElement--;
-
-		return l_iter;
-	}
-
-	const Iter operator--(int) const
 	{
 		Iter l_iter(*this);
 		m_poolElement--;
@@ -120,19 +92,7 @@ public:
 		return *this;
 	}
 
-	const Iter& operator+=(u32 p_offset) const
-	{
-		m_poolElement += p_offset;
-		return *this;
-	}
-
 	Iter& operator-=(u32 p_offset)
-	{
-		m_poolElement -= p_offset;
-		return *this;
-	}
-
-	const Iter& operator-=(u32 p_offset) const
 	{
 		m_poolElement -= p_offset;
 		return *this;
@@ -208,21 +168,7 @@ public:
 		return *this;
 	}
 
-	const CIter& operator++() const
-	{
-		m_iter++;
-		return *this;
-	}
-
 	CIter operator++(int)
-	{
-		TypedContinuousPoolIterator l_iter(m_iter);
-		m_iter++;
-
-		return l_iter;
-	}
-
-	const CIter operator++(int) const
 	{
 		TypedContinuousPoolIterator l_iter(m_iter);
 		m_iter++;
@@ -236,21 +182,7 @@ public:
 		return *this;
 	}
 
-	const CIter& operator--() const
-	{
-		m_iter--;
-		return *this;
-	}
-
 	CIter operator--(int)
-	{
-		TypedContinuousPoolIterator l_iter(m_iter);
-		m_iter--;
-
-		return l_iter;
-	}
-
-	const CIter operator--(int) const
 	{
 		TypedContinuousPoolIterator l_iter(m_iter);
 		m_iter--;
@@ -264,19 +196,7 @@ public:
 		return *this;
 	}
 
-	const CIter& operator+=(u32 p_offset) const
-	{
-		m_iter += p_offset;
-		return *this;
-	}
-
 	CIter& operator-=(u32 p_offset)
-	{
-		m_iter -= p_offset;
-		return *this;
-	}
-
-	const CIter& operator-=(u32 p_offset) const
 	{
 		m_iter -= p_offset;
 		return *this;
@@ -319,7 +239,7 @@ public:
 	}
 
 private:
-	const TypedContinuousPoolIterator m_iter;
+	TypedContinuousPoolIterator m_iter;
 };
 
 enum class InitMode
