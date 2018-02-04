@@ -478,11 +478,72 @@ TEST_F(PoolTestSuite, NewConstIterCanBeCreatedByOperatorMinus)
 	EXPECT_EQ(ENTITY_ID_1, l_citer->id);
 }
 
-TEST_F(PoolTestSuite, it)
+TEST_F(PoolTestSuite, SafeIterFromEmptyPoolIsNotValid)
 {
-	auto citer = m_pool.cbegin();
+	auto l_safeIter = m_pool.makeSafeIter();
+	EXPECT_FALSE(l_safeIter.isValid());
+}
 
-	auto i = ++citer;
+TEST_F(PoolTestSuite, SafeIterIsValidWhenCreatedFromNonEmptyPool)
+{
+	addThreeElementsToPool();
+	
+	auto l_safeIter = m_pool.makeSafeIter();
+	EXPECT_TRUE(l_safeIter.isValid());
+}
 
-	//i->id = 9;
+TEST_F(PoolTestSuite, SafeIterShouldPointToTheSameElementAfterMoveInternally)
+{
+	auto& l_firstElement = addElementToPool(ENTITY_ID_1);
+	addElementToPool(ENTITY_ID_2);
+	addElementToPool(ENTITY_ID_3);
+
+	auto l_safeIter = m_pool.makeSafeIter();
+	auto& l_iter = l_safeIter.getIter();
+	l_iter += TWO_ELEMENTS;
+
+	ASSERT_EQ(ENTITY_ID_3, l_iter->id);
+	m_pool.deallocate(l_firstElement);
+	addElementToPool(ENTITY_ID_4);
+
+	EXPECT_TRUE(l_safeIter.isValid());
+	EXPECT_EQ(ENTITY_ID_3, l_iter->id);
+}
+
+TEST_F(PoolTestSuite, SafeIterShouldBeInvalidIfTrackedElementIsDealloacted)
+{
+	auto& l_firstElement = addElementToPool(ENTITY_ID_3);
+	addElementToPool(ENTITY_ID_4);
+
+	auto l_safeIter = m_pool.makeSafeIter();
+	auto& l_iter = l_safeIter.getIter();
+
+	ASSERT_TRUE(l_safeIter.isValid());
+	m_pool.deallocate(l_firstElement);
+
+	EXPECT_FALSE(l_safeIter.isValid());
+}
+
+TEST_F(PoolTestSuite, SafeItersShouldBeInvalidAfterReset)
+{
+	addThreeElementsToPool();
+
+	auto l_safeIter = m_pool.makeSafeIter();
+	
+	ASSERT_TRUE(l_safeIter.isValid());
+	m_pool.reset();
+
+	ASSERT_FALSE(l_safeIter.isValid());
+}
+
+TEST_F(PoolTestSuite, SafeItersShouldBeInvalidAfterClear)
+{
+	addThreeElementsToPool();
+
+	auto l_safeIter = m_pool.makeSafeIter();
+
+	ASSERT_TRUE(l_safeIter.isValid());
+	m_pool.clear();
+
+	ASSERT_FALSE(l_safeIter.isValid());
 }

@@ -231,6 +231,58 @@ private:
 	TypedContinuousPoolIterator m_iter;
 };
 
+template<typename ElementType>
+class SafeIterator
+{
+private:
+	template<typename ElementType>
+	friend class ContinuousPool;
+
+	using TypedContinuousPool = ContinuousPool<ElementType>;
+	using Iter = typename TypedContinuousPool::Iter;
+
+	SafeIterator(TypedContinuousPool& p_pool, Iter& p_iter)
+		:m_parentPool(p_pool),
+		 m_iter(p_iter)
+	{
+		m_parentPool.registerSafeIter(*this);
+
+		if (m_parentPool.isEmpty())
+		{
+			m_isValid = false;
+		}
+	}
+
+public:
+	SafeIterator(const SafeIterator& p_safeIter)
+		:m_parentPool(p_safeIter.m_parentPool),
+		 m_iter(p_safeIter.m_iter),
+		 m_isValid(p_safeIter.m_isValid)
+	{
+		m_parentPool.registerSafeIter(*this);
+	}
+
+	~SafeIterator()
+	{
+		m_parentPool.deregisterSafeIter(*this);
+	}
+
+	Iter& getIter()
+	{
+		return m_iter;
+	}
+
+	bool isValid()
+	{
+		return m_isValid;
+	}
+
+private:
+	TypedContinuousPool& m_parentPool;
+	Iter m_iter;
+	bool m_isValid = true;
+};
+
 enum class InitMode
 {
 	NO_PRE_INIT,
@@ -244,6 +296,14 @@ public:
 	using Iter = ContinuousPoolIterator<ElementType>;
 	using CIter = ContinuousPoolConstIterator<ContinuousPoolIterator<ElementType>>;
 
+	using TypedSafeIter = SafeIterator<ElementType>;
+	using SafeItersContainer = std::vector<TypedSafeIter*>;
+
+private:
+	template<typename T>
+	friend class SafeIterator;
+
+public:
 	template<typename ...Args>
 	ContinuousPool(PoolSize p_size, InitMode p_initMode = InitMode::NO_PRE_INIT, Args&&... args)
 		:MAX_NR_OF_ELEMENTS(p_size)
@@ -301,6 +361,9 @@ public:
 		m_positionAfterLastElement--;
 		m_nrOfStoredElements--;
 
+		invalidateSafeIters(p_element);
+		updateSafeIters(p_element, *m_positionAfterLastElement);
+
 		if (l_element != m_positionAfterLastElement)
 			std::memcpy(l_element, m_positionAfterLastElement, ELEMENT_SIZE);
 	}
@@ -327,6 +390,8 @@ public:
 	{
 		m_positionAfterLastElement = getPtrToBeginning();
 		m_nrOfStoredElements = 0u;
+
+		invalidateAllSafeIterators();
 	}
 
 	bool isEmpty() const
@@ -377,6 +442,11 @@ public:
 		return CIter(*m_positionAfterLastElement);
 	}
 
+	TypedSafeIter makeSafeIter()
+	{
+		return TypedSafeIter(*this, begin());
+	}
+
 private:
 	static const int ELEMENT_SIZE = sizeof(ElementType);
 	const PoolSize MAX_NR_OF_ELEMENTS;
@@ -385,6 +455,7 @@ private:
 	u32 m_nrOfStoredElements = 0u;
 
 	ElementType* m_positionAfterLastElement = nullptr;
+	SafeItersContainer m_safeIters;
 
 	void initMemory()
 	{
@@ -417,6 +488,72 @@ private:
 		auto l_alignedPtr = reinterpret_cast<const core::MemoryAllocationUnit>(l_dataBeginning);
 
 		return !(l_alignedPtr % alignof(ElementType));
+	}
+
+	void registerSafeIter(TypedSafeIter& p_safeIter)
+	{
+		m_safeIters.emplace_back();
+		auto& l_ptr = m_safeIters.back();
+		l_ptr = &p_safeIter;
+	}
+
+	void deregisterSafeIter(TypedSafeIter& p_safeIter)
+	{
+		auto l_end = m_safeIters.end();
+
+		for (auto l_iter = m_safeIters.begin(); l_iter != l_end; l_iter++)
+		{
+			if (*l_iter == &p_safeIter)
+			{
+				m_safeIters.erase(l_iter);
+				break;
+			}
+		}
+	}
+
+	void invalidateSafeIters(const ElementType& p_element)
+	{
+		auto l_end = m_safeIters.end();
+
+		for (auto l_iter = m_safeIters.begin(); l_iter != l_end; l_iter++)
+		{
+			auto& l_safeIter = **l_iter;
+			auto& l_safeElement = *l_safeIter.getIter();
+
+			if (&l_safeElement == &p_element)
+			{
+				invalidateSafeIterator(l_safeIter);
+			}
+		}
+	}
+
+	void invalidateSafeIterator(TypedSafeIter& p_safeIter)
+	{
+		p_safeIter.m_isValid = false;
+	}
+
+	void invalidateAllSafeIterators()
+	{
+		for (auto l_iterPtr : m_safeIters)
+		{
+			invalidateSafeIterator(*l_iterPtr);
+		}
+	}
+
+	void updateSafeIters(ElementType& p_newPosition, ElementType& p_oldPosition)
+	{
+		auto l_end = m_safeIters.end();
+
+		for (auto l_iter = m_safeIters.begin(); l_iter != l_end; l_iter++)
+		{
+			auto& l_safeIter = **l_iter;
+			auto& l_safeElement = *l_safeIter.getIter();
+
+			if (&l_safeElement == &p_oldPosition)
+			{
+				l_safeIter.m_iter.m_poolElement = &p_newPosition;
+			}
+		}
 	}
 };
 
