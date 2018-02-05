@@ -84,6 +84,7 @@
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)Test\Tools;$(SolutionDir)Test\Core\Suits;$(SolutionDir)GameProject\Main\Core\Include;$(SolutionDir)GameProject\Main\Core\MemoryMgmt\Include;$(SolutionDir)GameProject\Main\Core\MemoryMgmt;$(SolutionDir)GameProject\Main\Core;$(SolutionDir)Externals\box2d\Include;$(SolutionDir)Externals\sfml\Include;$(SolutionDir)Externals\googleTest\Include;$(SolutionDir)Externals\googleTest\Include\gtest;$(SolutionDir)Externals\googleTest\Include\gmock;$(SolutionDir)GameProject\Main\Modules\DevTestModule;$(SolutionDir)GameProject\Main\Modules\DevTestModule\Include;$(SolutionDir)Test\Modules\DevTestModulesTest\Mocks;$(SolutionDir)Test\Modules\DevTestModulesTest\Suits;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>SFML_STATIC;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

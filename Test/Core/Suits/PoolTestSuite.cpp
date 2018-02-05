@@ -547,3 +547,18 @@ TEST_F(PoolTestSuite, SafeItersShouldBeInvalidAfterClear)
 
 	ASSERT_FALSE(l_safeIter.isValid());
 }
+
+TEST_F(PoolTestSuite, SafeItersAreEqualWhenPointsToTheSameElement)
+{
+	addThreeElementsToPool();
+
+	auto safeIter1 = m_pool.makeSafeIter();
+	auto safeIter2 = m_pool.makeSafeIter();
+
+	EXPECT_EQ(safeIter1, safeIter2);
+
+	auto& l_iter = safeIter1.getIter();
+	l_iter++;
+
+	EXPECT_NE(safeIter1, safeIter2);
+}

@@ -26,11 +26,6 @@ private:
 	template<typename ElementType>
 	friend class ContinuousPool;
 
-	ContinuousPoolIterator(ElementType& p_element)
-	{
-		m_poolElement = &p_element;
-	}
-
 public:
 	using Iter = ContinuousPoolIterator<ElementType>;
 
@@ -113,9 +108,10 @@ public:
 		return l_iter;
 	}
 
-	bool operator!=(const Iter& p_iter) const
+	Iter& operator=(const Iter& p_iter)
 	{
-		return m_poolElement != p_iter.m_poolElement;
+		m_poolElement = p_iter.m_poolElement;
+		return *this;
 	}
 
 	bool operator==(const Iter& p_iter) const
@@ -123,14 +119,18 @@ public:
 		return m_poolElement == p_iter.m_poolElement;
 	}
 
-	Iter& operator=(const Iter& p_iter)
+	bool operator!=(const Iter& p_iter) const
 	{
-		m_poolElement = p_iter.m_poolElement;
-		return *this;
+		return m_poolElement != p_iter.m_poolElement;
 	}
 
 private:
 	mutable ElementType* m_poolElement = nullptr;
+
+	ContinuousPoolIterator(ElementType& p_element)
+	{
+		m_poolElement = &p_element;
+	}
 };
 
 template<typename TypedContinuousPoolIterator>
@@ -139,11 +139,6 @@ class ContinuousPoolConstIterator
 private:
 	template<typename ElementType>
 	friend class ContinuousPool;
-
-	ContinuousPoolConstIterator(const TypedContinuousPoolIterator& p_iter)
-		:m_iter(p_iter)
-	{
-	}
 
 public:
 	using CIter = ContinuousPoolConstIterator<TypedContinuousPoolIterator>;
@@ -217,18 +212,23 @@ public:
 		return *this;
 	}
 
-	bool operator!=(const CIter& p_iter) const
-	{
-		return m_iter != p_iter.m_iter;
-	}
-
 	bool operator==(const CIter& p_iter) const
 	{
 		return m_iter == p_iter.m_iter;
 	}
 
+	bool operator!=(const CIter& p_iter) const
+	{
+		return !(*this == p_iter);
+	}
+
 private:
 	TypedContinuousPoolIterator m_iter;
+
+	ContinuousPoolConstIterator(const TypedContinuousPoolIterator& p_iter)
+		:m_iter(p_iter)
+	{
+	}
 };
 
 template<typename ElementType>
@@ -241,30 +241,18 @@ private:
 	using TypedContinuousPool = ContinuousPool<ElementType>;
 	using Iter = typename TypedContinuousPool::Iter;
 
-	SafeIterator(TypedContinuousPool& p_pool, Iter& p_iter)
-		:m_parentPool(p_pool),
-		 m_iter(p_iter)
-	{
-		m_parentPool.registerSafeIter(*this);
-
-		if (m_parentPool.isEmpty())
-		{
-			m_isValid = false;
-		}
-	}
-
 public:
 	SafeIterator(const SafeIterator& p_safeIter)
 		:m_parentPool(p_safeIter.m_parentPool),
 		 m_iter(p_safeIter.m_iter),
 		 m_isValid(p_safeIter.m_isValid)
 	{
-		m_parentPool.registerSafeIter(*this);
+		m_parentPool.registerSafeIterator(*this);
 	}
 
 	~SafeIterator()
 	{
-		m_parentPool.deregisterSafeIter(*this);
+		m_parentPool.deregisterSafeIterator(*this);
 	}
 
 	Iter& getIter()
@@ -277,10 +265,37 @@ public:
 		return m_isValid;
 	}
 
+	bool operator==(const SafeIterator& p_iter) const
+	{
+		return m_iter == p_iter.m_iter;
+	}
+
+	bool operator!=(const SafeIterator& p_iter) const
+	{
+		return !(*this == p_iter);
+	}
+
 private:
 	TypedContinuousPool& m_parentPool;
 	Iter m_iter;
 	bool m_isValid = true;
+
+	SafeIterator(TypedContinuousPool& p_pool, Iter& p_iter)
+		:m_parentPool(p_pool),
+		m_iter(p_iter)
+	{
+		m_parentPool.registerSafeIterator(*this);
+
+		if (m_parentPool.isEmpty())
+		{
+			m_isValid = false;
+		}
+	}
+
+	void invalidate()
+	{
+		m_isValid = false;
+	}
 };
 
 enum class InitMode
@@ -356,16 +371,16 @@ public:
 
 	void takeBack(ElementType& p_element)
 	{
-		ElementType* l_element = &p_element;
+		invalidateSafeIteratorsWhichPointToRemovedElement(p_element);
+
+		if (!isLastElement(p_element))
+		{
+			copyLastElementToPositionOfRemovedElement(p_element);
+			updateSafeIteratorsWhichPointToLastElement(p_element);
+		}
 
 		m_positionAfterLastElement--;
 		m_nrOfStoredElements--;
-
-		invalidateSafeIters(p_element);
-		updateSafeIters(p_element, *m_positionAfterLastElement);
-
-		if (l_element != m_positionAfterLastElement)
-			std::memcpy(l_element, m_positionAfterLastElement, ELEMENT_SIZE);
 	}
 
 	PoolSize maxSize() const
@@ -490,20 +505,19 @@ private:
 		return !(l_alignedPtr % alignof(ElementType));
 	}
 
-	void registerSafeIter(TypedSafeIter& p_safeIter)
+	void registerSafeIterator(TypedSafeIter& p_safeIter)
 	{
-		m_safeIters.emplace_back();
-		auto& l_ptr = m_safeIters.back();
+		auto& l_ptr = m_safeIters.emplace_back();
 		l_ptr = &p_safeIter;
 	}
 
-	void deregisterSafeIter(TypedSafeIter& p_safeIter)
+	void deregisterSafeIterator(TypedSafeIter& p_safeIter)
 	{
-		auto l_end = m_safeIters.end();
-
-		for (auto l_iter = m_safeIters.begin(); l_iter != l_end; l_iter++)
+		for (auto l_iter = m_safeIters.begin(); l_iter != m_safeIters.end(); l_iter++)
 		{
-			if (*l_iter == &p_safeIter)
+			auto& l_safeIterator = **l_iter;
+
+			if (l_safeIterator == p_safeIter)
 			{
 				m_safeIters.erase(l_iter);
 				break;
@@ -511,49 +525,58 @@ private:
 		}
 	}
 
-	void invalidateSafeIters(const ElementType& p_element)
+	void invalidateSafeIteratorsWhichPointToRemovedElement(const ElementType& p_removedElement)
 	{
-		auto l_end = m_safeIters.end();
-
-		for (auto l_iter = m_safeIters.begin(); l_iter != l_end; l_iter++)
+		for (auto l_iterPtr : m_safeIters)
 		{
-			auto& l_safeIter = **l_iter;
-			auto& l_safeElement = *l_safeIter.getIter();
+			auto& l_pointedElement = *l_iterPtr->getIter();
 
-			if (&l_safeElement == &p_element)
+			if(isTheSameElement(l_pointedElement, p_removedElement))
 			{
-				invalidateSafeIterator(l_safeIter);
+				l_iterPtr->invalidate();
 			}
 		}
-	}
-
-	void invalidateSafeIterator(TypedSafeIter& p_safeIter)
-	{
-		p_safeIter.m_isValid = false;
 	}
 
 	void invalidateAllSafeIterators()
 	{
 		for (auto l_iterPtr : m_safeIters)
 		{
-			invalidateSafeIterator(*l_iterPtr);
+			l_iterPtr->invalidate();
 		}
 	}
 
-	void updateSafeIters(ElementType& p_newPosition, ElementType& p_oldPosition)
+	void updateSafeIteratorsWhichPointToLastElement(ElementType& p_newPosition)
 	{
-		auto l_end = m_safeIters.end();
-
-		for (auto l_iter = m_safeIters.begin(); l_iter != l_end; l_iter++)
+		for (auto l_iterPtr : m_safeIters)
 		{
-			auto& l_safeIter = **l_iter;
-			auto& l_safeElement = *l_safeIter.getIter();
+			auto& l_element = *(l_iterPtr->getIter());
 
-			if (&l_safeElement == &p_oldPosition)
+			if (isLastElement(l_element))
 			{
-				l_safeIter.m_iter.m_poolElement = &p_newPosition;
+				l_iterPtr->getIter().m_poolElement = &p_newPosition;
 			}
 		}
+	}
+
+	bool isLastElement(const ElementType& p_element) const
+	{
+		return isTheSameElement(p_element, getLastElement());
+	}
+
+	bool isTheSameElement(const ElementType& p_firstElement, const ElementType& p_secondElement) const
+	{
+		return &p_firstElement == &p_secondElement;
+	}
+
+	ElementType& getLastElement() const
+	{
+		return *(m_positionAfterLastElement - 1);
+	}
+
+	void copyLastElementToPositionOfRemovedElement(ElementType& p_removedElement)
+	{
+		std::memcpy(&p_removedElement, &getLastElement(), ELEMENT_SIZE);
 	}
 };
 
