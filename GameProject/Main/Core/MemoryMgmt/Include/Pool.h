@@ -376,7 +376,7 @@ public:
 		if (!isLastElement(p_element))
 		{
 			copyLastElementToPositionOfRemovedElement(p_element);
-			updateSafeIteratorsWhichPointToLastElement(p_element);
+			updateSafeIteratorsWhichPointedToLastElement(p_element);
 		}
 
 		m_positionAfterLastElement--;
@@ -396,7 +396,9 @@ public:
 	void clear()
 	{
 		for (auto& element : *this)
+		{
 			element.~ElementType();
+		}
 
 		reset();
 	}
@@ -416,9 +418,9 @@ public:
 
 	bool isMyObject(const ElementType& p_element) const
 	{
-		for (const auto& element : *this)
+		for (const auto& l_element : *this)
 		{
-			if (&element == &p_element)
+			if (isTheSameElement(l_element, p_element))
 			{
 				return true;
 			}
@@ -546,11 +548,11 @@ private:
 		}
 	}
 
-	void updateSafeIteratorsWhichPointToLastElement(ElementType& p_newPosition)
+	void updateSafeIteratorsWhichPointedToLastElement(ElementType& p_newPosition)
 	{
 		for (auto l_iterPtr : m_safeIters)
 		{
-			auto& l_element = *(l_iterPtr->getIter());
+			auto& l_element = *l_iterPtr->getIter();
 
 			if (isLastElement(l_element))
 			{
