@@ -1,0 +1,18 @@
+@startuml
+
+participant "EXTERNALS" as EXT
+
+participant "IEntityController" as EC
+participant "IComponentController" as CC
+participant "ISystemController" as SC
+participant "IEntityTraitsChangePropagator" as ETCP
+
+participant "ISystem" as S
+participant "IComponent" as C
+
+
+note over EXT: level loader etc.
+EXT -> EC: create new entity
+EC --> EXT: return ref
+
+@enduml

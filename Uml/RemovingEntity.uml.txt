@@ -1,0 +1,32 @@
+@startuml
+
+participant "EXTERNALS" as EXT
+
+participant "IEntityController" as EC
+participant "IComponentController" as CC
+participant "ISystemController" as SC
+participant "IEntityChangeDistributor" as ECD
+
+participant "ISystem" as S
+participant "IComponent" as C
+
+
+note over EXT: level loader etc.
+EXT -> EC: remove entity
+EC -> CC: remove all connected components
+
+loop all connected components
+	CC -> C: remove
+end
+
+note over EC: remove entity
+
+EC -> ECD: inform about change in entity
+ECD -> SC: propagate info about change
+SC -> S: inform all systems
+
+alt entity currently stored in internal set
+	note over S: remove
+end
+
+@enduml
