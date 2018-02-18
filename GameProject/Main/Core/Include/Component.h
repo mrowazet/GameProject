@@ -1,14 +1,13 @@
 #pragma once
-#include "Types.h"
-#include "Constants.h"
+#include "IComponent.h"
 
 namespace engine
 {
 
-struct Component
+struct Component : public IComponent
 {
 	Component() = default;
-	virtual ~Component() = default;
+	~Component() = default;
 
 	ComponentPtr nextComonent = nullptr;
 };

@@ -27,6 +27,11 @@
     <ClInclude Include="Main\Core\Core.h" />
     <ClInclude Include="Main\Core\Include\Component.h" />
     <ClInclude Include="Main\Core\Include\Entity.h" />
+    <ClInclude Include="Main\Core\Include\IComponent.h" />
+    <ClInclude Include="Main\Core\Include\IComponentController.h" />
+    <ClInclude Include="Main\Core\Include\IEntityController.h" />
+    <ClInclude Include="Main\Core\Include\ISystem.h" />
+    <ClInclude Include="Main\Core\Include\ISystemController.h" />
     <ClInclude Include="Main\Core\Include\System.h" />
     <ClInclude Include="Main\Core\MemoryMgmt\Include\Pool.h" />
     <ClInclude Include="Main\Core\MemoryMgmt\MemoryMgmt.hpp" />

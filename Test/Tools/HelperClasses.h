@@ -6,10 +6,10 @@ namespace testTool
 
 using namespace engine;
 
-class CtorDtorCounter
+class SpecialFuncCounter
 {
 public:
-	CtorDtorCounter() = default;
+	SpecialFuncCounter() = default;
 
 	u32& getCtorCounter()
 	{
@@ -37,7 +37,7 @@ class TestEntity
 public:
 	TestEntity() = default;
 
-	TestEntity(CtorDtorCounter& p_counters, u32 p_id = 0u)
+	TestEntity(SpecialFuncCounter& p_counters, u32 p_id = 0u)
 		:m_counters(&p_counters),
 		 m_id(p_id)
 	{
@@ -67,7 +67,7 @@ public:
 
 private:
 	u32 m_id = 0u;
-	CtorDtorCounter* m_counters = nullptr;
+	SpecialFuncCounter* m_counters = nullptr;
 };
 
 }

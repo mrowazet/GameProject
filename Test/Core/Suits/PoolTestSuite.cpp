@@ -45,7 +45,7 @@ protected:
 	Entity& addElementToPool(EntityId p_entityId);
 
 	ContinuousPool<Entity> m_pool;
-	CtorDtorCounter m_counters;
+	SpecialFuncCounter m_counters;
 };
 
 void PoolTestSuite::addThreeElementsToPool()

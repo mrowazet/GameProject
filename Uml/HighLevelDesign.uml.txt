@@ -1,0 +1,23 @@
+@startuml
+
+class "EXTERNALS" as EXT
+
+class "IEntityController" as EC
+class "IComponentController" as CC
+class "ISystemController" as SC
+class "IEntityTraitsChangePropagator" as ETCP
+
+class "ISystem" as S
+class "IComponent" as C
+
+
+EXT --> EC
+EC --> ETCP
+ETCP --> SC
+SC --> S
+S --> EC
+EC --> CC
+CC --> C
+
+
+@enduml

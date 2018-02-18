@@ -1,11 +1,10 @@
 #pragma once
-#include "Types.h"
-#include "Constants.h"
+#include "ISystem.h"
 
 namespace engine
 {
 
-class System
+class System : public ISystem
 {
 public:
 	System() = default;
