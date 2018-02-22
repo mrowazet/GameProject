@@ -14,7 +14,6 @@ struct Entity final
 	Entity(EntityId p_id)
 		:id(p_id)
 	{
-
 	}
 
 	EntityId id = UNDEFINED_ENTITY_ID;

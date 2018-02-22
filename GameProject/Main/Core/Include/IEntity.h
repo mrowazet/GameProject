@@ -5,11 +5,11 @@
 namespace engine
 {
 
-class IComponent
+class IEntity
 {
 public:
-	IComponent() = default;
-	virtual ~IComponent() = default;
+	IEntity() = default;
+	virtual ~IEntity() = default;
 };
 
 }

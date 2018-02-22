@@ -23,6 +23,9 @@
     <Filter Include="Tools">
       <UniqueIdentifier>{dca4c097-e8a8-4745-a143-f66171805e82}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\Mocks">
+      <UniqueIdentifier>{22aab612-939c-45f0-8ba0-617fb7a647e4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -38,6 +41,12 @@
     <ClCompile Include="Core\Suits\ContinuousPoolPerformanceTestSuite.cpp">
       <Filter>Core</Filter>
     </ClCompile>
+    <ClCompile Include="Core\Suits\EntityControllerTestSuite.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Suits\IdGuardTestSuite.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Modules\DevTestModulesTest\Mocks\DevTestClassMock.hpp">
@@ -51,6 +60,9 @@
     </ClInclude>
     <ClInclude Include="Tools\HelperClasses.h">
       <Filter>Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Mocks\IdGuardMock.h">
+      <Filter>Core\Mocks</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,6 +1,7 @@
 #pragma once
 #include "Types.h"
 #include "Constants.h"
+#include "ComponentBase.h"
 
 namespace engine
 {

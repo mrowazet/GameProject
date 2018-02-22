@@ -3,15 +3,16 @@
 namespace engine
 {
 	struct Entity;
-	struct Component;
+	struct ComponentBase;
 	class System;
 
-	using EntityId = unsigned int;
+	using Id = unsigned int;
+	using EntityId = Id;
 
 	using PoolSize = unsigned int;
 
 	using ComponentFlags = unsigned int;
-	using ComponentPtr = Component*;
+	using ComponentPtr = ComponentBase*;
 
 	using s32 = signed int;
 	using u32 = unsigned int;

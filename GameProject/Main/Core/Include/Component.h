@@ -1,15 +1,15 @@
 #pragma once
-#include "IComponent.h"
+#include "ComponentBase.h"
 
 namespace engine
 {
 
-struct Component : public IComponent
+struct Component : public ComponentBase
 {
 	Component() = default;
 	~Component() = default;
 
-	ComponentPtr nextComonent = nullptr;
+	ComponentPtr nextComponent = nullptr;
 };
 
 }

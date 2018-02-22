@@ -2,6 +2,7 @@
 #include <vector>
 #include <memory>
 #include <new>
+#include "assert.h"
 #include "Types.h"
 #include "Constants.h"
 #include "Entity.h"
