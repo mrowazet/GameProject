@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Main\Core\Source\ComponentController.cpp" />
     <ClCompile Include="Main\Core\Source\EntityController.cpp" />
     <ClCompile Include="Main\Core\Source\IdGuard.cpp" />
     <ClCompile Include="Main\main.cpp" />
@@ -28,6 +29,8 @@
     <ClInclude Include="Main\Core\Constants.h" />
     <ClInclude Include="Main\Core\Core.h" />
     <ClInclude Include="Main\Core\Include\Component.h" />
+    <ClInclude Include="Main\Core\Include\ComponentController.h" />
+    <ClInclude Include="Main\Core\Include\ComponentTypes.h" />
     <ClInclude Include="Main\Core\Include\Entity.h" />
     <ClInclude Include="Main\Core\Include\ComponentBase.h" />
     <ClInclude Include="Main\Core\Include\EntityController.h" />

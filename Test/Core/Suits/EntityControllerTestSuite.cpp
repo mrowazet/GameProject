@@ -3,6 +3,9 @@
 #include "Core.h"
 #include "EntityController.h"
 #include "IdGuardMock.h"
+#include "EntityControllerMock.h"
+#include "ComponentControllerMock.h"
+#include "TestComponents.h"
 
 using namespace testing;
 using namespace engine;
@@ -46,7 +49,6 @@ public:
 	EntityControllerTestSuite()
 		: m_entityController(NR_OF_ENTITIES)
 	{
-
 	}
 
 protected:

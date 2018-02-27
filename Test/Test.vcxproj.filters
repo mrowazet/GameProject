@@ -47,6 +47,9 @@
     <ClCompile Include="Core\Suits\IdGuardTestSuite.cpp">
       <Filter>Core</Filter>
     </ClCompile>
+    <ClCompile Include="Core\Suits\ComponentControllerTestSuite.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Modules\DevTestModulesTest\Mocks\DevTestClassMock.hpp">
@@ -63,6 +66,15 @@
     </ClInclude>
     <ClInclude Include="Core\Mocks\IdGuardMock.h">
       <Filter>Core\Mocks</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Mocks\EntityControllerMock.h">
+      <Filter>Core\Mocks</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Mocks\ComponentControllerMock.h">
+      <Filter>Core\Mocks</Filter>
+    </ClInclude>
+    <ClInclude Include="Tools\TestComponents.h">
+      <Filter>Tools</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -8,8 +8,6 @@ struct Component : public ComponentBase
 {
 	Component() = default;
 	~Component() = default;
-
-	ComponentPtr nextComponent = nullptr;
 };
 
 }

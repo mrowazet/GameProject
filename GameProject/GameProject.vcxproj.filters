@@ -49,6 +49,9 @@
     <ClCompile Include="Main\Core\Source\IdGuard.cpp">
       <Filter>Core\Source</Filter>
     </ClCompile>
+    <ClCompile Include="Main\Core\Source\ComponentController.cpp">
+      <Filter>Core\Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Main\Modules\DevTestModule\Include\DevTestClass.hpp">
@@ -106,6 +109,12 @@
       <Filter>Core\Other</Filter>
     </ClInclude>
     <ClInclude Include="Main\Core\Include\IdGuard.h">
+      <Filter>Core\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Main\Core\Include\ComponentTypes.h">
+      <Filter>Core\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="Main\Core\Include\ComponentController.h">
       <Filter>Core\Include</Filter>
     </ClInclude>
   </ItemGroup>

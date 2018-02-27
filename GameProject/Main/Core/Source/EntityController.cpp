@@ -18,6 +18,11 @@ EntityId EntityController::createEntity()
 	return l_entity.id;
 }
 
+EntityId EntityController::createEntityWithComponents(const ComponentFlags& p_components)
+{
+	return UNDEFINED_ENTITY_ID;
+}
+
 bool EntityController::removeEntity(EntityId p_id)
 {
 	auto l_entityIter = findEntityById(p_id);
@@ -56,6 +61,16 @@ ContinuousPool<Entity>::Iter EntityController::findEntityById(EntityId p_id)
 	}
 
 	return l_iter;
+}
+
+bool EntityController::connectComponentsToEntity(EntityId p_id, const ComponentFlags& p_components)
+{
+	return false;
+}
+
+bool EntityController::disconnectComponentsFromEntity(EntityId p_id, const ComponentFlags& p_components)
+{
+	return false;
 }
 
 }

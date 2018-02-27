@@ -9,6 +9,9 @@ struct ComponentBase
 {
 	ComponentBase() = default;
 	virtual ~ComponentBase() = default;
+
+	EntityId connectedEntity = UNDEFINED_ENTITY_ID;
+	ComponentPtr nextComponent = nullptr;
 };
 
 }
