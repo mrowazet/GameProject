@@ -1,4 +1,18 @@
 #pragma once
+#include <bitset>
+
+namespace engine
+{
+namespace core
+{
+
+}
+
+namespace CoreParams
+{
+	constexpr unsigned int MAX_NR_OF_COMPONENTS = 32u;
+}
+}
 
 namespace engine
 {
@@ -11,17 +25,9 @@ namespace engine
 
 	using PoolSize = unsigned int;
 
-	using ComponentFlags = unsigned int;
+	using ComponentFlags = std::bitset<CoreParams::MAX_NR_OF_COMPONENTS>;
 	using ComponentPtr = ComponentBase*;
 
 	using s32 = signed int;
 	using u32 = unsigned int;
 };
-
-namespace engine
-{
-namespace core
-{
-
-}
-}
