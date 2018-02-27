@@ -21,7 +21,7 @@ public:
 TEST_F(EntityTestSuite, defaultCtorSetIdToZero)
 {
 	Entity l_entity;
-	EXPECT_EQ(UNDEFINED_ID, l_entity.id);
+	EXPECT_EQ(engine::UNDEFINED_ID, l_entity.id);
 }
 
 TEST_F(EntityTestSuite, constructorSetProperId)
