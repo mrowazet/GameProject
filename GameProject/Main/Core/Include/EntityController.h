@@ -19,6 +19,8 @@ public:
 protected:
 	ContinuousPool<Entity> m_entities;
 	std::unique_ptr<IIdGuard> m_idGuard;
+
+	ContinuousPool<Entity>::Iter findEntityById(EntityId p_id);
 };
 
 }
