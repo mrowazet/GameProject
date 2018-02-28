@@ -3,7 +3,7 @@
 #include "Core.h"
 #include "EntityController.h"
 #include "IdGuardMock.h"
-#include "EntityControllerMock.h"
+#include "EntityChangeDistributorMock.h"
 #include "ComponentControllerMock.h"
 #include "TestComponents.h"
 
@@ -25,8 +25,8 @@ const EntityId ENTITY_ID_2 = 2u;
 class EntityControllerTestable : public EntityController
 {
 public:
-	EntityControllerTestable(PoolSize p_maxNrOfEntities)
-		: EntityController(p_maxNrOfEntities)
+	EntityControllerTestable(PoolSize p_maxNrOfEntities, IComponentController p_componentController, const IEntityChangeDistributor& p_distributor)
+		: EntityController(p_maxNrOfEntities, p_componentController, p_distributor)
 	{
 		m_idGuard = std::make_unique<IdGuardMock>();
 	}
@@ -47,11 +47,13 @@ class EntityControllerTestSuite : public Test
 {
 public:
 	EntityControllerTestSuite()
-		: m_entityController(NR_OF_ENTITIES)
+		: m_entityController(NR_OF_ENTITIES, m_componentControllerMock, m_changeDistributorMock)
 	{
 	}
 
 protected:
+	ComponentControllerMock m_componentControllerMock;
+	EntityChangeDistributorMock m_changeDistributorMock;
 	EntityControllerTestable m_entityController;
 };
 

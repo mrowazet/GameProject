@@ -4,9 +4,13 @@
 namespace engine
 {
 
-EntityController::EntityController(PoolSize p_maxNrOfEntities)
+EntityController::EntityController(PoolSize p_maxNrOfEntities,
+								   IComponentController p_componentController,
+								   const IEntityChangeDistributor& p_changeDistributor)
 	:m_entities(p_maxNrOfEntities),
-	 m_idGuard(std::make_unique<IdGuard>(p_maxNrOfEntities))
+	 m_idGuard(std::make_unique<IdGuard>(p_maxNrOfEntities)),
+	 m_componentController(p_componentController),
+	 m_changeDistributor(p_changeDistributor)
 {
 }
 
