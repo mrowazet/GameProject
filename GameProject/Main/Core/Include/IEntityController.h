@@ -12,7 +12,7 @@ class IEntityController
 {
 public:
 	IEntityController() = default;
-	~IEntityController() = default;
+	virtual ~IEntityController() = default;
 
 	virtual EntityId createEntity() = 0;
 	virtual EntityId createEntityWithComponents(const ComponentFlags& p_components) = 0;

@@ -6,5 +6,6 @@
 #include "IEntityController.h"
 #include "IComponentController.h"
 #include "ISystemController.h"
+#include "IEntityChangeDistributor.h"
 
 #include "MemoryMgmt.hpp"

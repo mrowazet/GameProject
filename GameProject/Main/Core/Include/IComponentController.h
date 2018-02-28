@@ -13,7 +13,7 @@ class IComponentController
 {
 public:
 	IComponentController() = default;
-	~IComponentController() = default;
+	virtual ~IComponentController() = default;
 };
 
 }

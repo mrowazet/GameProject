@@ -10,7 +10,7 @@ class ISystemController
 {
 public:
 	ISystemController() = default;
-	~ISystemController() = default;
+	virtual ~ISystemController() = default;
 };
 
 }

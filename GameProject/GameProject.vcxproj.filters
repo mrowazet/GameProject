@@ -52,6 +52,9 @@
     <ClCompile Include="Main\Core\Source\ComponentController.cpp">
       <Filter>Core\Source</Filter>
     </ClCompile>
+    <ClCompile Include="Main\Core\Source\EntityChangeDistributor.cpp">
+      <Filter>Core\Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Main\Modules\DevTestModule\Include\DevTestClass.hpp">
@@ -115,6 +118,12 @@
       <Filter>Core\Other</Filter>
     </ClInclude>
     <ClInclude Include="Main\Core\Include\ComponentController.h">
+      <Filter>Core\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Main\Core\Include\IEntityChangeDistributor.h">
+      <Filter>Core\Include\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Main\Core\Include\EntityChangeDistributor.h">
       <Filter>Core\Include</Filter>
     </ClInclude>
   </ItemGroup>

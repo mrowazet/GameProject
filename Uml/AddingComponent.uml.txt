@@ -20,8 +20,8 @@ CC --> EC: return ref
 
 note over EC: set ptrs in entity
 
-EC -> ETCP: inform about change in entity
-ETCP -> SC: propagate info about change
+EC -> ECD: inform about change in entity
+ECD -> SC: propagate info about change
 SC -> S: inform all systems
 
 S -> EC: get entity by id

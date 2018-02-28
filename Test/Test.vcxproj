@@ -121,6 +121,7 @@
   <ItemGroup>
     <ClCompile Include="Core\Suits\ComponentControllerTestSuite.cpp" />
     <ClCompile Include="Core\Suits\ContinuousPoolPerformanceTestSuite.cpp" />
+    <ClCompile Include="Core\Suits\EntityChangeDistributorTestSuite.cpp" />
     <ClCompile Include="Core\Suits\EntityControllerTestSuite.cpp" />
     <ClCompile Include="Core\Suits\EntityTestSuite.cpp" />
     <ClCompile Include="Core\Suits\IdGuardTestSuite.cpp" />
@@ -130,6 +131,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\Mocks\ComponentControllerMock.h" />
+    <ClInclude Include="Core\Mocks\EntityChangeDistributorMock.h" />
     <ClInclude Include="Core\Mocks\EntityControllerMock.h" />
     <ClInclude Include="Core\Mocks\IdGuardMock.h" />
     <ClInclude Include="Modules\DevTestModulesTest\Mocks\DevTestClassMock.hpp" />
