@@ -3,11 +3,11 @@
 
 namespace engine
 {
-namespace component
+
+enum class ComponentType
 {
+	POSITION = 1,
+	MOVABLE = 2
+};
 
-constexpr ComponentFlags COPMONENT_POSITION(1);
-constexpr ComponentFlags COMPONENT_MOVABLE(2);
-
-}
 }

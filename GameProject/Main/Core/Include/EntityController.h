@@ -13,7 +13,7 @@ class EntityController : public IEntityController
 {
 public:
 	EntityController(PoolSize p_maxNrOfEntities,
-					 IComponentController p_componentController,
+					 IComponentController& p_componentController,
 					 const IEntityChangeDistributor& p_changeDistributor);
 
 	EntityId createEntity() override;

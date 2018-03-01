@@ -14,6 +14,8 @@ class IComponentController
 public:
 	IComponentController() = default;
 	virtual ~IComponentController() = default;
+
+	virtual ComponentBase& createComponent(ComponentType p_component) = 0;
 };
 
 }

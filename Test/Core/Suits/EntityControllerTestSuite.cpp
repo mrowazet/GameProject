@@ -25,7 +25,7 @@ const EntityId ENTITY_ID_2 = 2u;
 class EntityControllerTestable : public EntityController
 {
 public:
-	EntityControllerTestable(PoolSize p_maxNrOfEntities, IComponentController p_componentController, const IEntityChangeDistributor& p_distributor)
+	EntityControllerTestable(PoolSize p_maxNrOfEntities, IComponentController& p_componentController, const IEntityChangeDistributor& p_distributor)
 		: EntityController(p_maxNrOfEntities, p_componentController, p_distributor)
 	{
 		m_idGuard = std::make_unique<IdGuardMock>();
