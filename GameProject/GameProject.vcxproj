@@ -31,12 +31,14 @@
     <ClInclude Include="Main\Core\Core.h" />
     <ClInclude Include="Main\Core\Include\Component.h" />
     <ClInclude Include="Main\Core\Include\ComponentController.h" />
+    <ClInclude Include="Main\Core\Include\ComponentPool.h" />
     <ClInclude Include="Main\Core\Include\ComponentTypes.h" />
     <ClInclude Include="Main\Core\Include\Entity.h" />
     <ClInclude Include="Main\Core\Include\ComponentBase.h" />
     <ClInclude Include="Main\Core\Include\EntityChangeDistributor.h" />
     <ClInclude Include="Main\Core\Include\EntityController.h" />
     <ClInclude Include="Main\Core\Include\IComponentController.h" />
+    <ClInclude Include="Main\Core\Include\IComponentPool.h" />
     <ClInclude Include="Main\Core\Include\IdGuard.h" />
     <ClInclude Include="Main\Core\Include\IEntityChangeDistributor.h" />
     <ClInclude Include="Main\Core\Include\IEntityController.h" />

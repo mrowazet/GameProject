@@ -126,5 +126,11 @@
     <ClInclude Include="Main\Core\Include\EntityChangeDistributor.h">
       <Filter>Core\Include</Filter>
     </ClInclude>
+    <ClInclude Include="Main\Core\Include\IComponentPool.h">
+      <Filter>Core\Include\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Main\Core\Include\ComponentPool.h">
+      <Filter>Core\Include</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
