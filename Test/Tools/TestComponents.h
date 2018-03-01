@@ -7,11 +7,11 @@ namespace testComponents
 {
 	struct ComponentA : public ComponentBase
 	{
-		int a = 1;
+		const int value = 1;
 	};
 
 	struct ComponentB : public ComponentBase
 	{
-
+		const int value = 2;
 	};
 }

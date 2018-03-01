@@ -22,9 +22,6 @@
     <Filter Include="Core\MemoryMgmt\Include">
       <UniqueIdentifier>{5d6d80ce-cb0b-43c2-bed8-61710deeadd6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Core\MemoryMgmt\Source">
-      <UniqueIdentifier>{6f816b7a-99d5-4a80-8bdf-6daa5b2df196}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Core\Include">
       <UniqueIdentifier>{e0df7242-e84c-44eb-a4df-7db8d6277e31}</UniqueIdentifier>
     </Filter>
@@ -126,11 +123,11 @@
     <ClInclude Include="Main\Core\Include\EntityChangeDistributor.h">
       <Filter>Core\Include</Filter>
     </ClInclude>
-    <ClInclude Include="Main\Core\Include\IComponentPool.h">
-      <Filter>Core\Include\Interfaces</Filter>
+    <ClInclude Include="Main\Core\MemoryMgmt\Include\IComponentPool.h">
+      <Filter>Core\MemoryMgmt\Include</Filter>
     </ClInclude>
-    <ClInclude Include="Main\Core\Include\ComponentPool.h">
-      <Filter>Core\Include</Filter>
+    <ClInclude Include="Main\Core\MemoryMgmt\Include\ComponentPool.h">
+      <Filter>Core\MemoryMgmt\Include</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
