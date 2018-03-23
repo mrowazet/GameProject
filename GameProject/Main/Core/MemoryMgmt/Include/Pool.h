@@ -342,7 +342,7 @@ public:
 
 	~ContinuousPool()
 	{
-		clear();
+		//clear() should not be called here - it will cause a crash if getNext was used earlier
 	}
 
 	template<typename ...Args>

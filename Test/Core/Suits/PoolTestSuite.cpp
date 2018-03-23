@@ -3,6 +3,7 @@
 #include <gmock\gmock.h>
 #include "TestEnities.h"
 #include "HelperClasses.h"
+#include "TestComponents.h"
 #include "Core.h"
 
 using namespace testing;
@@ -333,16 +334,6 @@ TEST_F(PoolTestSuite, ClearShouldCallDtorsOnAllObjectsAndClearInternalData)
 	EXPECT_EQ(THREE_ELEMENTS, m_counters.getDtorCounter());
 	EXPECT_EQ(ZERO, l_pool.size());
 
-}
-
-TEST_F(PoolTestSuite, PoolDestructorShouldCallClear)
-{
-	auto l_pool = std::make_unique<ContinuousPool<TestEntity>>(POOL_SIZE);
-	
-	l_pool->allocate(m_counters);
-	l_pool.reset();
-
-	EXPECT_EQ(ONE_ELEMENT, m_counters.getDtorCounter());
 }
 
 TEST_F(PoolTestSuite, isMyElementReturnsCorrectValues)
