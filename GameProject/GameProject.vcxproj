@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Main\Core\MemoryMgmt\Source\EntityPool.cpp" />
     <ClCompile Include="Main\Core\Source\ComponentController.cpp" />
     <ClCompile Include="Main\Core\Source\EntityChangeDistributor.cpp" />
     <ClCompile Include="Main\Core\Source\EntityController.cpp" />
@@ -45,7 +46,9 @@
     <ClInclude Include="Main\Core\Include\ISystemController.h" />
     <ClInclude Include="Main\Core\Include\System.h" />
     <ClInclude Include="Main\Core\MemoryMgmt\Include\ComponentPool.h" />
+    <ClInclude Include="Main\Core\MemoryMgmt\Include\EntityPool.h" />
     <ClInclude Include="Main\Core\MemoryMgmt\Include\IComponentPool.h" />
+    <ClInclude Include="Main\Core\MemoryMgmt\Include\IEntityPool.h" />
     <ClInclude Include="Main\Core\MemoryMgmt\Include\Pool.h" />
     <ClInclude Include="Main\Core\MemoryMgmt\MemoryMgmt.hpp" />
     <ClInclude Include="Main\Core\Parameters.h" />

@@ -1,6 +1,5 @@
 #pragma once
 #include "ComponentBase.h"
-#include "Pool.h"
 
 namespace engine
 {

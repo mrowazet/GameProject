@@ -11,6 +11,7 @@ class IdGuardMock : public IIdGuard
 public:
 	MOCK_METHOD0(getNextId, Id());
 	MOCK_METHOD1(freeId, void(Id));
+	MOCK_METHOD0(reset, void());
 };
 
 }

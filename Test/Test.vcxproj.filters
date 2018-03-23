@@ -56,6 +56,9 @@
     <ClCompile Include="Core\Suits\ComponentPoolTestSuite.cpp">
       <Filter>Core</Filter>
     </ClCompile>
+    <ClCompile Include="Core\Suits\EntityPoolTestSuite.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Modules\DevTestModulesTest\Mocks\DevTestClassMock.hpp">
@@ -86,6 +89,9 @@
       <Filter>Core\Mocks</Filter>
     </ClInclude>
     <ClInclude Include="Core\Mocks\ComponentPoolMock.h">
+      <Filter>Core\Mocks</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Mocks\EntityPoolMock.h">
       <Filter>Core\Mocks</Filter>
     </ClInclude>
   </ItemGroup>

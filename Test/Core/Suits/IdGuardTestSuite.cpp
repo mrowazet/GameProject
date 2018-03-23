@@ -97,6 +97,40 @@ TEST_F(IdGuardTestSuite, shouldBePossibleToFreeIdWhenLastCorrectIdHasBeenReturne
 	EXPECT_EQ(l_id1, l_freedId);
 }
 
+TEST_F(IdGuardTestSuite, resetShouldClearGuardState)
+{
+	auto l_firstId = m_idGuard.getNextId();
+	m_idGuard.getNextId();
+
+	m_idGuard.reset();
+
+	EXPECT_EQ(l_firstId, m_idGuard.getNextId());
+}
+
+TEST_F(IdGuardTestSuite, resetShouldClearFreedIds)
+{
+	auto l_firstId = m_idGuard.getNextId();
+	auto l_secondId = m_idGuard.getNextId();
+
+	m_idGuard.freeId(l_secondId);
+	m_idGuard.reset();
+
+	EXPECT_EQ(l_firstId, m_idGuard.getNextId());
+}
+
+TEST_F(IdGuardTestSuite, resetShouldClearOverloadState)
+{
+	IdGuard l_idGuard(ID_1);
+
+	auto l_firstId = l_idGuard.getNextId();
+
+	auto l_undefId = l_idGuard.getNextId();
+	ASSERT_EQ(engine::UNDEFINED_ID, l_undefId);
+
+	l_idGuard.reset();
+	EXPECT_EQ(l_firstId, l_idGuard.getNextId());
+}
+
 /*
 Note:
 Guard should not be recovered after oveflow - this situation indicates a problem in other parts!

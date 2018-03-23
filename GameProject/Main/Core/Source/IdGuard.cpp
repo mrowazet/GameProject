@@ -70,4 +70,11 @@ void IdGuard::freeId(Id p_id)
 	m_freedIds.emplace(p_id);
 }
 
+void IdGuard::reset()
+{
+	m_overflowed = false;
+	m_currentId = engine::UNDEFINED_ID;
+	m_freedIds.clear();
+}
+
 }

@@ -34,6 +34,9 @@
     <Filter Include="Core\Other">
       <UniqueIdentifier>{b0d4002f-9033-453a-84ea-3c735287a4a4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\MemoryMgmt\Source">
+      <UniqueIdentifier>{9c88e746-44d6-40f6-9abf-3065339c7976}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main\Modules\DevTestModule\Source\DevTestClass.cpp">
@@ -51,6 +54,9 @@
     </ClCompile>
     <ClCompile Include="Main\Core\Source\EntityChangeDistributor.cpp">
       <Filter>Core\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Main\Core\MemoryMgmt\Source\EntityPool.cpp">
+      <Filter>Core\MemoryMgmt\Source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -127,6 +133,12 @@
       <Filter>Core\MemoryMgmt\Include</Filter>
     </ClInclude>
     <ClInclude Include="Main\Core\MemoryMgmt\Include\ComponentPool.h">
+      <Filter>Core\MemoryMgmt\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Main\Core\MemoryMgmt\Include\IEntityPool.h">
+      <Filter>Core\Include\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Main\Core\MemoryMgmt\Include\EntityPool.h">
       <Filter>Core\MemoryMgmt\Include</Filter>
     </ClInclude>
   </ItemGroup>

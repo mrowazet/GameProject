@@ -12,6 +12,7 @@ public:
 
 	Id getNextId() override;
 	void freeId(Id p_id) override;
+	void reset() override;
 
 private:
 	const Id m_maxId;

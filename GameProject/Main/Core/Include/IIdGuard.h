@@ -13,6 +13,7 @@ public:
 
 	virtual Id getNextId() = 0;
 	virtual void freeId(Id p_id) = 0;
+	virtual void reset() = 0;
 };
 
 }
