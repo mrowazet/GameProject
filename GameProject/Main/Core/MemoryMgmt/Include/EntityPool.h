@@ -13,12 +13,12 @@ class EntityPool : IEntityPool
 public:
 	EntityPool(PoolSize p_poolSize, std::unique_ptr<IIdGuard> p_guard);
 
-	Entity& createEntity() override;
-	bool removeEntity(EntityId p_id) override;
-	Entity& getEntity(EntityId p_id) override;
+	Entity& create() override;
+	bool remove(EntityId p_id) override;
+	Entity& get(EntityId p_id) override;
 
 	u32 size() const override;
-	bool hasEntityId(EntityId p_id) const override;
+	bool hasId(EntityId p_id) const override;
 
 	void clear() override;
 

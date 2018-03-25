@@ -26,13 +26,13 @@ protected:
 	IdGuard m_idGuard;
 };
 
-TEST_F(IdGuardTestSuite, shouldReturnId1WhenCalledFirstTime)
+TEST_F(IdGuardTestSuite, shouldReturnFirstIdWhenCalledFirstTime)
 {
 	auto l_id = m_idGuard.getNextId();
 	EXPECT_EQ(ID_1, l_id);
 }
 
-TEST_F(IdGuardTestSuite, shouldReturnNextIdWhenCalled)
+TEST_F(IdGuardTestSuite, shouldReturnNextIdFreeIdWhenNextIdIsCalled)
 {
 	auto l_id1 = m_idGuard.getNextId();
 	auto l_id2 = m_idGuard.getNextId();
@@ -52,7 +52,7 @@ TEST_F(IdGuardTestSuite, shouldReturnUndefinedIdWhenOverflowed)
 	EXPECT_EQ(engine::UNDEFINED_ID, l_idAfterOverflow);
 }
 
-TEST_F(IdGuardTestSuite, shouldReturnReleasedIdIfReturned)
+TEST_F(IdGuardTestSuite, shouldReturnReleasedIdIfIdWasReturnedEarlier)
 {
 	auto l_id = m_idGuard.getNextId();
 	m_idGuard.freeId(l_id);

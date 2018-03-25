@@ -4,11 +4,10 @@
 namespace engine
 {
 
-EntityController::EntityController(PoolSize p_maxNrOfEntities,
+EntityController::EntityController(std::unique_ptr<IEntityPool> p_entityPool,
 								   IComponentController& p_componentController,
 								   const IEntityChangeDistributor& p_changeDistributor)
-	:m_entities(p_maxNrOfEntities),
-	 m_idGuard(std::make_unique<IdGuard>(p_maxNrOfEntities)),
+	:m_pool(std::move(p_entityPool)),
 	 m_componentController(p_componentController),
 	 m_changeDistributor(p_changeDistributor)
 {
@@ -16,9 +15,7 @@ EntityController::EntityController(PoolSize p_maxNrOfEntities,
 
 EntityId EntityController::createEntity()
 {
-	auto& l_entity = m_entities.getNext();
-	l_entity.id = m_idGuard->getNextId();
-
+	auto& l_entity = m_pool->create();
 	return l_entity.id;
 }
 
@@ -27,44 +24,19 @@ EntityId EntityController::createEntityWithComponents(const ComponentFlags& p_co
 	return UNDEFINED_ENTITY_ID;
 }
 
-bool EntityController::removeEntity(EntityId p_id)
+bool EntityController::remove(EntityId p_id)
 {
-	auto l_entityIter = findEntityById(p_id);
-
-	if (l_entityIter != m_entities.end())
-	{
-		m_idGuard->freeId(l_entityIter->id);
-		m_entities.takeBack(*l_entityIter);
-		return true;
-	}
-	
-	return false;
+	return m_pool->remove(p_id);
 }
 
-Entity& EntityController::getEntity(EntityId p_id)
+Entity& EntityController::get(EntityId p_id)
 {
-	return *findEntityById(p_id);
-}
-
-ContinuousPool<Entity>::Iter EntityController::findEntityById(EntityId p_id)
-{
-	auto l_iter = m_entities.begin();
-	auto l_endIter = m_entities.end();
-
-	for (l_iter; l_iter != l_endIter; l_iter++)
+	if (!m_pool->hasId(p_id))
 	{
-		if (l_iter->id == p_id)
-		{
-			break;
-		}
+		std::cerr << "Requestd ID does NOT exist in the pool! ID: " << p_id;
 	}
 
-	if (l_iter == l_endIter)
-	{
-		std::cerr << "Cant't find Entity with selected id: " << p_id << "!\n";
-	}
-
-	return l_iter;
+	return m_pool->get(p_id);
 }
 
 bool EntityController::connectComponentsToEntity(EntityId p_id, const ComponentFlags& p_components)
