@@ -135,10 +135,10 @@
     <ClInclude Include="Main\Core\MemoryMgmt\Include\ComponentPool.h">
       <Filter>Core\MemoryMgmt\Include</Filter>
     </ClInclude>
-    <ClInclude Include="Main\Core\MemoryMgmt\Include\IEntityPool.h">
-      <Filter>Core\Include\Interfaces</Filter>
-    </ClInclude>
     <ClInclude Include="Main\Core\MemoryMgmt\Include\EntityPool.h">
+      <Filter>Core\MemoryMgmt\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Main\Core\MemoryMgmt\Include\IEntityPool.h">
       <Filter>Core\MemoryMgmt\Include</Filter>
     </ClInclude>
   </ItemGroup>

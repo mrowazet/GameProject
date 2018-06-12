@@ -11,10 +11,9 @@ namespace engine
 	Entity& EntityPool::create()
 	{
 		auto& l_entity = m_pool.getNext();	
-		auto l_id = m_idGuard->getNextId();
 
-		l_entity.id = l_id;
-		m_storedIds.emplace(l_id);
+		l_entity.id = m_idGuard->getNextId();
+		m_storedIds.emplace(l_entity.id);
 
 		return l_entity;
 	}

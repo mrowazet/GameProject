@@ -543,13 +543,42 @@ TEST_F(PoolTestSuite, SafeItersAreEqualWhenPointsToTheSameElement)
 {
 	addThreeElementsToPool();
 
-	auto safeIter1 = m_pool.makeSafeIter();
-	auto safeIter2 = m_pool.makeSafeIter();
+	auto l_safeIter1 = m_pool.makeSafeIter();
+	auto l_safeIter2 = m_pool.makeSafeIter();
 
-	EXPECT_EQ(safeIter1, safeIter2);
+	EXPECT_EQ(l_safeIter1, l_safeIter2);
 
-	auto& l_iter = safeIter1.getIter();
+	auto& l_iter = l_safeIter1.getIter();
 	l_iter++;
 
-	EXPECT_NE(safeIter1, safeIter2);
+	EXPECT_NE(l_safeIter1, l_safeIter2);
+}
+
+TEST_F(PoolTestSuite, SafeIterIsCorectllyCopied)
+{
+	addThreeElementsToPool();
+
+	auto l_safeIter1 = m_pool.makeSafeIter();
+	auto l_safeIter2 = l_safeIter1;
+
+	EXPECT_EQ(l_safeIter1.isValid(), l_safeIter2.isValid());
+	
+	//corecttly registered SafeIter should be invalidate after pool reset
+	m_pool.reset();
+	EXPECT_EQ(l_safeIter1.isValid(), l_safeIter2.isValid());
+}
+
+TEST_F(PoolTestSuite, SafeIterCanBeCreatedFromIter)
+{
+	addThreeElementsToPool();
+
+	auto l_iter = m_pool.begin();
+	l_iter++;
+
+	EXPECT_NE(m_pool.begin(), l_iter);
+
+	auto l_safeIter = m_pool.makeSafeIter(l_iter);
+	EXPECT_TRUE(l_safeIter.isValid());
+	EXPECT_NE(m_pool.begin(), l_safeIter.getIter());
+	EXPECT_EQ(l_iter, l_safeIter.getIter());
 }

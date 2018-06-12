@@ -465,6 +465,11 @@ public:
 		return TypedSafeIter(*this, begin());
 	}
 
+	TypedSafeIter makeSafeIter(Iter& p_iter)
+	{
+		return TypedSafeIter(*this, p_iter);
+	}
+
 private:
 	static const int ELEMENT_SIZE = sizeof(ElementType);
 	const PoolSize MAX_NR_OF_ELEMENTS;
