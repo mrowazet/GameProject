@@ -37,7 +37,7 @@ class PoolTestSuite : public Test
 {
 public:
 	PoolTestSuite()
-		:m_pool(POOL_SIZE)
+		:m_sut(POOL_SIZE)
 	{
 	}
 
@@ -45,7 +45,7 @@ protected:
 	void addThreeElementsToPool();
 	Entity& addElementToPool(EntityId p_entityId);
 
-	ContinuousPool<Entity> m_pool;
+	ContinuousPool<Entity> m_sut;
 	SpecialFuncCounter m_counters;
 };
 
@@ -58,7 +58,7 @@ void PoolTestSuite::addThreeElementsToPool()
 
 Entity& PoolTestSuite::addElementToPool(EntityId p_entityId)
 {
-	auto& l_element = m_pool.allocate();
+	auto& l_element = m_sut.allocate();
 	l_element.id = p_entityId;
 
 	return l_element;
@@ -66,13 +66,13 @@ Entity& PoolTestSuite::addElementToPool(EntityId p_entityId)
 
 TEST_F(PoolTestSuite, ConstructorAllocatesEnoughMemoryForNumberOfElements)
 {
-	EXPECT_EQ(POOL_SIZE, m_pool.maxSize());
+	EXPECT_EQ(POOL_SIZE, m_sut.maxSize());
 }
 
 TEST_F(PoolTestSuite, PoolIsEmptyAfterInitialization)
 {
-	EXPECT_EQ(NO_ELEMENTS, m_pool.size());
-	EXPECT_TRUE(m_pool.isEmpty());
+	EXPECT_EQ(NO_ELEMENTS, m_sut.size());
+	EXPECT_TRUE(m_sut.isEmpty());
 }
 
 TEST_F(PoolTestSuite, ResetShouldClearInternalDataWithoutCallingDtors)
@@ -94,10 +94,10 @@ TEST_F(PoolTestSuite, ResetShouldClearInternalDataWithoutCallingDtors)
 
 TEST_F(PoolTestSuite, BeginAndEndIterAreEqualIfPoolIsEmpty)
 {
-	ASSERT_TRUE(m_pool.isEmpty());
+	ASSERT_TRUE(m_sut.isEmpty());
 
-	auto l_begin = m_pool.begin();
-	auto l_end = m_pool.end();
+	auto l_begin = m_sut.begin();
+	auto l_end = m_sut.end();
 
 	EXPECT_EQ(l_begin, l_end);
 }
@@ -106,7 +106,7 @@ TEST_F(PoolTestSuite, CanIterateOverPoolUsingIterator)
 {
 	addThreeElementsToPool();
 
-	auto l_iter = m_pool.begin();
+	auto l_iter = m_sut.begin();
 
 	EXPECT_EQ(ENTITY_ID_1, l_iter->id);
 
@@ -122,7 +122,7 @@ TEST_F(PoolTestSuite, CanUseRangeBasedForLoopToIterateOverPool)
 	addThreeElementsToPool();
 	u32 l_nrOfLoops = 0u;
 
-	for (auto& l_element : m_pool)
+	for (auto& l_element : m_sut)
 	{
 		l_nrOfLoops++;
 	}
@@ -132,10 +132,10 @@ TEST_F(PoolTestSuite, CanUseRangeBasedForLoopToIterateOverPool)
 
 TEST_F(PoolTestSuite, ElementCanBeAddedToPool)
 {
-	m_pool.allocate();
+	m_sut.allocate();
 
-	EXPECT_EQ(ONE_ELEMENT, m_pool.size());
-	EXPECT_FALSE(m_pool.isEmpty());
+	EXPECT_EQ(ONE_ELEMENT, m_sut.size());
+	EXPECT_FALSE(m_sut.isEmpty());
 }
 
 TEST_F(PoolTestSuite, ElementsAreCorrectlyAddedToPool)
@@ -158,10 +158,10 @@ TEST_F(PoolTestSuite, ElementCanBeRemoveFromPool)
 	auto& l_elementToRemove = addElementToPool(ENTITY_ID_1);
 	addElementToPool(ENTITY_ID_2);
 
-	ASSERT_EQ(TWO_ELEMENTS, m_pool.size());
-	m_pool.deallocate(l_elementToRemove);
+	ASSERT_EQ(TWO_ELEMENTS, m_sut.size());
+	m_sut.deallocate(l_elementToRemove);
 
-	EXPECT_EQ(ONE_ELEMENT, m_pool.size());
+	EXPECT_EQ(ONE_ELEMENT, m_sut.size());
 }
 
 TEST_F(PoolTestSuite, ElementsAreCorrectlyLocatedInPoolAfterAddRemoveAddSequence)
@@ -170,7 +170,7 @@ TEST_F(PoolTestSuite, ElementsAreCorrectlyLocatedInPoolAfterAddRemoveAddSequence
 	auto& l_elementOnPosition1 = addElementToPool(ENTITY_ID_2);
 	auto& l_elementOnPosition2 = addElementToPool(ENTITY_ID_3);
 
-	m_pool.deallocate(l_elementOnPosition0);
+	m_sut.deallocate(l_elementOnPosition0);
 	addElementToPool(ENTITY_ID_4);
 
 	//Note: references still point to the same address on memory but internal struct of data 
@@ -185,7 +185,7 @@ TEST_F(PoolTestSuite, IteratorCanBeMovedWithOperatorPlusEqual)
 {
 	addThreeElementsToPool();
 
-	auto l_iter = m_pool.begin();
+	auto l_iter = m_sut.begin();
 	l_iter += ITER_OFFSET;
 
 	EXPECT_EQ(ENTITY_ID_3, l_iter->id);
@@ -195,7 +195,7 @@ TEST_F(PoolTestSuite, NewIterCanBeCreatedByOperatorPlus)
 {
 	addThreeElementsToPool();
 
-	auto l_begin = m_pool.begin();
+	auto l_begin = m_sut.begin();
 	auto l_iter = l_begin + ITER_OFFSET;
 
 	EXPECT_EQ(ENTITY_ID_1, l_begin->id);
@@ -204,15 +204,15 @@ TEST_F(PoolTestSuite, NewIterCanBeCreatedByOperatorPlus)
 
 TEST_F(PoolTestSuite, ConstItersCanBeCreated)
 {
-	auto l_cbegin = m_pool.cbegin();
-	auto l_cend = m_pool.cend();
+	auto l_cbegin = m_sut.cbegin();
+	auto l_cend = m_sut.cend();
 }
 
 TEST_F(PoolTestSuite, ConstIterCanBeUsed)
 {
 	addThreeElementsToPool();
 
-	auto l_cbegin = m_pool.cbegin();
+	auto l_cbegin = m_sut.cbegin();
 
 	EXPECT_EQ(ENTITY_ID_1, (*l_cbegin).id);
 	EXPECT_EQ(ENTITY_ID_1, l_cbegin->id);
@@ -222,8 +222,8 @@ TEST_F(PoolTestSuite, ElementIsNotCopiedWhenIterReturned)
 {
 	addThreeElementsToPool();
 
-	auto l_cbegin = m_pool.cbegin();
-	auto l_begin = m_pool.begin();
+	auto l_cbegin = m_sut.cbegin();
+	auto l_begin = m_sut.begin();
 
 	l_begin->id = ENTITY_ID_3;
 	const auto& l_element = *l_cbegin;
@@ -239,7 +239,7 @@ TEST_F(PoolTestSuite, PrefixPostfixIncrementationCanBeUsedWithConstIter)
 {
 	addThreeElementsToPool();
 
-	auto l_cbegin = m_pool.cbegin();
+	auto l_cbegin = m_sut.cbegin();
 
 	++l_cbegin;
 	EXPECT_EQ(ENTITY_ID_2, l_cbegin->id);
@@ -250,8 +250,8 @@ TEST_F(PoolTestSuite, PrefixPostfixIncrementationCanBeUsedWithConstIter)
 
 TEST_F(PoolTestSuite, ConstIterAreEqualsIfPoolIsEmpty)
 {
-	auto l_cbegin = m_pool.cbegin();
-	auto l_cend = m_pool.cend();
+	auto l_cbegin = m_sut.cbegin();
+	auto l_cend = m_sut.cend();
 
 	EXPECT_EQ(l_cbegin, l_cend);
 
@@ -263,7 +263,7 @@ TEST_F(PoolTestSuite, ConstIteratorCanBeMovedWithOperatorPlusEqual)
 {
 	addThreeElementsToPool();
 
-	auto l_citer = m_pool.cbegin();
+	auto l_citer = m_sut.cbegin();
 	l_citer += ITER_OFFSET;
 
 	EXPECT_EQ(ENTITY_ID_3, l_citer->id);
@@ -273,7 +273,7 @@ TEST_F(PoolTestSuite, NewConstIterCanBeCreatedByOperatorPlus)
 {
 	addThreeElementsToPool();
 
-	auto l_cbegin = m_pool.cbegin();
+	auto l_cbegin = m_sut.cbegin();
 	auto l_citer = l_cbegin + ITER_OFFSET;
 
 	EXPECT_EQ(ENTITY_ID_1, l_cbegin->id);
@@ -285,7 +285,7 @@ TEST_F(PoolTestSuite, CanUseRangeBasedForLoopToIterateOverPoolUsingConstIter)
 	addThreeElementsToPool();
 	u32 l_nrOfLoops = 0u;
 
-	const auto& l_pool = m_pool;
+	const auto& l_pool = m_sut;
 
 	for (const auto& l_element : l_pool)
 	{
@@ -297,7 +297,7 @@ TEST_F(PoolTestSuite, CanUseRangeBasedForLoopToIterateOverPoolUsingConstIter)
 
 TEST_F(PoolTestSuite, CanForwardArgumentsToCtorWhenAllocate)
 {
-	auto& l_element = m_pool.allocate(ENTITY_ID_4);
+	auto& l_element = m_sut.allocate(ENTITY_ID_4);
 	EXPECT_EQ(ENTITY_ID_4, l_element.id);
 }
 
@@ -338,11 +338,11 @@ TEST_F(PoolTestSuite, ClearShouldCallDtorsOnAllObjectsAndClearInternalData)
 
 TEST_F(PoolTestSuite, isMyElementReturnsCorrectValues)
 {
-	auto& l_myElement = m_pool.allocate();
+	auto& l_myElement = m_sut.allocate();
 	Entity l_otherObject;
 
-	EXPECT_TRUE(m_pool.isMyObject(l_myElement));
-	EXPECT_FALSE(m_pool.isMyObject(l_otherObject));
+	EXPECT_TRUE(m_sut.isMyObject(l_myElement));
+	EXPECT_FALSE(m_sut.isMyObject(l_otherObject));
 }
 
 TEST_F(PoolTestSuite, elementsAreNotPreInitedByDefault)
@@ -398,7 +398,7 @@ TEST_F(PoolTestSuite, CanIterateBackOverPoolUsingIterator)
 {
 	addThreeElementsToPool();
 
-	auto l_iter = m_pool.end();
+	auto l_iter = m_sut.end();
 
 	--l_iter;
 	EXPECT_EQ(ENTITY_ID_3, l_iter->id);
@@ -414,7 +414,7 @@ TEST_F(PoolTestSuite, IteratorCanBeMovedWithOperatorMinusEqual)
 {
 	addThreeElementsToPool();
 
-	auto l_iter = m_pool.end();
+	auto l_iter = m_sut.end();
 	l_iter -= ITER_OFFSET;
 
 	EXPECT_EQ(ENTITY_ID_2, l_iter->id);
@@ -424,7 +424,7 @@ TEST_F(PoolTestSuite, NewIterCanBeCreatedByOperatorMinus)
 {
 	addThreeElementsToPool();
 
-	auto l_end = m_pool.end();
+	auto l_end = m_sut.end();
 	--l_end;
 
 	auto l_iter = l_end - ITER_OFFSET;
@@ -437,7 +437,7 @@ TEST_F(PoolTestSuite, PrefixPostfixDecrementationCanBeUsedWithConstIter)
 {
 	addThreeElementsToPool();
 
-	auto l_cend = m_pool.cend();
+	auto l_cend = m_sut.cend();
 
 	--l_cend;
 	EXPECT_EQ(ENTITY_ID_3, l_cend->id);
@@ -450,7 +450,7 @@ TEST_F(PoolTestSuite, ConstIteratorCanBeMovedWithOperatorMinusEqual)
 {
 	addThreeElementsToPool();
 
-	auto l_citer = m_pool.cend();
+	auto l_citer = m_sut.cend();
 	l_citer -= ITER_OFFSET;
 
 	EXPECT_EQ(ENTITY_ID_2, l_citer->id);
@@ -460,7 +460,7 @@ TEST_F(PoolTestSuite, NewConstIterCanBeCreatedByOperatorMinus)
 {
 	addThreeElementsToPool();
 
-	auto l_cend = m_pool.cend();
+	auto l_cend = m_sut.cend();
 	--l_cend;
 
 	auto l_citer = l_cend - ITER_OFFSET;
@@ -471,7 +471,7 @@ TEST_F(PoolTestSuite, NewConstIterCanBeCreatedByOperatorMinus)
 
 TEST_F(PoolTestSuite, SafeIterFromEmptyPoolIsNotValid)
 {
-	auto l_safeIter = m_pool.makeSafeIter();
+	auto l_safeIter = m_sut.makeSafeIter();
 	EXPECT_FALSE(l_safeIter.isValid());
 }
 
@@ -479,7 +479,7 @@ TEST_F(PoolTestSuite, SafeIterIsValidWhenCreatedFromNonEmptyPool)
 {
 	addThreeElementsToPool();
 	
-	auto l_safeIter = m_pool.makeSafeIter();
+	auto l_safeIter = m_sut.makeSafeIter();
 	EXPECT_TRUE(l_safeIter.isValid());
 }
 
@@ -489,12 +489,12 @@ TEST_F(PoolTestSuite, SafeIterShouldPointToTheSameElementAfterMoveInternally)
 	addElementToPool(ENTITY_ID_2);
 	addElementToPool(ENTITY_ID_3);
 
-	auto l_safeIter = m_pool.makeSafeIter();
+	auto l_safeIter = m_sut.makeSafeIter();
 	auto& l_iter = l_safeIter.getIter();
 	l_iter += TWO_ELEMENTS;
 
 	ASSERT_EQ(ENTITY_ID_3, l_iter->id);
-	m_pool.deallocate(l_firstElement);
+	m_sut.deallocate(l_firstElement);
 	addElementToPool(ENTITY_ID_4);
 
 	EXPECT_TRUE(l_safeIter.isValid());
@@ -506,11 +506,11 @@ TEST_F(PoolTestSuite, SafeIterShouldBeInvalidIfTrackedElementIsDealloacted)
 	auto& l_firstElement = addElementToPool(ENTITY_ID_3);
 	addElementToPool(ENTITY_ID_4);
 
-	auto l_safeIter = m_pool.makeSafeIter();
+	auto l_safeIter = m_sut.makeSafeIter();
 	auto& l_iter = l_safeIter.getIter();
 
 	ASSERT_TRUE(l_safeIter.isValid());
-	m_pool.deallocate(l_firstElement);
+	m_sut.deallocate(l_firstElement);
 
 	EXPECT_FALSE(l_safeIter.isValid());
 }
@@ -519,10 +519,10 @@ TEST_F(PoolTestSuite, SafeItersShouldBeInvalidAfterReset)
 {
 	addThreeElementsToPool();
 
-	auto l_safeIter = m_pool.makeSafeIter();
+	auto l_safeIter = m_sut.makeSafeIter();
 	
 	ASSERT_TRUE(l_safeIter.isValid());
-	m_pool.reset();
+	m_sut.reset();
 
 	ASSERT_FALSE(l_safeIter.isValid());
 }
@@ -531,10 +531,10 @@ TEST_F(PoolTestSuite, SafeItersShouldBeInvalidAfterClear)
 {
 	addThreeElementsToPool();
 
-	auto l_safeIter = m_pool.makeSafeIter();
+	auto l_safeIter = m_sut.makeSafeIter();
 
 	ASSERT_TRUE(l_safeIter.isValid());
-	m_pool.clear();
+	m_sut.clear();
 
 	ASSERT_FALSE(l_safeIter.isValid());
 }
@@ -543,8 +543,8 @@ TEST_F(PoolTestSuite, SafeItersAreEqualWhenPointsToTheSameElement)
 {
 	addThreeElementsToPool();
 
-	auto l_safeIter1 = m_pool.makeSafeIter();
-	auto l_safeIter2 = m_pool.makeSafeIter();
+	auto l_safeIter1 = m_sut.makeSafeIter();
+	auto l_safeIter2 = m_sut.makeSafeIter();
 
 	EXPECT_EQ(l_safeIter1, l_safeIter2);
 
@@ -558,13 +558,13 @@ TEST_F(PoolTestSuite, SafeIterIsCorectllyCopied)
 {
 	addThreeElementsToPool();
 
-	auto l_safeIter1 = m_pool.makeSafeIter();
+	auto l_safeIter1 = m_sut.makeSafeIter();
 	auto l_safeIter2 = l_safeIter1;
 
 	EXPECT_EQ(l_safeIter1.isValid(), l_safeIter2.isValid());
 	
 	//corecttly registered SafeIter should be invalidate after pool reset
-	m_pool.reset();
+	m_sut.reset();
 	EXPECT_EQ(l_safeIter1.isValid(), l_safeIter2.isValid());
 }
 
@@ -572,13 +572,13 @@ TEST_F(PoolTestSuite, SafeIterCanBeCreatedFromIter)
 {
 	addThreeElementsToPool();
 
-	auto l_iter = m_pool.begin();
+	auto l_iter = m_sut.begin();
 	l_iter++;
 
-	EXPECT_NE(m_pool.begin(), l_iter);
+	EXPECT_NE(m_sut.begin(), l_iter);
 
-	auto l_safeIter = m_pool.makeSafeIter(l_iter);
+	auto l_safeIter = m_sut.makeSafeIter(l_iter);
 	EXPECT_TRUE(l_safeIter.isValid());
-	EXPECT_NE(m_pool.begin(), l_safeIter.getIter());
+	EXPECT_NE(m_sut.begin(), l_safeIter.getIter());
 	EXPECT_EQ(l_iter, l_safeIter.getIter());
 }

@@ -48,49 +48,49 @@ protected:
 	Entity& addEntityToPool(EntityId p_id);
 	bool removeEntityFromPool(EntityId p_id);
 
-	EntityPoolTestable m_entityPool;
+	EntityPoolTestable m_sut;
 };
 
 Entity& EntityPoolTestSuite::addEntityToPool(EntityId p_id)
 {
-	auto& l_guardMock = m_entityPool.getIdGuardMock();
+	auto& l_guardMock = m_sut.getIdGuardMock();
 	EXPECT_CALL(l_guardMock, getNextId()).WillOnce(Return(p_id));
 
-	return m_entityPool.create();
+	return m_sut.create();
 }
 
 bool EntityPoolTestSuite::removeEntityFromPool(EntityId p_id)
 {
-	auto& l_guardMock = m_entityPool.getIdGuardMock();
+	auto& l_guardMock = m_sut.getIdGuardMock();
 	EXPECT_CALL(l_guardMock, freeId(p_id));
 
-	return m_entityPool.removeEntity(p_id);
+	return m_sut.removeEntity(p_id);
 }
 
 TEST_F(EntityPoolTestSuite, shouldAddEntityToPoolWhenCreateIsCalled)
 {
 	addEntityToPool(ENTITY_ID_1);
-	EXPECT_EQ(ONE_ELEMENT, m_entityPool.size());
+	EXPECT_EQ(ONE_ELEMENT, m_sut.size());
 }
 
 TEST_F(EntityPoolTestSuite, hasEntityIdshouldReturnFalseIfEntityWasNotCreated)
 {
-	EXPECT_FALSE(m_entityPool.hasId(ENTITY_ID_1));
+	EXPECT_FALSE(m_sut.hasId(ENTITY_ID_1));
 }
 
 TEST_F(EntityPoolTestSuite, hasEntityIdshouldReturnTrueIfEntityWasAdded)
 {
 	addEntityToPool(ENTITY_ID_1);
-	EXPECT_TRUE(m_entityPool.hasId(ENTITY_ID_1));
+	EXPECT_TRUE(m_sut.hasId(ENTITY_ID_1));
 }
 
 TEST_F(EntityPoolTestSuite, shouldReturnProperRefIfEntityExist)
 {
 	addEntityToPool(ENTITY_ID_1);
 
-	auto& l_entity = m_entityPool.getEntity(ENTITY_ID_1);
+	auto& l_entity = m_sut.getEntity(ENTITY_ID_1);
 
-	auto& l_internalPool = m_entityPool.getPool();
+	auto& l_internalPool = m_sut.getPool();
 	auto l_entityInPool = l_internalPool.begin();
 
 	EXPECT_EQ(&l_entity, &(*l_entityInPool));
@@ -101,30 +101,30 @@ TEST_F(EntityPoolTestSuite, hasEntityShouldReturnFalseIfEntityWasRemoved)
 	addEntityToPool(ENTITY_ID_1);
 	removeEntityFromPool(ENTITY_ID_1);
 
-	EXPECT_FALSE(m_entityPool.hasId(ENTITY_ID_1));
+	EXPECT_FALSE(m_sut.hasId(ENTITY_ID_1));
 }
 
 TEST_F(EntityPoolTestSuite, removeEntityShouldReturnTrueIfEntityWasStored)
 {
 	addEntityToPool(ENTITY_ID_1);
 	EXPECT_TRUE(removeEntityFromPool(ENTITY_ID_1));
-	EXPECT_EQ(EMPTY, m_entityPool.size());
+	EXPECT_EQ(EMPTY, m_sut.size());
 }
 
 TEST_F(EntityPoolTestSuite, removeEntityShouldReturnFalseIfEntityWasNotStored)
 {
-	EXPECT_FALSE(m_entityPool.removeEntity(ENTITY_ID_1));
+	EXPECT_FALSE(m_sut.removeEntity(ENTITY_ID_1));
 }
 
 TEST_F(EntityPoolTestSuite, clearShouldRemoveAllData)
 {
 	addEntityToPool(ENTITY_ID_1);
 
-	auto& l_guardMock = m_entityPool.getIdGuardMock();
+	auto& l_guardMock = m_sut.getIdGuardMock();
 	EXPECT_CALL(l_guardMock, reset());
 
-	m_entityPool.clear();
+	m_sut.clear();
 
-	EXPECT_FALSE(m_entityPool.hasId(ENTITY_ID_1));
-	EXPECT_EQ(EMPTY, m_entityPool.size());
+	EXPECT_FALSE(m_sut.hasId(ENTITY_ID_1));
+	EXPECT_EQ(EMPTY, m_sut.size());
 }

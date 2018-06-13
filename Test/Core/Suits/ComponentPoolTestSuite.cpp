@@ -21,24 +21,24 @@ class ComponentPoolTestSuite : public Test
 {
 public:
 	ComponentPoolTestSuite()
-		:m_pool(POOL_SIZE)
+		:m_sut(POOL_SIZE)
 	{
 
 	}
 
 protected:
-	ComponentPool<testComponents::ComponentA> m_pool;
+	ComponentPool<testComponents::ComponentA> m_sut;
 };
 
 TEST_F(ComponentPoolTestSuite, componentsCanBeAddAndRemove)
 {
-	auto& l_first = m_pool.getComponent();
-	EXPECT_EQ(ONE_ELEMENT, m_pool.size());
+	auto& l_first = m_sut.getComponent();
+	EXPECT_EQ(ONE_ELEMENT, m_sut.size());
 
-	auto& l_second = m_pool.getComponent();
-	EXPECT_EQ(TWO_ELEMENTS, m_pool.size());
+	auto& l_second = m_sut.getComponent();
+	EXPECT_EQ(TWO_ELEMENTS, m_sut.size());
 
-	m_pool.returnComponent(l_second);
-	m_pool.returnComponent(l_first);
-	EXPECT_EQ(EMPTY, m_pool.size());
+	m_sut.returnComponent(l_second);
+	m_sut.returnComponent(l_first);
+	EXPECT_EQ(EMPTY, m_sut.size());
 }

@@ -17,25 +17,25 @@ class IdGuardTestSuite : public Test
 {
 public:
 	IdGuardTestSuite()
-		: m_idGuard(MAX_ID)
+		: m_sut(MAX_ID)
 	{
 
 	}
 
 protected:
-	IdGuard m_idGuard;
+	IdGuard m_sut;
 };
 
 TEST_F(IdGuardTestSuite, shouldReturnFirstIdWhenCalledFirstTime)
 {
-	auto l_id = m_idGuard.getNextId();
+	auto l_id = m_sut.getNextId();
 	EXPECT_EQ(ID_1, l_id);
 }
 
 TEST_F(IdGuardTestSuite, shouldReturnNextIdFreeIdWhenNextIdIsCalled)
 {
-	auto l_id1 = m_idGuard.getNextId();
-	auto l_id2 = m_idGuard.getNextId();
+	auto l_id1 = m_sut.getNextId();
+	auto l_id2 = m_sut.getNextId();
 
 	EXPECT_EQ(ID_1, l_id1);
 	EXPECT_EQ(ID_2, l_id2);
@@ -54,21 +54,21 @@ TEST_F(IdGuardTestSuite, shouldReturnUndefinedIdWhenOverflowed)
 
 TEST_F(IdGuardTestSuite, shouldReturnReleasedIdIfIdWasReturnedEarlier)
 {
-	auto l_id = m_idGuard.getNextId();
-	m_idGuard.freeId(l_id);
+	auto l_id = m_sut.getNextId();
+	m_sut.freeId(l_id);
 
-	auto l_nextId = m_idGuard.getNextId();
+	auto l_nextId = m_sut.getNextId();
 	EXPECT_EQ(ID_1, l_id);
 	EXPECT_EQ(l_id, l_nextId);
 }
 
 TEST_F(IdGuardTestSuite, shouldReturnNextFreeIdAfterGetFreeSequence)
 {
-	auto l_id = m_idGuard.getNextId();
-	m_idGuard.freeId(l_id);
+	auto l_id = m_sut.getNextId();
+	m_sut.freeId(l_id);
 
-	auto l_id1 = m_idGuard.getNextId();
-	auto l_id2 = m_idGuard.getNextId();
+	auto l_id1 = m_sut.getNextId();
+	auto l_id2 = m_sut.getNextId();
 
 	EXPECT_EQ(ID_1, l_id1);
 	EXPECT_EQ(ID_2, l_id2);
@@ -99,23 +99,23 @@ TEST_F(IdGuardTestSuite, shouldBePossibleToFreeIdWhenLastCorrectIdHasBeenReturne
 
 TEST_F(IdGuardTestSuite, resetShouldClearGuardState)
 {
-	auto l_firstId = m_idGuard.getNextId();
-	m_idGuard.getNextId();
+	auto l_firstId = m_sut.getNextId();
+	m_sut.getNextId();
 
-	m_idGuard.reset();
+	m_sut.reset();
 
-	EXPECT_EQ(l_firstId, m_idGuard.getNextId());
+	EXPECT_EQ(l_firstId, m_sut.getNextId());
 }
 
 TEST_F(IdGuardTestSuite, resetShouldClearFreedIds)
 {
-	auto l_firstId = m_idGuard.getNextId();
-	auto l_secondId = m_idGuard.getNextId();
+	auto l_firstId = m_sut.getNextId();
+	auto l_secondId = m_sut.getNextId();
 
-	m_idGuard.freeId(l_secondId);
-	m_idGuard.reset();
+	m_sut.freeId(l_secondId);
+	m_sut.reset();
 
-	EXPECT_EQ(l_firstId, m_idGuard.getNextId());
+	EXPECT_EQ(l_firstId, m_sut.getNextId());
 }
 
 TEST_F(IdGuardTestSuite, resetShouldClearOverloadState)
