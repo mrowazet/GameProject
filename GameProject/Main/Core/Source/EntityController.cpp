@@ -24,19 +24,41 @@ EntityId EntityController::createEntityWithComponents(const ComponentFlags& p_co
 	return UNDEFINED_ENTITY_ID;
 }
 
-bool EntityController::remove(EntityId p_id)
+bool EntityController::removeEntity(EntityId p_id)
 {
-	return m_pool->remove(p_id);
+	return m_pool->removeEntity(p_id);
 }
 
-Entity& EntityController::get(EntityId p_id)
+bool EntityController::hasEntity(EntityId p_id)
 {
-	if (!m_pool->hasId(p_id))
-	{
-		std::cerr << "Requestd ID does NOT exist in the pool! ID: " << p_id;
-	}
+	return m_pool->hasId(p_id);
+}
 
-	return m_pool->get(p_id);
+Entity& EntityController::getEntity(EntityId p_id)
+{
+	return m_pool->getEntity(p_id);
+}
+
+bool EntityController::connectSingleComponentToEntity(EntityId p_id, ComponentType p_componentType) //todo refactor!
+{
+	auto& l_entity = m_pool->getEntity(p_id);
+	if(!l_entity.attachedComponents.test(static_cast<int>(p_componentType)))
+	{
+		auto& l_component = m_componentController.createComponent(p_componentType);
+		l_entity.attachedComponents.flip(static_cast<int>(p_componentType));
+		l_entity.components = &l_component; //todo set in last connected component where nextComponent != nullptr
+		//todo call change propagator here
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool EntityController::disconnectSingleComponentFromEntity(EntityId p_id, ComponentType p_componentType)
+{
+	return false;
 }
 
 bool EntityController::connectComponentsToEntity(EntityId p_id, const ComponentFlags& p_components)

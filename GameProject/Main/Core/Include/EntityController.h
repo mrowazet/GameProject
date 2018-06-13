@@ -19,8 +19,13 @@ public:
 	EntityId createEntity() override;
 	EntityId createEntityWithComponents(const ComponentFlags& p_components) override;
 
-	bool remove(EntityId p_id) override;
-	Entity& get(EntityId p_id) override;
+	bool removeEntity(EntityId p_id) override;
+
+	bool hasEntity(EntityId p_id) override;
+	Entity& getEntity(EntityId p_id) override;
+
+	bool connectSingleComponentToEntity(EntityId p_id, ComponentType p_componentType) override;
+	bool disconnectSingleComponentFromEntity(EntityId p_id, ComponentType p_componentType) override;
 
 	bool connectComponentsToEntity(EntityId p_id, const ComponentFlags& p_components) override;
 	bool disconnectComponentsFromEntity(EntityId p_id, const ComponentFlags& p_components) override;

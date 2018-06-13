@@ -11,8 +11,8 @@ public:
 	virtual ~IEntityPool() = default;
 
 	virtual Entity& create() = 0;
-	virtual bool remove(EntityId p_id) = 0;
-	virtual Entity& get(EntityId p_id) = 0;
+	virtual bool removeEntity(EntityId p_id) = 0;
+	virtual Entity& getEntity(EntityId p_id) = 0;
 
 	virtual u32 size() const = 0;
 	virtual bool hasId(EntityId p_id) const = 0;

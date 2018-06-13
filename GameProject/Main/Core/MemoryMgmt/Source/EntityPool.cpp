@@ -18,13 +18,13 @@ namespace engine
 		return l_entity;
 	}
 
-	bool EntityPool::remove(EntityId p_id)
+	bool EntityPool::removeEntity(EntityId p_id)
 	{
 		auto l_iter = m_storedIds.find(p_id);
 
 		if (l_iter != m_storedIds.end())
 		{
-			m_pool.takeBack(get(p_id));
+			m_pool.takeBack(getEntity(p_id));
 
 			m_idGuard->freeId(p_id);
 			m_storedIds.erase(l_iter);
@@ -37,7 +37,7 @@ namespace engine
 		}
 	}
 
-	Entity& EntityPool::get(EntityId p_id)
+	Entity& EntityPool::getEntity(EntityId p_id)
 	{
 		auto l_iter = m_pool.begin();
 		auto l_endIter = m_pool.end();

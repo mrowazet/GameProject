@@ -7,6 +7,7 @@ namespace testComponents
 {
 	struct ComponentA : public ComponentBase
 	{
+		const static ComponentType type = ComponentType::VISIBLE;
 		const int value = 1;
 	};
 
