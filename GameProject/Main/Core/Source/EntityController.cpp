@@ -6,7 +6,7 @@ namespace engine
 
 EntityController::EntityController(std::unique_ptr<IEntityPool> p_entityPool,
 								   IComponentController& p_componentController,
-								   const IEntityChangeDistributor& p_changeDistributor)
+								   IEntityChangeDistributor& p_changeDistributor)
 	:m_pool(std::move(p_entityPool)),
 	 m_componentController(p_componentController),
 	 m_changeDistributor(p_changeDistributor)
@@ -47,7 +47,7 @@ bool EntityController::connectSingleComponentToEntity(EntityId p_id, ComponentTy
 		auto& l_component = m_componentController.createComponent(p_componentType);
 		l_entity.attachedComponents.flip(static_cast<int>(p_componentType));
 		l_entity.components = &l_component; //todo set in last connected component where nextComponent != nullptr
-		//todo call change propagator here
+		m_changeDistributor.entityChanged(p_id);
 		return true;
 	}
 	else

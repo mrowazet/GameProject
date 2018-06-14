@@ -9,7 +9,7 @@ namespace engine
 class EntityChangeDistributorMock : public IEntityChangeDistributor
 {
 public:
-
+	MOCK_METHOD1(entityChanged, void(EntityId));
 };
 
 }

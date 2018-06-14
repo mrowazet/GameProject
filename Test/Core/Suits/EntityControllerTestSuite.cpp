@@ -20,18 +20,18 @@ constexpr bool ID_NOT_EXIST = false;
 constexpr bool REMOVED = true;
 constexpr bool COMPONENT_CONNECTED = true;
 
-constexpr ComponentType COMPONENT_TYPE = ComponentType::VISIBLE;
 constexpr EntityId ENTITY_ID = 1u;
 testComponents::ComponentA COMPONENT_A;
+testComponents::ComponentB COMPONENT_B;
 
-constexpr u32 ZERO_COMPONENTS = 0u;
 constexpr u32 ONE_COMPONENT = 1u;
+constexpr u32 TWO_COMPONENTS = 2u;
 }
 
 class EntityControllerTestable : public EntityController
 {
 public:
-	EntityControllerTestable(std::unique_ptr<IEntityPool> p_entityPool, IComponentController& p_componentController, const IEntityChangeDistributor& p_distributor)
+	EntityControllerTestable(std::unique_ptr<IEntityPool> p_entityPool, IComponentController& p_componentController, IEntityChangeDistributor& p_distributor)
 		: EntityController(std::move(p_entityPool), p_componentController, p_distributor)
 	{
 
@@ -52,10 +52,58 @@ public:
 	{
 	}
 
+	void SetUp() override
+	{
+		EXPECT_TRUE(m_entity.attachedComponents.none());
+		EXPECT_THAT(m_entity.components, IsNull());
+	}
+
+	void addComponent(ComponentBase& p_component)
+	{
+		expectAddComponent(p_component);
+		m_sut.connectSingleComponentToEntity(ENTITY_ID, p_component.type);
+	}
+
+	void expectAddComponent(ComponentBase& p_component)
+	{
+		auto& l_poolMock = m_sut.getPoolMock();
+		EXPECT_CALL(l_poolMock, getEntity(ENTITY_ID)).WillOnce(ReturnRef(m_entity));
+		EXPECT_CALL(m_componentControllerMock, createComponent(p_component.type)).WillOnce(ReturnRef(p_component));
+		EXPECT_CALL(m_changeDistributorMock, entityChanged(ENTITY_ID));
+	}
+
+	void checkComponentConnectedAsFirst(ComponentBase& p_component)
+	{
+		checkComponentBitIsSet(p_component);
+		EXPECT_EQ(m_entity.components, &p_component);
+	}
+
+	void checkComponentConnectedAsSecond(ComponentBase& p_component)
+	{
+		checkComponentBitIsSet(p_component);
+		EXPECT_EQ(m_entity.components->nextComponent, &p_component);
+	}
+
+	void checkComponentBitIsSet(ComponentBase& p_component)
+	{
+		auto l_componentBitNumber = coponentTypeToInt(p_component.type);
+		EXPECT_TRUE(m_entity.attachedComponents.test(l_componentBitNumber));
+	}
+
+	void checkNumberOfConnectedComponents(u32 p_nrOfComponents)
+	{
+		EXPECT_EQ(p_nrOfComponents, m_entity.attachedComponents.count());
+	}
+
+	u32 coponentTypeToInt(const ComponentType& p_type)
+	{
+		return static_cast<u32>(p_type);
+	}
+
 protected:
 	Entity m_entity;
-	ComponentControllerMock m_componentControllerMock;
-	EntityChangeDistributorMock m_changeDistributorMock;
+	StrictMock<ComponentControllerMock> m_componentControllerMock;
+	StrictMock<EntityChangeDistributorMock> m_changeDistributorMock;
 
 	EntityControllerTestable m_sut;
 };
@@ -96,40 +144,29 @@ TEST_F(EntityControllerTestSuite, shouldCallPoolToCheckIfEntityWithIdExist)
 
 TEST_F(EntityControllerTestSuite, shouldCreateComponentWhenConnectComponentToIdToEntityCalled)
 {
-	auto& l_poolMock = m_sut.getPoolMock();
-	EXPECT_CALL(l_poolMock, getEntity(ENTITY_ID)).WillOnce(ReturnRef(m_entity));
-	EXPECT_CALL(m_componentControllerMock, createComponent(COMPONENT_TYPE)).WillOnce(ReturnRef(COMPONENT_A));
-
-	auto l_result = m_sut.connectSingleComponentToEntity(ENTITY_ID, COMPONENT_TYPE);
-	EXPECT_TRUE(l_result);
+	expectAddComponent(COMPONENT_A);
+	EXPECT_TRUE(m_sut.connectSingleComponentToEntity(ENTITY_ID, COMPONENT_A.type));
 }
 
 TEST_F(EntityControllerTestSuite, shouldNotCallComponentControllerIfMentionedComponentIsAlreadyConnectedWhenConnectComponentCalled)
 {
+	addComponent(COMPONENT_A);
+
 	auto& l_poolMock = m_sut.getPoolMock();
 	EXPECT_CALL(l_poolMock, getEntity(ENTITY_ID)).WillOnce(ReturnRef(m_entity));
-	EXPECT_CALL(m_componentControllerMock, createComponent(COMPONENT_TYPE)).Times(0);
 
-	m_entity.attachedComponents.flip(static_cast<int>(COMPONENT_A.type));
-
-	auto l_result = m_sut.connectSingleComponentToEntity(ENTITY_ID, COMPONENT_TYPE);
-	EXPECT_FALSE(l_result);
+	EXPECT_FALSE(m_sut.connectSingleComponentToEntity(ENTITY_ID, COMPONENT_A.type));
 }
 
 TEST_F(EntityControllerTestSuite, shouldConfigureEntityWhenComponentIsAdding)
 {
-	auto& l_poolMock = m_sut.getPoolMock();
-	EXPECT_CALL(l_poolMock, getEntity(ENTITY_ID)).WillOnce(ReturnRef(m_entity));
-	EXPECT_CALL(m_componentControllerMock, createComponent(COMPONENT_TYPE)).WillOnce(ReturnRef(COMPONENT_A));
-	EXPECT_EQ(ZERO_COMPONENTS, m_entity.attachedComponents.count());
+	addComponent(COMPONENT_A);
 
-	auto l_result = m_sut.connectSingleComponentToEntity(ENTITY_ID, COMPONENT_TYPE);
-	EXPECT_TRUE(l_result);
+	checkComponentConnectedAsFirst(COMPONENT_A);
+	checkNumberOfConnectedComponents(ONE_COMPONENT);
+}
 
-	EXPECT_THAT(m_entity.components, NotNull());
-	EXPECT_EQ(m_entity.components, &COMPONENT_A);
-	EXPECT_EQ(ONE_COMPONENT, m_entity.attachedComponents.count());
+TEST_F(EntityControllerTestSuite, shouldCorrectlyAddComponentToEntityIfAnotherOneIsAlreadyConnected)
+{
 
-	auto l_componentBitNumber = static_cast<int>(COMPONENT_A.type);
-	EXPECT_EQ(COMPONENT_CONNECTED, m_entity.attachedComponents.test(l_componentBitNumber));
 }

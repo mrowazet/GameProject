@@ -14,7 +14,7 @@ class EntityController : public IEntityController
 public:
 	EntityController(std::unique_ptr<IEntityPool> p_entityPool,
 					 IComponentController& p_componentController,
-					 const IEntityChangeDistributor& p_changeDistributor);
+					 IEntityChangeDistributor& p_changeDistributor);
 
 	EntityId createEntity() override;
 	EntityId createEntityWithComponents(const ComponentFlags& p_components) override;
@@ -33,7 +33,7 @@ public:
 protected:
 	std::unique_ptr<IEntityPool> m_pool;
 	IComponentController& m_componentController;
-	const IEntityChangeDistributor& m_changeDistributor;
+	IEntityChangeDistributor& m_changeDistributor;
 };
 
 }

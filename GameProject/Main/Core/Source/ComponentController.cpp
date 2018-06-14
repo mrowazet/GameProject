@@ -4,6 +4,6 @@ namespace engine
 {
 	ComponentBase& ComponentController::createComponent(ComponentType p_component)
 	{
-		return ComponentBase();
+		return ComponentBase(ComponentType::VISIBLE);
 	}
 }
