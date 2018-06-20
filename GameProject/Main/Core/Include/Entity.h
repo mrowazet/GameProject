@@ -1,9 +1,40 @@
 #pragma once
 #include "Types.h"
 #include "Constants.h"
+#include "ComponentTypes.h"
 
 namespace engine
 {
+
+class AttachedComponents final
+{
+public:
+	AttachedComponents() = default;
+
+	void flip(ComponentType p_type)
+	{
+		m_flags.flip(static_cast<int>(p_type));
+	}
+
+	bool isAttached(ComponentType p_type) const
+	{
+		return m_flags.test(static_cast<int>(p_type));
+	}
+
+	bool hasAny() const
+	{
+		return m_flags.any();
+	}
+
+	u32 getNumOfSetComponents() const
+	{
+		return static_cast<u32>(m_flags.count());
+	}
+
+private:
+	ComponentFlags m_flags = NO_COMPONENTS;
+};
+
 
 struct Entity final
 {
@@ -17,8 +48,10 @@ struct Entity final
 	}
 
 	EntityId id = UNDEFINED_ENTITY_ID;
-	ComponentFlags attachedComponents = NO_COMPONENTS;
+	AttachedComponents attachedComponents;
 	ComponentPtr components = nullptr;
 };
+
+
 
 }

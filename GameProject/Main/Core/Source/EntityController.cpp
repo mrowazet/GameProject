@@ -58,12 +58,12 @@ bool EntityController::connectSingleComponentToEntity(EntityId p_id, ComponentTy
 
 bool EntityController::isComponentAlreadyAttachedToEntity(Entity& p_entity, ComponentType p_componentType)
 {
-	return p_entity.attachedComponents.test(static_cast<int>(p_componentType));
+	return p_entity.attachedComponents.isAttached(p_componentType);
 }
 
 void EntityController::attachComponent(Entity& p_entity, ComponentType p_componentType)
 {
-	p_entity.attachedComponents.flip(static_cast<int>(p_componentType));
+	p_entity.attachedComponents.flip(p_componentType);
 
 	auto& l_component = m_componentController.createComponent(p_componentType);
 	putComponentToNextFreePositionInEntity(p_entity, l_component);

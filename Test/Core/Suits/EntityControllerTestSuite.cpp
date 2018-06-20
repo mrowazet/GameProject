@@ -54,7 +54,7 @@ public:
 
 	void SetUp() override
 	{
-		EXPECT_TRUE(m_entity.attachedComponents.none());
+		EXPECT_FALSE(m_entity.attachedComponents.hasAny());
 		EXPECT_THAT(m_entity.components, IsNull());
 	}
 
@@ -86,18 +86,12 @@ public:
 
 	void checkComponentBitIsSet(ComponentBase& p_component)
 	{
-		auto l_componentBitNumber = coponentTypeToInt(p_component.type);
-		EXPECT_TRUE(m_entity.attachedComponents.test(l_componentBitNumber));
+		EXPECT_TRUE(m_entity.attachedComponents.isAttached(p_component.type));
 	}
 
 	void checkNumberOfConnectedComponents(u32 p_nrOfComponents)
 	{
-		EXPECT_EQ(p_nrOfComponents, m_entity.attachedComponents.count());
-	}
-
-	u32 coponentTypeToInt(const ComponentType& p_type)
-	{
-		return static_cast<u32>(p_type);
+		EXPECT_EQ(p_nrOfComponents, m_entity.attachedComponents.getNumOfSetComponents());
 	}
 
 protected:
