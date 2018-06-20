@@ -8,7 +8,7 @@ class EntityChangeDistributor : public IEntityChangeDistributor
 {
 public:
 
-	void entityChanged(EntityId p_id) override;
+	void distributeInfoAboutChangeInEntity(EntityId p_id) override;
 
 };
 

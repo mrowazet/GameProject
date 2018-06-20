@@ -34,6 +34,12 @@ protected:
 	std::unique_ptr<IEntityPool> m_pool;
 	IComponentController& m_componentController;
 	IEntityChangeDistributor& m_changeDistributor;
+
+private:
+	bool isComponentAlreadyAttachedToEntity(Entity& p_entity, ComponentType p_componentType);
+	void attachComponent(Entity& p_entity, ComponentType p_componentType);
+	void putComponentToNextFreePositionInEntity(Entity& p_entity, ComponentBase& p_component);
+	ComponentPtr* getNextFreePositionForComponent(Entity& p_entity);
 };
 
 }

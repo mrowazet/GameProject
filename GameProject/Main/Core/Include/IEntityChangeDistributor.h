@@ -13,7 +13,7 @@ public:
 	IEntityChangeDistributor() = default;
 	virtual ~IEntityChangeDistributor() = default;
 
-	virtual void entityChanged(EntityId p_id) = 0;
+	virtual void distributeInfoAboutChangeInEntity(EntityId p_id) = 0;
 };
 
 }

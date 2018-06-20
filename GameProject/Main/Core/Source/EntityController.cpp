@@ -39,21 +39,52 @@ Entity& EntityController::getEntity(EntityId p_id)
 	return m_pool->getEntity(p_id);
 }
 
-bool EntityController::connectSingleComponentToEntity(EntityId p_id, ComponentType p_componentType) //todo refactor!
+bool EntityController::connectSingleComponentToEntity(EntityId p_id, ComponentType p_componentType)
 {
 	auto& l_entity = m_pool->getEntity(p_id);
-	if(!l_entity.attachedComponents.test(static_cast<int>(p_componentType)))
+	
+	if(!isComponentAlreadyAttachedToEntity(l_entity, p_componentType))
 	{
-		auto& l_component = m_componentController.createComponent(p_componentType);
-		l_entity.attachedComponents.flip(static_cast<int>(p_componentType));
-		l_entity.components = &l_component; //todo set in last connected component where nextComponent != nullptr
-		m_changeDistributor.entityChanged(p_id);
+		attachComponent(l_entity, p_componentType);
+		m_changeDistributor.distributeInfoAboutChangeInEntity(p_id);
+		
 		return true;
 	}
 	else
 	{
 		return false;
 	}
+}
+
+bool EntityController::isComponentAlreadyAttachedToEntity(Entity& p_entity, ComponentType p_componentType)
+{
+	return p_entity.attachedComponents.test(static_cast<int>(p_componentType));
+}
+
+void EntityController::attachComponent(Entity& p_entity, ComponentType p_componentType)
+{
+	p_entity.attachedComponents.flip(static_cast<int>(p_componentType));
+
+	auto& l_component = m_componentController.createComponent(p_componentType);
+	putComponentToNextFreePositionInEntity(p_entity, l_component);
+}
+
+void EntityController::putComponentToNextFreePositionInEntity(Entity& p_entity, ComponentBase& p_component)
+{
+	auto l_freeComponentPosition = getNextFreePositionForComponent(p_entity);
+	*l_freeComponentPosition = &p_component;
+}
+
+ComponentPtr* EntityController::getNextFreePositionForComponent(Entity& p_entity)
+{
+	ComponentPtr* l_componentPtr = &p_entity.components;
+
+	while (*l_componentPtr != nullptr)
+	{
+		l_componentPtr = &(*l_componentPtr)->nextComponent;
+	}
+
+	return l_componentPtr;
 }
 
 bool EntityController::disconnectSingleComponentFromEntity(EntityId p_id, ComponentType p_componentType)

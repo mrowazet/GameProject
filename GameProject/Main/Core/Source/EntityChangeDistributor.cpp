@@ -3,7 +3,7 @@
 namespace engine
 {
 
-void EntityChangeDistributor::entityChanged(EntityId p_id)
+void EntityChangeDistributor::distributeInfoAboutChangeInEntity(EntityId p_id)
 {
 
 }

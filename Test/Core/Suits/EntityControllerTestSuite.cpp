@@ -69,7 +69,7 @@ public:
 		auto& l_poolMock = m_sut.getPoolMock();
 		EXPECT_CALL(l_poolMock, getEntity(ENTITY_ID)).WillOnce(ReturnRef(m_entity));
 		EXPECT_CALL(m_componentControllerMock, createComponent(p_component.type)).WillOnce(ReturnRef(p_component));
-		EXPECT_CALL(m_changeDistributorMock, entityChanged(ENTITY_ID));
+		EXPECT_CALL(m_changeDistributorMock, distributeInfoAboutChangeInEntity(ENTITY_ID));
 	}
 
 	void checkComponentConnectedAsFirst(ComponentBase& p_component)
@@ -168,5 +168,10 @@ TEST_F(EntityControllerTestSuite, shouldConfigureEntityWhenComponentIsAdding)
 
 TEST_F(EntityControllerTestSuite, shouldCorrectlyAddComponentToEntityIfAnotherOneIsAlreadyConnected)
 {
+	addComponent(COMPONENT_A);
+	addComponent(COMPONENT_B);
 
+	checkComponentConnectedAsFirst(COMPONENT_A);
+	checkComponentConnectedAsSecond(COMPONENT_B);
+	checkNumberOfConnectedComponents(TWO_COMPONENTS);
 }
