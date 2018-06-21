@@ -46,7 +46,7 @@ bool EntityController::connectSingleComponentToEntity(EntityId p_id, ComponentTy
 	if(!isComponentAlreadyAttachedToEntity(l_entity, p_componentType))
 	{
 		attachComponent(l_entity, p_componentType);
-		m_changeDistributor.distributeInfoAboutChangeInEntity(p_id);
+		m_changeDistributor.distributeEntityChange(p_id);
 		
 		return true;
 	}

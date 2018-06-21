@@ -8,8 +8,10 @@
 #include "TestComponents.h"
 #include "EntityPoolMock.h"
 #include "ComponentTypes.h"
+#include "UniquePtrMockWrapper.h"
 
 using namespace testing;
+using namespace testTool;
 using namespace engine;
 
 namespace
@@ -28,27 +30,13 @@ constexpr u32 ONE_COMPONENT = 1u;
 constexpr u32 TWO_COMPONENTS = 2u;
 }
 
-class EntityControllerTestable : public EntityController
-{
-public:
-	EntityControllerTestable(std::unique_ptr<IEntityPool> p_entityPool, IComponentController& p_componentController, IEntityChangeDistributor& p_distributor)
-		: EntityController(std::move(p_entityPool), p_componentController, p_distributor)
-	{
-
-	}
-
-	EntityPoolMock& getPoolMock()
-	{
-		return static_cast<EntityPoolMock&>(*m_pool);
-	}
-};
 
 class EntityControllerTestSuite : public Test
 {
 public:
 	EntityControllerTestSuite()
 		: m_entity(ENTITY_ID),
-		m_sut(std::make_unique<StrictMock<EntityPoolMock>>(), m_componentControllerMock, m_changeDistributorMock)
+		  m_sut(m_entityPoolMock.getPtr(), m_componentControllerMock, m_changeDistributorMock)
 	{
 	}
 
@@ -66,10 +54,9 @@ public:
 
 	void expectAddComponent(ComponentBase& p_component)
 	{
-		auto& l_poolMock = m_sut.getPoolMock();
-		EXPECT_CALL(l_poolMock, getEntity(ENTITY_ID)).WillOnce(ReturnRef(m_entity));
+		EXPECT_CALL(*m_entityPoolMock, getEntity(ENTITY_ID)).WillOnce(ReturnRef(m_entity));
 		EXPECT_CALL(m_componentControllerMock, createComponent(p_component.type)).WillOnce(ReturnRef(p_component));
-		EXPECT_CALL(m_changeDistributorMock, distributeInfoAboutChangeInEntity(ENTITY_ID));
+		EXPECT_CALL(m_changeDistributorMock, distributeEntityChange(ENTITY_ID));
 	}
 
 	void checkComponentConnectedAsFirst(ComponentBase& p_component)
@@ -98,14 +85,14 @@ protected:
 	Entity m_entity;
 	StrictMock<ComponentControllerMock> m_componentControllerMock;
 	StrictMock<EntityChangeDistributorMock> m_changeDistributorMock;
+	UniquePtrMockWrapper<StrictMock<EntityPoolMock>> m_entityPoolMock;
 
-	EntityControllerTestable m_sut;
+	EntityController m_sut;
 };
 
 TEST_F(EntityControllerTestSuite, createEntityShouldCreateElementInPoolAndReturnProperId)
 {
-	auto& l_poolMock = m_sut.getPoolMock();
-	EXPECT_CALL(l_poolMock, create()).WillOnce(ReturnRef(m_entity));
+	EXPECT_CALL(*m_entityPoolMock, create()).WillOnce(ReturnRef(m_entity));
 
 	auto l_id = m_sut.createEntity();
 	EXPECT_EQ(ENTITY_ID, l_id);
@@ -113,16 +100,14 @@ TEST_F(EntityControllerTestSuite, createEntityShouldCreateElementInPoolAndReturn
 
 TEST_F(EntityControllerTestSuite, removeEntityShouldRemoveElementFromPool)
 {
-	auto& l_poolMock = m_sut.getPoolMock();
-	EXPECT_CALL(l_poolMock, removeEntity(ENTITY_ID)).WillOnce(Return(REMOVED));
+	EXPECT_CALL(*m_entityPoolMock, removeEntity(ENTITY_ID)).WillOnce(Return(REMOVED));
 
 	m_sut.removeEntity(ENTITY_ID);
 }
 
 TEST_F(EntityControllerTestSuite, getEntityShouldReturnRefToEntityFromPool)
 {
-	auto& l_poolMock = m_sut.getPoolMock();
-	EXPECT_CALL(l_poolMock, getEntity(ENTITY_ID)).WillOnce(ReturnRef(m_entity));
+	EXPECT_CALL(*m_entityPoolMock, getEntity(ENTITY_ID)).WillOnce(ReturnRef(m_entity));
 
 	auto& l_returnedEntity = m_sut.getEntity(ENTITY_ID);
 	EXPECT_EQ(&m_entity, &l_returnedEntity);
@@ -130,8 +115,7 @@ TEST_F(EntityControllerTestSuite, getEntityShouldReturnRefToEntityFromPool)
 
 TEST_F(EntityControllerTestSuite, shouldCallPoolToCheckIfEntityWithIdExist)
 {
-	auto& l_poolMock = m_sut.getPoolMock();
-	EXPECT_CALL(l_poolMock, hasId(ENTITY_ID));
+	EXPECT_CALL(*m_entityPoolMock, hasId(ENTITY_ID));
 
 	m_sut.hasEntity(ENTITY_ID);
 }
@@ -146,8 +130,7 @@ TEST_F(EntityControllerTestSuite, shouldNotCallComponentControllerIfMentionedCom
 {
 	addComponent(COMPONENT_A);
 
-	auto& l_poolMock = m_sut.getPoolMock();
-	EXPECT_CALL(l_poolMock, getEntity(ENTITY_ID)).WillOnce(ReturnRef(m_entity));
+	EXPECT_CALL(*m_entityPoolMock, getEntity(ENTITY_ID)).WillOnce(ReturnRef(m_entity));
 
 	EXPECT_FALSE(m_sut.connectSingleComponentToEntity(ENTITY_ID, COMPONENT_A.type));
 }

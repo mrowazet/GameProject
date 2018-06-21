@@ -3,8 +3,10 @@
 #include "Core.h"
 #include "EntityPool.h"
 #include "IdGuardMock.h"
+#include "UniquePtrMockWrapper.h"
 
 using namespace testing;
+using namespace testTool;
 using namespace engine;
 
 namespace
@@ -22,8 +24,8 @@ const EntityId ENTITY_ID_2 = 2u;
 class EntityPoolTestable : public EntityPool
 {
 public:
-	EntityPoolTestable()
-		: EntityPool(NR_OF_ENTITIES, std::make_unique<StrictMock<IdGuardMock>>())
+	EntityPoolTestable(std::unique_ptr<IIdGuard> p_guard)
+		: EntityPool(NR_OF_ENTITIES, std::move(p_guard))
 	{
 
 	}
@@ -32,37 +34,34 @@ public:
 	{
 		return m_pool;
 	}
-
-	IdGuardMock& getIdGuardMock()
-	{
-		return static_cast<IdGuardMock&>(*m_idGuard);
-	}
 };
 
 class EntityPoolTestSuite : public Test
 {
 public:
-	EntityPoolTestSuite() = default;
+	EntityPoolTestSuite()
+		:m_sut(m_idGuardMock.getPtr())
+	{
+	}
 
 protected:
 	Entity& addEntityToPool(EntityId p_id);
 	bool removeEntityFromPool(EntityId p_id);
 
+	UniquePtrMockWrapper<StrictMock<IdGuardMock>> m_idGuardMock;
 	EntityPoolTestable m_sut;
 };
 
 Entity& EntityPoolTestSuite::addEntityToPool(EntityId p_id)
 {
-	auto& l_guardMock = m_sut.getIdGuardMock();
-	EXPECT_CALL(l_guardMock, getNextId()).WillOnce(Return(p_id));
+	EXPECT_CALL(*m_idGuardMock, getNextId()).WillOnce(Return(p_id));
 
 	return m_sut.create();
 }
 
 bool EntityPoolTestSuite::removeEntityFromPool(EntityId p_id)
 {
-	auto& l_guardMock = m_sut.getIdGuardMock();
-	EXPECT_CALL(l_guardMock, freeId(p_id));
+	EXPECT_CALL(*m_idGuardMock, freeId(p_id));
 
 	return m_sut.removeEntity(p_id);
 }
@@ -120,8 +119,7 @@ TEST_F(EntityPoolTestSuite, clearShouldRemoveAllData)
 {
 	addEntityToPool(ENTITY_ID_1);
 
-	auto& l_guardMock = m_sut.getIdGuardMock();
-	EXPECT_CALL(l_guardMock, reset());
+	EXPECT_CALL(*m_idGuardMock, reset());
 
 	m_sut.clear();
 
