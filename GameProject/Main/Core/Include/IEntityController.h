@@ -22,11 +22,11 @@ public:
 	virtual bool hasEntity(EntityId p_id) = 0;
 	virtual Entity& getEntity(EntityId p_id) = 0;
 	
-	virtual bool connectSingleComponentToEntity(EntityId p_id, ComponentType p_componentType) = 0;
-	virtual bool disconnectSingleComponentFromEntity(EntityId p_id, ComponentType p_componentType) = 0;
+	virtual bool connectComponentToEntity(EntityId p_id, ComponentType p_componentType) = 0;
+	virtual bool disconnectComponentFromEntity(EntityId p_id, ComponentType p_componentType) = 0;
 
-	virtual bool connectComponentsToEntity(EntityId p_id, const ComponentFlags& p_components) = 0;
-	virtual bool disconnectComponentsFromEntity(EntityId p_id, const ComponentFlags& p_components) = 0;
+	virtual bool connectMultipleComponentsToEntity(EntityId p_id, const ComponentFlags& p_components) = 0;
+	virtual bool disconnectMultipleComponentsFromEntity(EntityId p_id, const ComponentFlags& p_components) = 0;
 };
 
 }

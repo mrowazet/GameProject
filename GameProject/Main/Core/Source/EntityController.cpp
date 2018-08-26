@@ -39,7 +39,7 @@ Entity& EntityController::getEntity(EntityId p_id)
 	return m_pool->getEntity(p_id);
 }
 
-bool EntityController::connectSingleComponentToEntity(EntityId p_id, ComponentType p_componentType)
+bool EntityController::connectComponentToEntity(EntityId p_id, ComponentType p_componentType)
 {
 	auto& l_entity = m_pool->getEntity(p_id);
 	
@@ -58,6 +58,11 @@ bool EntityController::connectSingleComponentToEntity(EntityId p_id, ComponentTy
 
 bool EntityController::isComponentAlreadyAttachedToEntity(Entity& p_entity, ComponentType p_componentType)
 {
+	if (p_entity.components == nullptr)
+	{
+		return false;
+	}
+
 	return p_entity.attachedComponents.isAttached(p_componentType);
 }
 
@@ -87,17 +92,56 @@ ComponentPtr* EntityController::getNextFreePositionForComponent(Entity& p_entity
 	return l_componentPtr;
 }
 
-bool EntityController::disconnectSingleComponentFromEntity(EntityId p_id, ComponentType p_componentType)
+bool EntityController::disconnectComponentFromEntity(EntityId p_id, ComponentType p_componentType)
+{
+	auto& l_entity = m_pool->getEntity(p_id);
+
+	if (isComponentAlreadyAttachedToEntity(l_entity, p_componentType))
+	{
+		detachComponent(l_entity, p_componentType);
+		m_changeDistributor.distributeEntityChange(p_id);
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+void EntityController::detachComponent(Entity& p_entity, ComponentType p_componentType)
+{
+	ComponentPtr* l_componentPtr = &p_entity.components;
+	ComponentPtr* l_previousComponentPtr = &p_entity.components;
+
+	auto& l_component = *l_componentPtr;
+
+	while (l_component != nullptr)
+	{		
+		if (l_component->type == p_componentType)
+		{
+			break;
+		}
+		else
+		{
+			l_previousComponentPtr = l_componentPtr;
+			l_componentPtr = &(*l_componentPtr)->nextComponent;
+		}
+	}
+
+	auto& l_componentToRemove = **l_componentPtr;
+
+	*l_previousComponentPtr = l_componentToRemove.nextComponent;
+
+	m_componentController.removeComponent(l_componentToRemove);
+	p_entity.attachedComponents.flip(p_componentType);
+}
+
+bool EntityController::connectMultipleComponentsToEntity(EntityId p_id, const ComponentFlags& p_components)
 {
 	return false;
 }
 
-bool EntityController::connectComponentsToEntity(EntityId p_id, const ComponentFlags& p_components)
-{
-	return false;
-}
-
-bool EntityController::disconnectComponentsFromEntity(EntityId p_id, const ComponentFlags& p_components)
+bool EntityController::disconnectMultipleComponentsFromEntity(EntityId p_id, const ComponentFlags& p_components)
 {
 	return false;
 }

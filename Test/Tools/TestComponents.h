@@ -24,4 +24,14 @@ namespace testComponents
 
 		const int value = 2;
 	};
+
+	struct ComponentC : public ComponentBase
+	{
+		ComponentC()
+			:ComponentBase(ComponentType::WITH_SI)
+		{
+		}
+
+		const int value = 3;
+	};
 }

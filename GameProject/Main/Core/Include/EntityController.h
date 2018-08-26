@@ -24,11 +24,11 @@ public:
 	bool hasEntity(EntityId p_id) override;
 	Entity& getEntity(EntityId p_id) override;
 
-	bool connectSingleComponentToEntity(EntityId p_id, ComponentType p_componentType) override;
-	bool disconnectSingleComponentFromEntity(EntityId p_id, ComponentType p_componentType) override;
+	bool connectComponentToEntity(EntityId p_id, ComponentType p_componentType) override;
+	bool disconnectComponentFromEntity(EntityId p_id, ComponentType p_componentType) override;
 
-	bool connectComponentsToEntity(EntityId p_id, const ComponentFlags& p_components) override;
-	bool disconnectComponentsFromEntity(EntityId p_id, const ComponentFlags& p_components) override;
+	bool connectMultipleComponentsToEntity(EntityId p_id, const ComponentFlags& p_components) override;
+	bool disconnectMultipleComponentsFromEntity(EntityId p_id, const ComponentFlags& p_components) override;
 
 protected:
 	std::unique_ptr<IEntityPool> m_pool;
@@ -40,6 +40,7 @@ private:
 	void attachComponent(Entity& p_entity, ComponentType p_componentType);
 	void putComponentToNextFreePositionInEntity(Entity& p_entity, ComponentBase& p_component);
 	ComponentPtr* getNextFreePositionForComponent(Entity& p_entity);
+	void detachComponent(Entity& p_entity, ComponentType p_componentType);
 };
 
 }

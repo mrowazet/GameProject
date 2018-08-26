@@ -15,7 +15,8 @@ public:
 	IComponentController() = default;
 	virtual ~IComponentController() = default;
 
-	virtual ComponentBase& createComponent(ComponentType p_component) = 0;
+	virtual ComponentBase& createComponent(ComponentType) = 0;
+	virtual bool removeComponent(ComponentBase&) = 0;
 };
 
 }

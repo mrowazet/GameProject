@@ -10,6 +10,7 @@ class ComponentControllerMock : public IComponentController
 {
 public:
 	MOCK_METHOD1(createComponent, ComponentBase&(ComponentType p_component));
+	MOCK_METHOD1(removeComponent, bool(ComponentBase&));
 };
 
 }
