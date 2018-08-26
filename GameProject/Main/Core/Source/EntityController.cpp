@@ -110,30 +110,24 @@ bool EntityController::disconnectComponentFromEntity(EntityId p_id, ComponentTyp
 
 void EntityController::detachComponent(Entity& p_entity, ComponentType p_componentType)
 {
-	ComponentPtr* l_componentPtr = &p_entity.components;
-	ComponentPtr* l_previousComponentPtr = &p_entity.components;
+	p_entity.attachedComponents.flip(p_componentType);
 
-	auto& l_component = *l_componentPtr;
+	ComponentPtr* l_ptrToComponentPtr = &p_entity.components;
 
-	while (l_component != nullptr)
-	{		
-		if (l_component->type == p_componentType)
+	while(*l_ptrToComponentPtr != nullptr)
+	{
+		auto& l_component = **l_ptrToComponentPtr;
+		if (l_component.type == p_componentType)
 		{
+			*l_ptrToComponentPtr = &*l_component.nextComponent;
+			m_componentController.removeComponent(l_component);
 			break;
 		}
 		else
 		{
-			l_previousComponentPtr = l_componentPtr;
-			l_componentPtr = &(*l_componentPtr)->nextComponent;
+			l_ptrToComponentPtr = &l_component.nextComponent;
 		}
 	}
-
-	auto& l_componentToRemove = **l_componentPtr;
-
-	*l_previousComponentPtr = l_componentToRemove.nextComponent;
-
-	m_componentController.removeComponent(l_componentToRemove);
-	p_entity.attachedComponents.flip(p_componentType);
 }
 
 bool EntityController::connectMultipleComponentsToEntity(EntityId p_id, const ComponentFlags& p_components)
