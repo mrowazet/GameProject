@@ -9,6 +9,8 @@
 #include "EntityPoolMock.h"
 #include "ComponentTypes.h"
 #include "UniquePtrMockWrapper.h"
+#include "ComponentAttacherMock.h"
+#include "ComponentDetacherMock.h"
 
 using namespace testing;
 using namespace testTool;
@@ -106,7 +108,9 @@ protected:
 	Entity m_entity;
 	StrictMock<ComponentControllerMock> m_componentControllerMock;
 	StrictMock<EntityChangeDistributorMock> m_changeDistributorMock;
-	UniquePtrMockWrapper<StrictMock<EntityPoolMock>> m_entityPoolMock;
+	UniqueStrictMock<EntityPoolMock> m_entityPoolMock;
+	UniqueStrictMock<ComponentAttacherMock> m_componentAttacherMock;
+	UniqueStrictMock<ComponentDetacherMock> m_componentDetacherMock;
 
 	EntityController m_sut;
 };
@@ -141,13 +145,13 @@ TEST_F(EntityControllerTestSuite, shouldCallPoolToCheckIfEntityWithIdExist)
 	m_sut.hasEntity(ENTITY_ID);
 }
 
-TEST_F(EntityControllerTestSuite, shouldCreateComponentWhenConnectComponentToIdToEntityCalled)
+TEST_F(EntityControllerTestSuite, shouldCreateComponentWhenConnectComponentToIdToEntityCalled) //update needed
 {
 	expectConnectComponent(COMPONENT_A);
 	EXPECT_TRUE(m_sut.connectComponentToEntity(ENTITY_ID, COMPONENT_A.type));
 }
 
-TEST_F(EntityControllerTestSuite, shouldNotCallComponentControllerIfMentionedComponentIsAlreadyConnectedWhenConnectComponentCalled)
+TEST_F(EntityControllerTestSuite, shouldNotCallComponentControllerIfMentionedComponentIsAlreadyConnectedWhenConnectComponentCalled) //skipped update?
 {
 	connectComponent(COMPONENT_A);
 
@@ -156,7 +160,7 @@ TEST_F(EntityControllerTestSuite, shouldNotCallComponentControllerIfMentionedCom
 	EXPECT_FALSE(m_sut.connectComponentToEntity(ENTITY_ID, COMPONENT_A.type));
 }
 
-TEST_F(EntityControllerTestSuite, shouldConfigureEntityWhenComponentIsAdding)
+TEST_F(EntityControllerTestSuite, shouldConfigureEntityWhenComponentIsAdding) //ok
 {
 	connectComponent(COMPONENT_A);
 
@@ -164,7 +168,7 @@ TEST_F(EntityControllerTestSuite, shouldConfigureEntityWhenComponentIsAdding)
 	checkNumberOfConnectedComponents(ONE_COMPONENT);
 }
 
-TEST_F(EntityControllerTestSuite, shouldCorrectlyAddComponentToEntityIfAnotherOneIsAlreadyConnected)
+TEST_F(EntityControllerTestSuite, shouldCorrectlyAddComponentToEntityIfAnotherOneIsAlreadyConnected) //ok
 {
 	connectComponent(COMPONENT_A);
 	connectComponent(COMPONENT_B);
@@ -174,7 +178,7 @@ TEST_F(EntityControllerTestSuite, shouldCorrectlyAddComponentToEntityIfAnotherOn
 	checkNumberOfConnectedComponents(TWO_COMPONENTS);
 }
 
-TEST_F(EntityControllerTestSuite, shouldRetrunFalseIfComponentIsAlreadyConnected)
+TEST_F(EntityControllerTestSuite, shouldRetrunFalseIfComponentIsAlreadyConnected) //ok
 {
 	connectComponent(COMPONENT_A);
 	EXPECT_CALL(*m_entityPoolMock, getEntity(ENTITY_ID)).WillOnce(ReturnRef(m_entity));
@@ -183,7 +187,7 @@ TEST_F(EntityControllerTestSuite, shouldRetrunFalseIfComponentIsAlreadyConnected
 	checkNumberOfConnectedComponents(ONE_COMPONENT);
 }
 
-TEST_F(EntityControllerTestSuite, shouldReturnFalseIfComponentIsAlreadyDisconnected)
+TEST_F(EntityControllerTestSuite, shouldReturnFalseIfComponentIsAlreadyDisconnected) //ok
 {
 	EXPECT_CALL(*m_entityPoolMock, getEntity(ENTITY_ID)).WillOnce(ReturnRef(m_entity));
 
@@ -191,7 +195,7 @@ TEST_F(EntityControllerTestSuite, shouldReturnFalseIfComponentIsAlreadyDisconnec
 	checkNumberOfConnectedComponents(ZERO_COMPONENTS);
 }
 
-TEST_F(EntityControllerTestSuite, shouldCorrectlyDisconnectComponentFromEntityWhenLastComponentRemoved)
+TEST_F(EntityControllerTestSuite, shouldCorrectlyDisconnectComponentFromEntityWhenLastComponentRemoved) //ok
 {
 	connectComponent(COMPONENT_A);
 	disconnectComponent(COMPONENT_A);
@@ -199,7 +203,7 @@ TEST_F(EntityControllerTestSuite, shouldCorrectlyDisconnectComponentFromEntityWh
 	EXPECT_THAT(m_entity.components, IsNull());
 }
 
-TEST_F(EntityControllerTestSuite, shouldCorrectlyDisconnectFirstComponentInTheMiddleFromEntity)
+TEST_F(EntityControllerTestSuite, shouldCorrectlyDisconnectFirstComponentInTheMiddleFromEntity) //ok
 {
 	connectComponent(COMPONENT_A);
 	connectComponent(COMPONENT_B);
@@ -210,7 +214,7 @@ TEST_F(EntityControllerTestSuite, shouldCorrectlyDisconnectFirstComponentInTheMi
 	checkNumberOfConnectedComponents(ONE_COMPONENT);
 }
 
-TEST_F(EntityControllerTestSuite, shouldCorrectlyDisconnectComponentInTheMiddleFromEntity)
+TEST_F(EntityControllerTestSuite, shouldCorrectlyDisconnectComponentInTheMiddleFromEntity) //ok
 {
 	connectComponent(COMPONENT_A);
 	connectComponent(COMPONENT_B);
@@ -227,7 +231,7 @@ TEST_F(EntityControllerTestSuite, shouldCorrectlyDisconnectComponentInTheMiddleF
 	checkNumberOfConnectedComponents(TWO_COMPONENTS);
 }
 
-TEST_F(EntityControllerTestSuite, shouldCorrectlyDisconnectLastComponentFromEntity)
+TEST_F(EntityControllerTestSuite, shouldCorrectlyDisconnectLastComponentFromEntity) //ok
 {
 	connectComponent(COMPONENT_A);
 	connectComponent(COMPONENT_B);

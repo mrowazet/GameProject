@@ -58,6 +58,12 @@
     <ClCompile Include="Main\Core\MemoryMgmt\Source\EntityPool.cpp">
       <Filter>Core\MemoryMgmt\Source</Filter>
     </ClCompile>
+    <ClCompile Include="Main\Core\Source\ComponentAttacher.cpp">
+      <Filter>Core\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Main\Core\Source\ComponentDetacher.cpp">
+      <Filter>Core\Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Main\Modules\DevTestModule\Include\DevTestClass.hpp">
@@ -140,6 +146,18 @@
     </ClInclude>
     <ClInclude Include="Main\Core\MemoryMgmt\Include\IEntityPool.h">
       <Filter>Core\MemoryMgmt\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Main\Core\Include\IComponentAttacher.h">
+      <Filter>Core\Include\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Main\Core\Include\ComponentAttacher.h">
+      <Filter>Core\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Main\Core\Include\IComponentDetacher.h">
+      <Filter>Core\Include\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Main\Core\Include\ComponentDetacher.h">
+      <Filter>Core\Include</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

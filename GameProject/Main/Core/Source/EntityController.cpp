@@ -82,14 +82,14 @@ void EntityController::putComponentToNextFreePositionInEntity(Entity& p_entity, 
 
 ComponentPtr* EntityController::getNextFreePositionForComponent(Entity& p_entity)
 {
-	ComponentPtr* l_componentPtr = &p_entity.components;
+	ComponentPtr* l_ptrToComponentPosition = &p_entity.components;
 
-	while (*l_componentPtr != nullptr)
+	while (*l_ptrToComponentPosition != nullptr)
 	{
-		l_componentPtr = &(*l_componentPtr)->nextComponent;
+		l_ptrToComponentPosition = &(*l_ptrToComponentPosition)->nextComponent;
 	}
 
-	return l_componentPtr;
+	return l_ptrToComponentPosition;
 }
 
 bool EntityController::disconnectComponentFromEntity(EntityId p_id, ComponentType p_componentType)
@@ -112,20 +112,20 @@ void EntityController::detachComponent(Entity& p_entity, ComponentType p_compone
 {
 	p_entity.attachedComponents.flip(p_componentType);
 
-	ComponentPtr* l_ptrToComponentPtr = &p_entity.components;
+	ComponentPtr* l_ptrToComponentPosition = &p_entity.components;
 
-	while(*l_ptrToComponentPtr != nullptr)
+	while(*l_ptrToComponentPosition != nullptr)
 	{
-		auto& l_component = **l_ptrToComponentPtr;
+		auto& l_component = **l_ptrToComponentPosition;
 		if (l_component.type == p_componentType)
 		{
-			*l_ptrToComponentPtr = &(*l_component.nextComponent);
+			*l_ptrToComponentPosition = &(*l_component.nextComponent);
 			m_componentController.removeComponent(l_component);
 			break;
 		}
 		else
 		{
-			l_ptrToComponentPtr = &l_component.nextComponent;
+			l_ptrToComponentPosition = &l_component.nextComponent;
 		}
 	}
 }

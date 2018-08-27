@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>
+#include <gmock\gmock.h>
 #include "assert.h"
 
 namespace testTool
@@ -32,5 +33,7 @@ private:
 
 };
 
+template<typename Mock>
+using UniqueStrictMock = UniquePtrMockWrapper<testing::StrictMock<Mock>>;
 
 }
