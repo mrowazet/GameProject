@@ -27,8 +27,8 @@ namespace
 
 	const u32 ITER_OFFSET		= 2u;
 
-	constexpr unsigned int ALIGNMENT1024 = 1024u;
-	struct alignas(ALIGNMENT1024) Aligned1024 
+	constexpr unsigned int ALIGNMENT4096 = 4096u;
+	struct alignas(ALIGNMENT4096) Aligned4096 
 	{
 	};
 }
@@ -303,7 +303,7 @@ TEST_F(PoolTestSuite, CanForwardArgumentsToCtorWhenAllocate)
 
 TEST_F(PoolTestSuite, ShouldDeathIfDataNotAligned)
 {
-	EXPECT_DEATH(ContinuousPool<Aligned1024> l_pool(POOL_SIZE), "");
+	EXPECT_DEATH(ContinuousPool<Aligned4096> l_pool(POOL_SIZE), "");
 }
 
 TEST_F(PoolTestSuite, ShuldDeathIfDataSizeTooSmall)

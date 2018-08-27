@@ -119,7 +119,7 @@ void EntityController::detachComponent(Entity& p_entity, ComponentType p_compone
 		auto& l_component = **l_ptrToComponentPtr;
 		if (l_component.type == p_componentType)
 		{
-			*l_ptrToComponentPtr = &*l_component.nextComponent;
+			*l_ptrToComponentPtr = &(*l_component.nextComponent);
 			m_componentController.removeComponent(l_component);
 			break;
 		}
