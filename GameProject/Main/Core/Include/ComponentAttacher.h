@@ -14,10 +14,10 @@ public:
 private:
 	IComponentController& m_componentController;
 
-	bool isComponentAlreadyAttached(Entity&, ComponentType);
+	bool isComponentAlreadyAttached(Entity&, ComponentType) const;
 	void ComponentAttacher::attachComponentToEntity(Entity&, ComponentType);
-	void ComponentAttacher::addComponentToNextFreePositionInEntity(Entity&, ComponentBase&);
-	ComponentPtr* ComponentAttacher::getNextFreePositionForComponent(Entity&);
+	void ComponentAttacher::attachToNextFreePosition(Entity&, ComponentBase&);
+	ComponentPtr* ComponentAttacher::getNextFreeComponentPosition(Entity&);
 };
 
 }

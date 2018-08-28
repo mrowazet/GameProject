@@ -14,6 +14,7 @@ bool ComponentDetacher::detachComponent(Entity& p_entity, ComponentType p_compon
 	{
 		detachComponentFromEntity(p_entity, p_componentType);
 		p_entity.attachedComponents.flip(p_componentType);
+
 		return true;
 	}
 	else
@@ -22,13 +23,8 @@ bool ComponentDetacher::detachComponent(Entity& p_entity, ComponentType p_compon
 	}
 }
 
-bool ComponentDetacher::isComponentAlreadyAttached(Entity& p_entity, ComponentType p_componentType)
+bool ComponentDetacher::isComponentAlreadyAttached(Entity& p_entity, ComponentType p_componentType) const
 {
-	if (p_entity.components == nullptr)
-	{
-		return false;
-	}
-
 	return p_entity.attachedComponents.isAttached(p_componentType);
 }
 

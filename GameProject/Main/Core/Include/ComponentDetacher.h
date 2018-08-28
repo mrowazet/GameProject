@@ -14,7 +14,7 @@ public:
 private:
 	IComponentController& m_componentController;
 
-	bool isComponentAlreadyAttached(Entity&, ComponentType);
+	bool isComponentAlreadyAttached(Entity&, ComponentType) const;
 	void detachComponentFromEntity(Entity&, ComponentType);
 };
 

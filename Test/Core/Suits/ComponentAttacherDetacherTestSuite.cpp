@@ -10,16 +10,10 @@ using namespace testing;
 using namespace engine;
 using namespace testComponents;
 
-namespace //check for unused!
+namespace
 {
 
-constexpr bool ID_EXIST = true;
-constexpr bool ID_NOT_EXIST = false;
 constexpr bool REMOVED = true;
-constexpr bool COMPONENT_CONNECTED = true;
-
-constexpr EntityId ENTITY_ID = 1u;
-
 constexpr u32 ZERO_COMPONENTS = 0u;
 constexpr u32 ONE_COMPONENT = 1u;
 constexpr u32 TWO_COMPONENTS = 2u;
@@ -35,37 +29,27 @@ public:
 		EXPECT_THAT(m_entity.components, IsNull());
 	}
 
-	void expectCreateComponent(ComponentBase& p_component)
-	{
-		EXPECT_CALL(m_componentControllerMock, createComponent(p_component.type)).WillOnce(ReturnRef(p_component));
-	}
-
-	void expectRemoveComponent(ComponentBase& p_component)
-	{
-		EXPECT_CALL(m_componentControllerMock, removeComponent(Ref(p_component))).WillOnce(Return(REMOVED));
-	}
-
 	void checkComponentConnectedAsFirst(ComponentBase& p_component)
 	{
-		checkComponentBitIsSet(p_component);
+		EXPECT_TRUE(isComponentBitIsSet(p_component));
 		EXPECT_EQ(m_entity.components, &p_component);
 	}
 
 	void checkComponentConnectedAsSecond(ComponentBase& p_component)
 	{
-		checkComponentBitIsSet(p_component);
+		EXPECT_TRUE(isComponentBitIsSet(p_component));
 		EXPECT_EQ(m_entity.components->nextComponent, &p_component);
 	}
 
 	void checkComponentConnectedAsThird(ComponentBase& p_component)
 	{
-		checkComponentBitIsSet(p_component);
+		EXPECT_TRUE(isComponentBitIsSet(p_component));
 		EXPECT_EQ(m_entity.components->nextComponent->nextComponent, &p_component);
 	}
 
-	void checkComponentBitIsSet(ComponentBase& p_component)
+	bool isComponentBitIsSet(ComponentBase& p_component)
 	{
-		EXPECT_TRUE(m_entity.attachedComponents.isAttached(p_component.type));
+		return m_entity.attachedComponents.isAttached(p_component.type);
 	}
 
 	void checkNumberOfConnectedComponents(u32 p_nrOfComponents)
@@ -90,20 +74,31 @@ public:
 		ComponentAttacherDetacherBaseTestSuite::SetUp();
 	}
 
+	void expectCreateComponent(ComponentBase& p_component)
+	{
+		EXPECT_CALL(m_componentControllerMock, createComponent(p_component.type)).WillOnce(ReturnRef(p_component));
+	}
+
+	void attachComponent(ComponentBase& p_component)
+	{
+		expectCreateComponent(p_component);
+		m_sut.attachComponent(m_entity, p_component.type);
+	}
+
 protected:
 	ComponentAttacher m_sut{ m_componentControllerMock };
+
 };
 
 TEST_F(ComponentAttacherTestSuite, shouldCallCreateComponentAndReturnTrueWhenAttachingComponent)
 {
 	expectCreateComponent(COMPONENT_A);
-	m_sut.attachComponent(m_entity, COMPONENT_A.type);
+	EXPECT_TRUE(m_sut.attachComponent(m_entity, COMPONENT_A.type));
 }
 
 TEST_F(ComponentAttacherTestSuite, shouldConfigureEntityWhenComponentIsAttaching)
 {
-	expectCreateComponent(COMPONENT_A);
-	m_sut.attachComponent(m_entity, COMPONENT_A.type);
+	attachComponent(COMPONENT_A);
 
 	checkComponentConnectedAsFirst(COMPONENT_A);
 	checkNumberOfConnectedComponents(ONE_COMPONENT);
@@ -111,11 +106,8 @@ TEST_F(ComponentAttacherTestSuite, shouldConfigureEntityWhenComponentIsAttaching
 
 TEST_F(ComponentAttacherTestSuite, shouldConfigureEntityCorrectlyWhenComponentIsAttachingWhenAnotherComponentIsAlreadyCreated)
 {
-	expectCreateComponent(COMPONENT_A);
-	m_sut.attachComponent(m_entity, COMPONENT_A.type);
-
-	expectCreateComponent(COMPONENT_B);
-	m_sut.attachComponent(m_entity, COMPONENT_B.type);
+	attachComponent(COMPONENT_A);
+	attachComponent(COMPONENT_B);
 
 	checkComponentConnectedAsFirst(COMPONENT_A);
 	checkComponentConnectedAsSecond(COMPONENT_B);
@@ -125,8 +117,7 @@ TEST_F(ComponentAttacherTestSuite, shouldConfigureEntityCorrectlyWhenComponentIs
 
 TEST_F(ComponentAttacherTestSuite, shouldRetrunFalseIfComponentIsAlreadyAttached)
 {
-	expectCreateComponent(COMPONENT_A);
-	m_sut.attachComponent(m_entity, COMPONENT_A.type);
+	attachComponent(COMPONENT_A);
 
 	EXPECT_FALSE(m_sut.attachComponent(m_entity, COMPONENT_A.type));
 	checkNumberOfConnectedComponents(ONE_COMPONENT);
@@ -138,6 +129,33 @@ public:
 	void SetUp() override
 	{
 		ComponentAttacherDetacherBaseTestSuite::SetUp();
+	}
+
+	void addOneComponent()
+	{
+		addComponentToEntity(COMPONENT_A);
+		checkComponentConnectedAsFirst(COMPONENT_A);
+	}
+
+	void addTwoComponents()
+	{
+		addComponentToEntity(COMPONENT_A);
+		checkComponentConnectedAsFirst(COMPONENT_A);
+
+		addComponentToComponentA(COMPONENT_B);
+		checkComponentConnectedAsSecond(COMPONENT_B);
+	}
+
+	void addThreeComponents()
+	{
+		addComponentToEntity(COMPONENT_A);
+		checkComponentConnectedAsFirst(COMPONENT_A);
+
+		addComponentToComponentA(COMPONENT_B);
+		checkComponentConnectedAsSecond(COMPONENT_B);
+
+		addComponentToComponentB(COMPONENT_C);
+		checkComponentConnectedAsThird(COMPONENT_C);
 	}
 
 	void addComponentToEntity(ComponentBase& p_component)
@@ -158,6 +176,18 @@ public:
 		m_entity.attachedComponents.flip(p_component.type);
 	}
 
+	void expectRemoveComponent(ComponentBase& p_component)
+	{
+		EXPECT_CALL(m_componentControllerMock, removeComponent(Ref(p_component))).WillOnce(Return(REMOVED));
+	}
+
+	void detachComponent(ComponentBase& p_component)
+	{
+		expectRemoveComponent(p_component);
+		m_sut.detachComponent(m_entity, p_component.type);
+		EXPECT_FALSE(isComponentBitIsSet(p_component));
+	}
+
 protected:
 	ComponentDetacher m_sut{ m_componentControllerMock };
 };
@@ -170,10 +200,9 @@ TEST_F(ComponentDetacherTestSuite, shouldReturnFalseIfComponentIsAlreadyDetached
 
 TEST_F(ComponentDetacherTestSuite, shouldCorrectlyDetachComponentFromEntityWhenLastComponentRemoved)
 {
-	addComponentToEntity(COMPONENT_A);
+	addOneComponent();
 
-	expectRemoveComponent(COMPONENT_A);
-	m_sut.detachComponent(m_entity, COMPONENT_A.type);
+	detachComponent(COMPONENT_A);
 
 	checkNumberOfConnectedComponents(ZERO_COMPONENTS);
 	EXPECT_THAT(m_entity.components, IsNull());
@@ -181,11 +210,9 @@ TEST_F(ComponentDetacherTestSuite, shouldCorrectlyDetachComponentFromEntityWhenL
 
 TEST_F(ComponentDetacherTestSuite, shouldCorrectlyDisconnectFirstComponentInTheMiddleFromEntity)
 {
-	addComponentToEntity(COMPONENT_A);
-	addComponentToComponentA(COMPONENT_B);
+	addTwoComponents();
 
-	expectRemoveComponent(COMPONENT_A);
-	m_sut.detachComponent(m_entity, COMPONENT_A.type);
+	detachComponent(COMPONENT_A);
 
 	checkComponentConnectedAsFirst(COMPONENT_B);
 	checkNumberOfConnectedComponents(ONE_COMPONENT);
@@ -193,16 +220,9 @@ TEST_F(ComponentDetacherTestSuite, shouldCorrectlyDisconnectFirstComponentInTheM
 
 TEST_F(ComponentDetacherTestSuite, shouldCorrectlyDetachComponentInTheMiddleFromEntity)
 {
-	addComponentToEntity(COMPONENT_A);
-	addComponentToComponentA(COMPONENT_B);
-	addComponentToComponentB(COMPONENT_C);
+	addThreeComponents();
 
-	checkComponentConnectedAsFirst(COMPONENT_A);
-	checkComponentConnectedAsSecond(COMPONENT_B);
-	checkComponentConnectedAsThird(COMPONENT_C);
-
-	expectRemoveComponent(COMPONENT_B);
-	m_sut.detachComponent(m_entity, COMPONENT_B.type);
+	detachComponent(COMPONENT_B);
 
 	checkComponentConnectedAsFirst(COMPONENT_A);
 	checkComponentConnectedAsSecond(COMPONENT_C);
@@ -211,11 +231,9 @@ TEST_F(ComponentDetacherTestSuite, shouldCorrectlyDetachComponentInTheMiddleFrom
 
 TEST_F(ComponentDetacherTestSuite, shouldCorrectlyDetachLastComponentFromEntity)
 {
-	addComponentToEntity(COMPONENT_A);
-	addComponentToComponentA(COMPONENT_B);
+	addTwoComponents();
 
-	expectRemoveComponent(COMPONENT_B);
-	m_sut.detachComponent(m_entity, COMPONENT_B.type);
+	detachComponent(COMPONENT_B);
 
 	checkComponentConnectedAsFirst(COMPONENT_A);
 	checkNumberOfConnectedComponents(ONE_COMPONENT);
