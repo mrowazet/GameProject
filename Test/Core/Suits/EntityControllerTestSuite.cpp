@@ -20,9 +20,7 @@ using namespace testComponents;
 namespace
 {
 constexpr bool ATTACHED = true;
-constexpr bool NOT_ATTACHED = false;
 constexpr bool DETACHED = true;
-constexpr bool NOT_DETACHED = false;
 constexpr bool REMOVED = false;
 constexpr EntityId ENTITY_ID = 1u;
 }
@@ -88,7 +86,7 @@ TEST_F(EntityControllerTestSuite, createEntityShouldCreateElementInPoolAndReturn
 
 TEST_F(EntityControllerTestSuite, removeEntityShouldRemoveElementFromPool)
 {
-	EXPECT_CALL(*m_entityPoolMock, removeEntity(ENTITY_ID)).WillOnce(Return(REMOVED));
+	EXPECT_CALL(*m_entityPoolMock, removeEntity(ENTITY_ID)).WillOnce(Return(not REMOVED));
 
 	m_sut.removeEntity(ENTITY_ID);
 }
@@ -120,7 +118,7 @@ TEST_F(EntityControllerTestSuite, shouldReturnTrueAndDistributeChangeIfComponent
 TEST_F(EntityControllerTestSuite, shouldReturnFalseIfComponentNotCorrectlyCreated)
 {
 	expectGetEntityFromPool();
-	expectAttachComponent(NOT_ATTACHED);
+	expectAttachComponent(not ATTACHED);
 
 	EXPECT_FALSE(connectComponent());
 }
@@ -137,7 +135,7 @@ TEST_F(EntityControllerTestSuite, shouldReturnTrueAndDistributeChangeIfComponent
 TEST_F(EntityControllerTestSuite, shouldReturnFalseIfComponentNotCorrectlyRemoved)
 {
 	expectGetEntityFromPool();
-	expectDetachComponent(NOT_DETACHED);
+	expectDetachComponent(not DETACHED);
 
 	EXPECT_FALSE(disconnectComponent());
 }
