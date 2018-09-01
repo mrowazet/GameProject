@@ -15,98 +15,61 @@
 using namespace testing;
 using namespace testTool;
 using namespace engine;
+using namespace testComponents;
 
 namespace
 {
-constexpr bool ID_EXIST = true;
-constexpr bool ID_NOT_EXIST = false;
-constexpr bool REMOVED = true;
-constexpr bool COMPONENT_CONNECTED = true;
-
+constexpr bool ATTACHED = true;
+constexpr bool NOT_ATTACHED = false;
+constexpr bool DETACHED = true;
+constexpr bool NOT_DETACHED = false;
+constexpr bool REMOVED = false;
 constexpr EntityId ENTITY_ID = 1u;
-
-constexpr u32 ZERO_COMPONENTS = 0u;
-constexpr u32 ONE_COMPONENT = 1u;
-constexpr u32 TWO_COMPONENTS = 2u;
 }
-
 
 class EntityControllerTestSuite : public Test
 {
 public:
 	EntityControllerTestSuite()
 		: m_entity(ENTITY_ID),
-		  m_sut(m_entityPoolMock.getPtr(), m_componentControllerMock, m_changeDistributorMock)
+		  m_sut(m_entityPoolMock.getPtr(), m_componentAttacherMock.getPtr(), m_componentDetacherMock.getPtr(), m_changeDistributorMock)
 	{
 	}
 
-	void SetUp() override
+	void expectDistributeChange()
 	{
-		EXPECT_FALSE(m_entity.attachedComponents.hasAny());
-		EXPECT_THAT(m_entity.components, IsNull());
-	}
-
-	void connectComponent(ComponentBase& p_component)
-	{
-		expectConnectComponent(p_component);
-		m_sut.connectComponentToEntity(ENTITY_ID, p_component.type);
-	}
-
-	void expectConnectComponent(ComponentBase& p_component)
-	{
-		EXPECT_CALL(*m_entityPoolMock, getEntity(ENTITY_ID)).WillOnce(ReturnRef(m_entity));
-		EXPECT_CALL(m_componentControllerMock, createComponent(p_component.type)).WillOnce(ReturnRef(p_component));
 		EXPECT_CALL(m_changeDistributorMock, distributeEntityChange(ENTITY_ID));
 	}
 
-	void disconnectComponent(ComponentBase& p_component)
-	{
-		expectDisconnectComponent(p_component);
-		m_sut.disconnectComponentFromEntity(ENTITY_ID, p_component.type);
-	}
-
-	void expectDisconnectComponent(ComponentBase& p_component)
+	void expectGetEntityFromPool()
 	{
 		EXPECT_CALL(*m_entityPoolMock, getEntity(ENTITY_ID)).WillOnce(ReturnRef(m_entity));
-		EXPECT_CALL(m_componentControllerMock, removeComponent(Ref(p_component))).WillOnce(Return(REMOVED));
-		EXPECT_CALL(m_changeDistributorMock, distributeEntityChange(ENTITY_ID));
 	}
 
-	void checkComponentConnectedAsFirst(ComponentBase& p_component)
+	void expectAttachComponent(const bool p_result)
 	{
-		checkComponentBitIsSet(p_component);
-		EXPECT_EQ(m_entity.components, &p_component);
+		EXPECT_CALL(*m_componentAttacherMock, attachComponent(Ref(m_entity), COMPONENT.type)).WillOnce(Return(p_result));
 	}
 
-	void checkComponentConnectedAsSecond(ComponentBase& p_component)
+	void expectDetachComponent(const bool p_result)
 	{
-		checkComponentBitIsSet(p_component);
-		EXPECT_EQ(m_entity.components->nextComponent, &p_component);
+		EXPECT_CALL(*m_componentDetacherMock, detachComponent(Ref(m_entity), COMPONENT.type)).WillOnce(Return(p_result));
 	}
 
-	void checkComponentConnectedAsThird(ComponentBase& p_component)
+	bool connectComponent()
 	{
-		checkComponentBitIsSet(p_component);
-		EXPECT_EQ(m_entity.components->nextComponent->nextComponent, &p_component);
+		return m_sut.connectComponentToEntity(ENTITY_ID, COMPONENT.type);
 	}
 
-	void checkComponentBitIsSet(ComponentBase& p_component)
+	bool  disconnectComponent()
 	{
-		EXPECT_TRUE(m_entity.attachedComponents.isAttached(p_component.type));
-	}
-
-	void checkNumberOfConnectedComponents(u32 p_nrOfComponents)
-	{
-		EXPECT_EQ(p_nrOfComponents, m_entity.attachedComponents.getNumOfSetComponents());
+		return m_sut.disconnectComponentFromEntity(ENTITY_ID, COMPONENT.type);
 	}
 
 protected:
-	testComponents::ComponentA COMPONENT_A;
-	testComponents::ComponentB COMPONENT_B;
-	testComponents::ComponentC COMPONENT_C;
+	testComponents::ComponentA COMPONENT;
 
 	Entity m_entity;
-	StrictMock<ComponentControllerMock> m_componentControllerMock;
 	StrictMock<EntityChangeDistributorMock> m_changeDistributorMock;
 	UniqueStrictMock<EntityPoolMock> m_entityPoolMock;
 	UniqueStrictMock<ComponentAttacherMock> m_componentAttacherMock;
@@ -132,7 +95,7 @@ TEST_F(EntityControllerTestSuite, removeEntityShouldRemoveElementFromPool)
 
 TEST_F(EntityControllerTestSuite, getEntityShouldReturnRefToEntityFromPool)
 {
-	EXPECT_CALL(*m_entityPoolMock, getEntity(ENTITY_ID)).WillOnce(ReturnRef(m_entity));
+	expectGetEntityFromPool();
 
 	auto& l_returnedEntity = m_sut.getEntity(ENTITY_ID);
 	EXPECT_EQ(&m_entity, &l_returnedEntity);
@@ -145,100 +108,38 @@ TEST_F(EntityControllerTestSuite, shouldCallPoolToCheckIfEntityWithIdExist)
 	m_sut.hasEntity(ENTITY_ID);
 }
 
-TEST_F(EntityControllerTestSuite, shouldCreateComponentWhenConnectComponentToIdToEntityCalled) //update needed
+TEST_F(EntityControllerTestSuite, shouldReturnTrueAndDistributeChangeIfComponentCorrectlyCreated) 
 {
-	expectConnectComponent(COMPONENT_A);
-	EXPECT_TRUE(m_sut.connectComponentToEntity(ENTITY_ID, COMPONENT_A.type));
+	expectGetEntityFromPool();
+	expectAttachComponent(ATTACHED);
+	expectDistributeChange();
+
+	EXPECT_TRUE(connectComponent());
 }
 
-TEST_F(EntityControllerTestSuite, shouldNotCallComponentControllerIfMentionedComponentIsAlreadyConnectedWhenConnectComponentCalled) //skipped update?
+TEST_F(EntityControllerTestSuite, shouldReturnFalseIfComponentNotCorrectlyCreated)
 {
-	connectComponent(COMPONENT_A);
+	expectGetEntityFromPool();
+	expectAttachComponent(NOT_ATTACHED);
 
-	EXPECT_CALL(*m_entityPoolMock, getEntity(ENTITY_ID)).WillOnce(ReturnRef(m_entity));
-
-	EXPECT_FALSE(m_sut.connectComponentToEntity(ENTITY_ID, COMPONENT_A.type));
+	EXPECT_FALSE(connectComponent());
 }
 
-TEST_F(EntityControllerTestSuite, shouldConfigureEntityWhenComponentIsAdding) //ok
+TEST_F(EntityControllerTestSuite, shouldReturnTrueAndDistributeChangeIfComponentCorrectlyRemoved)
 {
-	connectComponent(COMPONENT_A);
+	expectGetEntityFromPool();
+	expectDetachComponent(DETACHED);
+	expectDistributeChange();
 
-	checkComponentConnectedAsFirst(COMPONENT_A);
-	checkNumberOfConnectedComponents(ONE_COMPONENT);
+	EXPECT_TRUE(disconnectComponent());
 }
 
-TEST_F(EntityControllerTestSuite, shouldCorrectlyAddComponentToEntityIfAnotherOneIsAlreadyConnected) //ok
+TEST_F(EntityControllerTestSuite, shouldReturnFalseIfComponentNotCorrectlyRemoved)
 {
-	connectComponent(COMPONENT_A);
-	connectComponent(COMPONENT_B);
+	expectGetEntityFromPool();
+	expectDetachComponent(NOT_DETACHED);
 
-	checkComponentConnectedAsFirst(COMPONENT_A);
-	checkComponentConnectedAsSecond(COMPONENT_B);
-	checkNumberOfConnectedComponents(TWO_COMPONENTS);
+	EXPECT_FALSE(disconnectComponent());
 }
 
-TEST_F(EntityControllerTestSuite, shouldRetrunFalseIfComponentIsAlreadyConnected) //ok
-{
-	connectComponent(COMPONENT_A);
-	EXPECT_CALL(*m_entityPoolMock, getEntity(ENTITY_ID)).WillOnce(ReturnRef(m_entity));
 
-	EXPECT_FALSE(m_sut.connectComponentToEntity(ENTITY_ID, COMPONENT_A.type));
-	checkNumberOfConnectedComponents(ONE_COMPONENT);
-}
-
-TEST_F(EntityControllerTestSuite, shouldReturnFalseIfComponentIsAlreadyDisconnected) //ok
-{
-	EXPECT_CALL(*m_entityPoolMock, getEntity(ENTITY_ID)).WillOnce(ReturnRef(m_entity));
-
-	EXPECT_FALSE(m_sut.disconnectComponentFromEntity(ENTITY_ID, COMPONENT_A.type));
-	checkNumberOfConnectedComponents(ZERO_COMPONENTS);
-}
-
-TEST_F(EntityControllerTestSuite, shouldCorrectlyDisconnectComponentFromEntityWhenLastComponentRemoved) //ok
-{
-	connectComponent(COMPONENT_A);
-	disconnectComponent(COMPONENT_A);
-	checkNumberOfConnectedComponents(ZERO_COMPONENTS);
-	EXPECT_THAT(m_entity.components, IsNull());
-}
-
-TEST_F(EntityControllerTestSuite, shouldCorrectlyDisconnectFirstComponentInTheMiddleFromEntity) //ok
-{
-	connectComponent(COMPONENT_A);
-	connectComponent(COMPONENT_B);
-
-	disconnectComponent(COMPONENT_A);
-
-	checkComponentConnectedAsFirst(COMPONENT_B);
-	checkNumberOfConnectedComponents(ONE_COMPONENT);
-}
-
-TEST_F(EntityControllerTestSuite, shouldCorrectlyDisconnectComponentInTheMiddleFromEntity) //ok
-{
-	connectComponent(COMPONENT_A);
-	connectComponent(COMPONENT_B);
-	connectComponent(COMPONENT_C);
-
-	checkComponentConnectedAsFirst(COMPONENT_A);
-	checkComponentConnectedAsSecond(COMPONENT_B);
-	checkComponentConnectedAsThird(COMPONENT_C);
-
-	disconnectComponent(COMPONENT_B);
-
-	checkComponentConnectedAsFirst(COMPONENT_A);
-	checkComponentConnectedAsSecond(COMPONENT_C);
-	checkNumberOfConnectedComponents(TWO_COMPONENTS);
-}
-
-TEST_F(EntityControllerTestSuite, shouldCorrectlyDisconnectLastComponentFromEntity) //ok
-{
-	connectComponent(COMPONENT_A);
-	connectComponent(COMPONENT_B);
-
-	disconnectComponent(COMPONENT_B);
-
-	checkComponentConnectedAsFirst(COMPONENT_A);
-	checkNumberOfConnectedComponents(ONE_COMPONENT);
-	EXPECT_THAT(COMPONENT_A.nextComponent, IsNull());
-}

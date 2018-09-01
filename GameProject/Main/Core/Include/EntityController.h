@@ -1,10 +1,11 @@
 #pragma once
 #include <memory>
 #include "IEntityController.h"
-#include "IComponentController.h"
 #include "EntityChangeDistributor.h"
 #include "IdGuard.h"
 #include "IEntityPool.h"
+#include "IComponentAttacher.h"
+#include "IComponentDetacher.h"
 
 namespace engine
 {
@@ -13,7 +14,8 @@ class EntityController : public IEntityController
 {
 public:
 	EntityController(std::unique_ptr<IEntityPool> p_entityPool,
-					 IComponentController& p_componentController,
+					 std::unique_ptr<IComponentAttacher> p_componentAttacher,
+					 std::unique_ptr<IComponentDetacher> p_componentDetacher,
 					 IEntityChangeDistributor& p_changeDistributor);
 
 	EntityId createEntity() override;
@@ -32,15 +34,11 @@ public:
 
 protected:
 	std::unique_ptr<IEntityPool> m_pool;
-	IComponentController& m_componentController;
+	std::unique_ptr<IComponentAttacher> m_componentAttacher;
+	std::unique_ptr<IComponentDetacher> m_componentDetacher;
 	IEntityChangeDistributor& m_changeDistributor;
 
 private:
-	bool isComponentAlreadyAttachedToEntity(Entity& p_entity, ComponentType p_componentType);
-	void attachComponent(Entity& p_entity, ComponentType p_componentType);
-	void putComponentToNextFreePositionInEntity(Entity& p_entity, ComponentBase& p_component);
-	ComponentPtr* getNextFreePositionForComponent(Entity& p_entity);
-	void detachComponent(Entity& p_entity, ComponentType p_componentType);
 };
 
 }
