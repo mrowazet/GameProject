@@ -1,4 +1,5 @@
 #pragma once
+#include <iso646.h>
 #include <bitset>
 
 namespace engine

@@ -118,7 +118,7 @@ protected:
 
 TEST_F(ContinuousPoolPerformanceTestSuite, allocateWholePoolAndClear)
 {	
-	if (!allocateWholePoolAndClear)
+	if (not allocateWholePoolAndClear)
 		return;
 
 	auto l_allocateWholePoolAndThenClear = [](auto& p_pool)
@@ -137,7 +137,7 @@ TEST_F(ContinuousPoolPerformanceTestSuite, allocateWholePoolAndClear)
 	measureActionOnCreatedPool<Entity256>(l_allocateWholePoolAndThenClear);
 	measureActionOnCreatedPool<Entity512>(l_allocateWholePoolAndThenClear);
 
-	if (!COMPARE_WITH_SMART_PTRS)
+	if (not COMPARE_WITH_SMART_PTRS)
 		return;
 
 	std::cout << "std::shared_ptr: \n";
@@ -161,7 +161,7 @@ TEST_F(ContinuousPoolPerformanceTestSuite, allocateWholePoolAndClear)
 
 TEST_F(ContinuousPoolPerformanceTestSuite, allocateWholePoolAndReset)
 {
-	if (!allocateWholePoolAndReset)
+	if (not allocateWholePoolAndReset)
 		return;
 
 	auto l_allocateWholePoolAndThenReset = [](auto& p_pool)

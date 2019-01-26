@@ -39,7 +39,7 @@ Id IdGuard::getNextFreeId()
 
 bool IdGuard::hasFreedIds()
 {
-	return !m_freedIds.empty();
+	return not m_freedIds.empty();
 }
 
 Id IdGuard::getNewId()
