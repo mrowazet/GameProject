@@ -19,7 +19,7 @@ public:
 					 IEntityChangeDistributor& p_changeDistributor);
 
 	EntityId createEntity() override;
-	EntityId createEntityWithComponents(const ComponentFlags&) override;
+	EntityId createEntityWithComponents(const ComponentIndicators&) override;
 
 	bool removeEntity(EntityId) override;
 
@@ -29,8 +29,8 @@ public:
 	bool connectComponentToEntity(EntityId, ComponentType) override;
 	bool disconnectComponentFromEntity(EntityId, ComponentType) override;
 
-	bool connectMultipleComponentsToEntity(EntityId, const ComponentFlags&) override;
-	bool disconnectMultipleComponentsFromEntity(EntityId, const ComponentFlags&) override;
+	bool connectMultipleComponentsToEntity(EntityId, const ComponentIndicators&) override;
+	bool disconnectMultipleComponentsFromEntity(EntityId, const ComponentIndicators&) override;
 
 protected:
 	std::unique_ptr<IEntityPool> m_pool;

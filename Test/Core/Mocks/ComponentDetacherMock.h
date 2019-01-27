@@ -10,7 +10,7 @@ class ComponentDetacherMock : public IComponentDetacher
 {
 public: 
 	MOCK_METHOD2(detachComponent, bool(Entity&, ComponentType));
-	MOCK_METHOD2(dettachMultipleComponents, bool(Entity&, const ComponentFlags&));
+	MOCK_METHOD2(dettachMultipleComponents, bool(Entity&, const ComponentIndicators&));
 };
 
 }

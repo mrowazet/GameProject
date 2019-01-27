@@ -10,7 +10,7 @@ class ComponentAttacher : public IComponentAttacher
 public:
 	ComponentAttacher(IComponentController&);
 	bool attachComponent(Entity&, ComponentType) override;
-	bool attachMultipleComponents(Entity&, const ComponentFlags&) override;
+	bool attachMultipleComponents(Entity&, const ComponentIndicators&) override;
 
 private:
 	IComponentController& m_componentController;

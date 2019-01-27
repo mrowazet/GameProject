@@ -160,4 +160,9 @@
       <Filter>Core\Include</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="Main\Core\Include\ComponentIndicators.h">
+      <Filter>Core\Include</Filter>
+    </Text>
+  </ItemGroup>
 </Project>

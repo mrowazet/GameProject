@@ -21,7 +21,7 @@ EntityId EntityController::createEntity()
 	return l_entity.id;
 }
 
-EntityId EntityController::createEntityWithComponents(const ComponentFlags& p_components)
+EntityId EntityController::createEntityWithComponents(const ComponentIndicators& p_components)
 {
 	return UNDEFINED_ENTITY_ID;
 }
@@ -71,7 +71,7 @@ bool EntityController::disconnectComponentFromEntity(EntityId p_id, ComponentTyp
 	}
 }
 
-bool EntityController::connectMultipleComponentsToEntity(EntityId p_id, const ComponentFlags& p_components)
+bool EntityController::connectMultipleComponentsToEntity(EntityId p_id, const ComponentIndicators& p_components)
 {
 	auto& l_entity = m_pool->getEntity(p_id);
 
@@ -86,7 +86,7 @@ bool EntityController::connectMultipleComponentsToEntity(EntityId p_id, const Co
 	}
 }
 
-bool EntityController::disconnectMultipleComponentsFromEntity(EntityId p_id, const ComponentFlags& p_components)
+bool EntityController::disconnectMultipleComponentsFromEntity(EntityId p_id, const ComponentIndicators& p_components)
 {
 	auto& l_entity = m_pool->getEntity(p_id);
 

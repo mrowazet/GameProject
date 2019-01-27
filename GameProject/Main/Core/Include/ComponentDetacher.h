@@ -10,7 +10,7 @@ class ComponentDetacher : public IComponentDetacher
 public:
 	ComponentDetacher(IComponentController&);
 	bool detachComponent(Entity&, ComponentType) override;
-	bool dettachMultipleComponents(Entity&, const ComponentFlags&) override;
+	bool dettachMultipleComponents(Entity&, const ComponentIndicators&) override;
 
 private:
 	IComponentController& m_componentController;

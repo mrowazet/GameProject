@@ -10,7 +10,7 @@ class EntityControllerMock : public IEntityController
 {
 public:
 	MOCK_METHOD0(createEntity, EntityId());
-	MOCK_METHOD1(createEntityWithComponents, EntityId(const ComponentFlags&));
+	MOCK_METHOD1(createEntityWithComponents, EntityId(const ComponentIndicators&));
 
 	MOCK_METHOD1(removeEntity, bool(EntityId));
 
@@ -20,8 +20,8 @@ public:
 	MOCK_METHOD2(connectComponentToEntity, bool(EntityId, ComponentType));
 	MOCK_METHOD2(disconnectComponentFromEntity, bool(EntityId, ComponentType));
 
-	MOCK_METHOD2(connectMultipleComponentsToEntity, bool(EntityId, const ComponentFlags&));
-	MOCK_METHOD2(disconnectMultipleComponentsFromEntity, bool(EntityId, const ComponentFlags&));
+	MOCK_METHOD2(connectMultipleComponentsToEntity, bool(EntityId, const ComponentIndicators&));
+	MOCK_METHOD2(disconnectMultipleComponentsFromEntity, bool(EntityId, const ComponentIndicators&));
 };
 
 }

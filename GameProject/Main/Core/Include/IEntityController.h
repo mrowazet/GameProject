@@ -15,7 +15,7 @@ public:
 	virtual ~IEntityController() = default;
 
 	virtual EntityId createEntity() = 0;
-	virtual EntityId createEntityWithComponents(const ComponentFlags& p_components) = 0;
+	virtual EntityId createEntityWithComponents(const ComponentIndicators& p_components) = 0;
 
 	virtual bool removeEntity(EntityId p_id) = 0;
 
@@ -25,8 +25,8 @@ public:
 	virtual bool connectComponentToEntity(EntityId p_id, ComponentType p_componentType) = 0;
 	virtual bool disconnectComponentFromEntity(EntityId p_id, ComponentType p_componentType) = 0;
 
-	virtual bool connectMultipleComponentsToEntity(EntityId p_id, const ComponentFlags& p_components) = 0;
-	virtual bool disconnectMultipleComponentsFromEntity(EntityId p_id, const ComponentFlags& p_components) = 0;
+	virtual bool connectMultipleComponentsToEntity(EntityId p_id, const ComponentIndicators& p_components) = 0;
+	virtual bool disconnectMultipleComponentsFromEntity(EntityId p_id, const ComponentIndicators& p_components) = 0;
 };
 
 }

@@ -56,12 +56,12 @@ public:
 
 	void expectAttachMultipleComponents(const bool p_result)
 	{
-		EXPECT_CALL(*m_componentAttacherMock, attachMultipleComponents(Ref(m_entity), Ref(m_componentFlags))).WillOnce(Return(p_result));
+		EXPECT_CALL(*m_componentAttacherMock, attachMultipleComponents(Ref(m_entity), Ref(m_componentIndicators))).WillOnce(Return(p_result));
 	}
 
 	void expectDettachMultipleComponents(const bool p_result)
 	{
-		EXPECT_CALL(*m_componentDetacherMock, dettachMultipleComponents(Ref(m_entity), Ref(m_componentFlags))).WillOnce(Return(p_result));
+		EXPECT_CALL(*m_componentDetacherMock, dettachMultipleComponents(Ref(m_entity), Ref(m_componentIndicators))).WillOnce(Return(p_result));
 	}
 
 	bool connectComponent()
@@ -76,19 +76,19 @@ public:
 
 	bool connectMultipleComponents()
 	{
-		return m_sut.connectMultipleComponentsToEntity(ENTITY_ID, m_componentFlags);
+		return m_sut.connectMultipleComponentsToEntity(ENTITY_ID, m_componentIndicators);
 	}
 
 	bool disconnectMultipleComponents()
 	{
-		return m_sut.disconnectMultipleComponentsFromEntity(ENTITY_ID, m_componentFlags);
+		return m_sut.disconnectMultipleComponentsFromEntity(ENTITY_ID, m_componentIndicators);
 	}
 
 protected:
 	testComponents::ComponentA COMPONENT;
 
 	Entity m_entity;
-	ComponentFlags m_componentFlags;
+	ComponentIndicators m_componentIndicators;
 
 	StrictMock<EntityChangeDistributorMock> m_changeDistributorMock;
 	UniqueStrictMock<EntityPoolMock> m_entityPoolMock;

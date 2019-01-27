@@ -25,7 +25,7 @@ bool ComponentAttacher::attachComponent(Entity& p_entity, ComponentType p_compon
 
 bool ComponentAttacher::isComponentAlreadyAttached(Entity& p_entity, ComponentType p_componentType) const
 {
-	return p_entity.attachedComponents.isAttached(p_componentType);
+	return p_entity.attachedComponents.isSet(p_componentType);
 }
 
 void ComponentAttacher::attachComponentToEntity(Entity& p_entity, ComponentType p_componentType)
@@ -52,7 +52,7 @@ ComponentPtr* ComponentAttacher::getNextFreeComponentPosition(Entity& p_entity)
 	return l_ptrToComponentPosition;
 }
 
-bool ComponentAttacher::attachMultipleComponents(Entity&, const ComponentFlags&)
+bool ComponentAttacher::attachMultipleComponents(Entity&, const ComponentIndicators&)
 {
 	return false;
 }

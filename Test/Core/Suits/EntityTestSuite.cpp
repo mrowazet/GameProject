@@ -10,6 +10,7 @@ namespace
 {
 	const EntityId UNDEFINED_ID = UNDEFINED_ENTITY_ID;
 	const EntityId ENTITY_ID = 33u;
+	const u32 TWO_COMPONENTS = 2u;
 }
 
 class EntityTestSuite : public Test
@@ -29,4 +30,3 @@ TEST_F(EntityTestSuite, constructorSetProperId)
 	Entity l_entity(ENTITY_ID);
 	EXPECT_EQ(ENTITY_ID, l_entity.id);
 }
-

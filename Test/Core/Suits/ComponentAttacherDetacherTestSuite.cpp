@@ -49,7 +49,7 @@ public:
 
 	bool isComponentBitIsSet(ComponentBase& p_component)
 	{
-		return m_entity.attachedComponents.isAttached(p_component.type);
+		return m_entity.attachedComponents.isSet(p_component.type);
 	}
 
 	void checkNumberOfConnectedComponents(u32 p_nrOfComponents)
@@ -121,6 +121,22 @@ TEST_F(ComponentAttacherTestSuite, shouldRetrunFalseIfComponentIsAlreadyAttached
 
 	EXPECT_FALSE(m_sut.attachComponent(m_entity, COMPONENT_A.type));
 	checkNumberOfConnectedComponents(ONE_COMPONENT);
+}
+
+TEST_F(ComponentAttacherTestSuite, shouldReturnFalseIfNoComponentsToAttach)
+{
+	ComponentIndicators l_emptyFlags;
+	EXPECT_FALSE(m_sut.attachMultipleComponents(m_entity, l_emptyFlags));
+}
+
+TEST_F(ComponentAttacherTestSuite, shouldReturnFalseIfAllRequestedComponentsAreAlreadyAttached)
+{
+	//todo
+}
+
+TEST_F(ComponentAttacherTestSuite, shouldReturnTrueIfAtLeastOneComponentHasBeenAttached)
+{
+	//todo
 }
 
 class ComponentDetacherTestSuite : public ComponentAttacherDetacherBaseTestSuite

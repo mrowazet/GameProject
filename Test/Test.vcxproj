@@ -121,6 +121,7 @@
   <ItemGroup>
     <ClCompile Include="Core\Suits\ComponentAttacherDetacherTestSuite.cpp" />
     <ClCompile Include="Core\Suits\ComponentControllerTestSuite.cpp" />
+    <ClCompile Include="Core\Suits\ComponentIndicatorsTestSuite.cpp" />
     <ClCompile Include="Core\Suits\ComponentPoolTestSuite.cpp" />
     <ClCompile Include="Core\Suits\ContinuousPoolPerformanceTestSuite.cpp" />
     <ClCompile Include="Core\Suits\EntityChangeDistributorTestSuite.cpp" />

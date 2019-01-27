@@ -25,7 +25,7 @@ bool ComponentDetacher::detachComponent(Entity& p_entity, ComponentType p_compon
 
 bool ComponentDetacher::isComponentAlreadyAttached(Entity& p_entity, ComponentType p_componentType) const
 {
-	return p_entity.attachedComponents.isAttached(p_componentType);
+	return p_entity.attachedComponents.isSet(p_componentType);
 }
 
 void ComponentDetacher::detachComponentFromEntity(Entity& p_entity, ComponentType p_componentType)
@@ -48,7 +48,7 @@ void ComponentDetacher::detachComponentFromEntity(Entity& p_entity, ComponentTyp
 	}
 }
 
-bool ComponentDetacher::dettachMultipleComponents(Entity&, const ComponentFlags&)
+bool ComponentDetacher::dettachMultipleComponents(Entity&, const ComponentIndicators&)
 {
 	return false;
 }

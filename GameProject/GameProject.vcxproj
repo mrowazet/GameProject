@@ -62,6 +62,9 @@
     <ClInclude Include="Main\Modules\DevTestModule\DevTestModule.hpp" />
     <ClInclude Include="Main\Modules\DevTestModule\Include\DevTestClass.hpp" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="Main\Core\Include\ComponentIndicators.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{65BF32B0-48FA-4EAD-8688-773205A4FB6B}</ProjectGuid>
