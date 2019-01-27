@@ -48,4 +48,9 @@ void ComponentDetacher::detachComponentFromEntity(Entity& p_entity, ComponentTyp
 	}
 }
 
+bool ComponentDetacher::dettachMultipleComponents(Entity&, const ComponentFlags&)
+{
+	return false;
+}
+
 }

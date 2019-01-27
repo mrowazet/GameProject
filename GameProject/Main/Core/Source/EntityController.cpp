@@ -48,7 +48,6 @@ bool EntityController::connectComponentToEntity(EntityId p_id, ComponentType p_c
 	if(m_componentAttacher->attachComponent(l_entity, p_componentType))
 	{
 		m_changeDistributor.distributeEntityChange(p_id);
-
 		return true;
 	}
 	else
@@ -64,7 +63,6 @@ bool EntityController::disconnectComponentFromEntity(EntityId p_id, ComponentTyp
 	if (m_componentDetacher->detachComponent(l_entity, p_componentType))
 	{
 		m_changeDistributor.distributeEntityChange(p_id);
-
 		return true;
 	}
 	else
@@ -75,12 +73,32 @@ bool EntityController::disconnectComponentFromEntity(EntityId p_id, ComponentTyp
 
 bool EntityController::connectMultipleComponentsToEntity(EntityId p_id, const ComponentFlags& p_components)
 {
-	return false;
+	auto& l_entity = m_pool->getEntity(p_id);
+
+	if (m_componentAttacher->attachMultipleComponents(l_entity, p_components))
+	{
+		m_changeDistributor.distributeEntityChange(p_id);
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 bool EntityController::disconnectMultipleComponentsFromEntity(EntityId p_id, const ComponentFlags& p_components)
 {
-	return false;
+	auto& l_entity = m_pool->getEntity(p_id);
+
+	if (m_componentDetacher->dettachMultipleComponents(l_entity, p_components))
+	{
+		m_changeDistributor.distributeEntityChange(p_id);
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 }

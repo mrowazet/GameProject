@@ -52,4 +52,9 @@ ComponentPtr* ComponentAttacher::getNextFreeComponentPosition(Entity& p_entity)
 	return l_ptrToComponentPosition;
 }
 
+bool ComponentAttacher::attachMultipleComponents(Entity&, const ComponentFlags&)
+{
+	return false;
+}
+
 }

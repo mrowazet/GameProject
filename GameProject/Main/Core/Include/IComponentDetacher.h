@@ -10,6 +10,7 @@ class IComponentDetacher
 public:
 	virtual ~IComponentDetacher() = default;
 	virtual bool detachComponent(Entity&, ComponentType) = 0;
+	virtual bool dettachMultipleComponents(Entity&, const ComponentFlags&) = 0;
 };
 
 }

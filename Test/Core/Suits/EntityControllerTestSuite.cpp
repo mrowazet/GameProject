@@ -30,7 +30,7 @@ class EntityControllerTestSuite : public Test
 public:
 	EntityControllerTestSuite()
 		: m_entity(ENTITY_ID),
-		  m_sut(m_entityPoolMock.getPtr(), m_componentAttacherMock.getPtr(), m_componentDetacherMock.getPtr(), m_changeDistributorMock)
+		m_sut(m_entityPoolMock.getPtr(), m_componentAttacherMock.getPtr(), m_componentDetacherMock.getPtr(), m_changeDistributorMock)
 	{
 	}
 
@@ -54,6 +54,16 @@ public:
 		EXPECT_CALL(*m_componentDetacherMock, detachComponent(Ref(m_entity), COMPONENT.type)).WillOnce(Return(p_result));
 	}
 
+	void expectAttachMultipleComponents(const bool p_result)
+	{
+		EXPECT_CALL(*m_componentAttacherMock, attachMultipleComponents(Ref(m_entity), Ref(m_componentFlags))).WillOnce(Return(p_result));
+	}
+
+	void expectDettachMultipleComponents(const bool p_result)
+	{
+		EXPECT_CALL(*m_componentDetacherMock, dettachMultipleComponents(Ref(m_entity), Ref(m_componentFlags))).WillOnce(Return(p_result));
+	}
+
 	bool connectComponent()
 	{
 		return m_sut.connectComponentToEntity(ENTITY_ID, COMPONENT.type);
@@ -64,10 +74,22 @@ public:
 		return m_sut.disconnectComponentFromEntity(ENTITY_ID, COMPONENT.type);
 	}
 
+	bool connectMultipleComponents()
+	{
+		return m_sut.connectMultipleComponentsToEntity(ENTITY_ID, m_componentFlags);
+	}
+
+	bool disconnectMultipleComponents()
+	{
+		return m_sut.disconnectMultipleComponentsFromEntity(ENTITY_ID, m_componentFlags);
+	}
+
 protected:
 	testComponents::ComponentA COMPONENT;
 
 	Entity m_entity;
+	ComponentFlags m_componentFlags;
+
 	StrictMock<EntityChangeDistributorMock> m_changeDistributorMock;
 	UniqueStrictMock<EntityPoolMock> m_entityPoolMock;
 	UniqueStrictMock<ComponentAttacherMock> m_componentAttacherMock;
@@ -138,6 +160,40 @@ TEST_F(EntityControllerTestSuite, shouldReturnFalseIfComponentNotCorrectlyRemove
 	expectDetachComponent(not DETACHED);
 
 	EXPECT_FALSE(disconnectComponent());
+}
+
+TEST_F(EntityControllerTestSuite, shouldReturnTrueAndDistributeChangeIfAtLeastOneComponentHasBeenConnectedToEntity)
+{
+	expectGetEntityFromPool();
+	expectAttachMultipleComponents(ATTACHED);
+	expectDistributeChange();
+
+	EXPECT_TRUE(connectMultipleComponents());
+}
+
+TEST_F(EntityControllerTestSuite, shouldReturnFalseIfNoComponentHasNotBeenConnectedToEntity)
+{
+	expectGetEntityFromPool();
+	expectAttachMultipleComponents(not ATTACHED);
+
+	EXPECT_FALSE(connectMultipleComponents());
+}
+
+TEST_F(EntityControllerTestSuite, shouldReturnTrueAndDistributeChangeIfAtLeastOneComponentHasBeenDisconnectedFromEntity)
+{
+	expectGetEntityFromPool();
+	expectDettachMultipleComponents(DETACHED);
+	expectDistributeChange();
+
+	EXPECT_TRUE(disconnectMultipleComponents());
+}
+
+TEST_F(EntityControllerTestSuite, shouldReturnFalseIfNoComponentHasNotBeenDisconnectedFromEntity)
+{
+	expectGetEntityFromPool();
+	expectDettachMultipleComponents(not DETACHED);
+
+	EXPECT_FALSE(disconnectMultipleComponents());
 }
 
 
