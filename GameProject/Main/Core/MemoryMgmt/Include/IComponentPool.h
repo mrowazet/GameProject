@@ -11,7 +11,7 @@ public:
 	virtual ~IComponentPool() = default;
 
 	virtual ComponentBase& getComponent() = 0;
-	virtual void returnComponent(ComponentBase& p_component) = 0;
+	virtual void returnComponent(ComponentBase&) = 0;
 
 	virtual u32 size() const = 0;
 };

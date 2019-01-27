@@ -11,14 +11,14 @@ namespace engine
 class EntityPool : IEntityPool
 {
 public:
-	EntityPool(PoolSize p_poolSize, std::unique_ptr<IIdGuard> p_guard);
+	EntityPool(PoolSize, std::unique_ptr<IIdGuard>);
 
 	Entity& create() override;
-	bool removeEntity(EntityId p_id) override;
-	Entity& getEntity(EntityId p_id) override;
+	bool removeEntity(EntityId) override;
+	Entity& getEntity(EntityId) override;
 
 	u32 size() const override;
-	bool hasId(EntityId p_id) const override;
+	bool hasEntity(EntityId) const override;
 
 	void clear() override;
 

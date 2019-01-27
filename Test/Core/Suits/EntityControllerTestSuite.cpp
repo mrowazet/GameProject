@@ -101,7 +101,7 @@ TEST_F(EntityControllerTestSuite, getEntityShouldReturnRefToEntityFromPool)
 
 TEST_F(EntityControllerTestSuite, shouldCallPoolToCheckIfEntityWithIdExist)
 {
-	EXPECT_CALL(*m_entityPoolMock, hasId(ENTITY_ID));
+	EXPECT_CALL(*m_entityPoolMock, hasEntity(ENTITY_ID));
 
 	m_sut.hasEntity(ENTITY_ID);
 }

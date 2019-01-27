@@ -58,7 +58,7 @@ namespace engine
 		return m_pool.size();
 	}
 
-	bool EntityPool::hasId(EntityId p_id) const
+	bool EntityPool::hasEntity(EntityId p_id) const
 	{
 		auto l_iter = m_storedIds.find(p_id);
 		return l_iter != m_storedIds.end();
@@ -67,7 +67,8 @@ namespace engine
 	/*
 		Caution!
 		Information about stored Ids can be desynchronized!
-		If Entity with some Id is stored by create method and after that Id is manually changed outside the class then ids in internal set are 'out of date'!
+		If Entity with some Id is stored by create method and after that Id is manually changed outside the class
+		then ids in internal set are 'out of date'!
 		Entity Id should NOT be changed manually at all.
 	*/
 

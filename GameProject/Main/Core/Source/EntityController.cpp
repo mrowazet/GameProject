@@ -33,7 +33,7 @@ bool EntityController::removeEntity(EntityId p_id)
 
 bool EntityController::hasEntity(EntityId p_id)
 {
-	return m_pool->hasId(p_id);
+	return m_pool->hasEntity(p_id);
 }
 
 Entity& EntityController::getEntity(EntityId p_id)

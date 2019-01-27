@@ -74,13 +74,13 @@ TEST_F(EntityPoolTestSuite, shouldAddEntityToPoolWhenCreateIsCalled)
 
 TEST_F(EntityPoolTestSuite, hasEntityIdshouldReturnFalseIfEntityWasNotCreated)
 {
-	EXPECT_FALSE(m_sut.hasId(ENTITY_ID_1));
+	EXPECT_FALSE(m_sut.hasEntity(ENTITY_ID_1));
 }
 
 TEST_F(EntityPoolTestSuite, hasEntityIdshouldReturnTrueIfEntityWasAdded)
 {
 	addEntityToPool(ENTITY_ID_1);
-	EXPECT_TRUE(m_sut.hasId(ENTITY_ID_1));
+	EXPECT_TRUE(m_sut.hasEntity(ENTITY_ID_1));
 }
 
 TEST_F(EntityPoolTestSuite, shouldReturnProperRefIfEntityExist)
@@ -100,7 +100,7 @@ TEST_F(EntityPoolTestSuite, hasEntityShouldReturnFalseIfEntityWasRemoved)
 	addEntityToPool(ENTITY_ID_1);
 	removeEntityFromPool(ENTITY_ID_1);
 
-	EXPECT_FALSE(m_sut.hasId(ENTITY_ID_1));
+	EXPECT_FALSE(m_sut.hasEntity(ENTITY_ID_1));
 }
 
 TEST_F(EntityPoolTestSuite, removeEntityShouldReturnTrueIfEntityWasStored)
@@ -123,6 +123,6 @@ TEST_F(EntityPoolTestSuite, clearShouldRemoveAllData)
 
 	m_sut.clear();
 
-	EXPECT_FALSE(m_sut.hasId(ENTITY_ID_1));
+	EXPECT_FALSE(m_sut.hasEntity(ENTITY_ID_1));
 	EXPECT_EQ(EMPTY, m_sut.size());
 }
