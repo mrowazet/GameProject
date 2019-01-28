@@ -9,8 +9,11 @@ namespace engine
 class ComponentControllerMock : public IComponentController
 {
 public:
-	MOCK_METHOD1(createComponent, ComponentBase&(ComponentType p_component));
-	MOCK_METHOD1(removeComponent, bool(ComponentBase&));
+	MOCK_METHOD2(attachComponent, bool(Entity&, ComponentType));
+	MOCK_METHOD2(attachMultipleComponents, bool(Entity&, const ComponentIndicators&));
+
+	MOCK_METHOD2(detachComponent, bool(Entity&, ComponentType));
+	MOCK_METHOD2(dettachMultipleComponents, bool(Entity&, const ComponentIndicators&));
 };
 
 }

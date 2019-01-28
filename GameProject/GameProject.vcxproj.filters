@@ -58,10 +58,7 @@
     <ClCompile Include="Main\Core\MemoryMgmt\Source\EntityPool.cpp">
       <Filter>Core\MemoryMgmt\Source</Filter>
     </ClCompile>
-    <ClCompile Include="Main\Core\Source\ComponentAttacher.cpp">
-      <Filter>Core\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Main\Core\Source\ComponentDetacher.cpp">
+    <ClCompile Include="Main\Core\Source\ComponentProvider.cpp">
       <Filter>Core\Source</Filter>
     </ClCompile>
   </ItemGroup>
@@ -147,16 +144,10 @@
     <ClInclude Include="Main\Core\MemoryMgmt\Include\IEntityPool.h">
       <Filter>Core\MemoryMgmt\Include</Filter>
     </ClInclude>
-    <ClInclude Include="Main\Core\Include\IComponentAttacher.h">
+    <ClInclude Include="Main\Core\Include\IComponentProvider.h">
       <Filter>Core\Include\Interfaces</Filter>
     </ClInclude>
-    <ClInclude Include="Main\Core\Include\ComponentAttacher.h">
-      <Filter>Core\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="Main\Core\Include\IComponentDetacher.h">
-      <Filter>Core\Include\Interfaces</Filter>
-    </ClInclude>
-    <ClInclude Include="Main\Core\Include\ComponentDetacher.h">
+    <ClInclude Include="Main\Core\Include\ComponentProvider.h">
       <Filter>Core\Include</Filter>
     </ClInclude>
   </ItemGroup>

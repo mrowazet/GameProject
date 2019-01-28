@@ -59,9 +59,6 @@
     <ClCompile Include="Core\Suits\EntityPoolTestSuite.cpp">
       <Filter>Core</Filter>
     </ClCompile>
-    <ClCompile Include="Core\Suits\ComponentAttacherDetacherTestSuite.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
     <ClCompile Include="Core\Suits\ComponentIndicatorsTestSuite.cpp">
       <Filter>Core</Filter>
     </ClCompile>
@@ -103,10 +100,7 @@
     <ClInclude Include="Tools\UniquePtrMockWrapper.h">
       <Filter>Tools</Filter>
     </ClInclude>
-    <ClInclude Include="Core\Mocks\ComponentAttacherMock.h">
-      <Filter>Core\Mocks</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Mocks\ComponentDetacherMock.h">
+    <ClInclude Include="Core\Mocks\ComponentProviderMock.h">
       <Filter>Core\Mocks</Filter>
     </ClInclude>
   </ItemGroup>

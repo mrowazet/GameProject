@@ -5,12 +5,10 @@ namespace engine
 {
 
 EntityController::EntityController(std::unique_ptr<IEntityPool> p_entityPool,
-								   std::unique_ptr<IComponentAttacher> p_componentAttacher,
-								   std::unique_ptr<IComponentDetacher> p_componentDetacher,
+								   std::unique_ptr<IComponentController> p_componentController,
 								   IEntityChangeDistributor& p_changeDistributor)
 	:m_pool(std::move(p_entityPool)),
-	 m_componentAttacher(std::move(p_componentAttacher)),
-     m_componentDetacher(std::move(p_componentDetacher)),
+     m_componentController(std::move(p_componentController)),
 	 m_changeDistributor(p_changeDistributor)
 {
 }
@@ -45,7 +43,7 @@ bool EntityController::connectComponentToEntity(EntityId p_id, ComponentType p_c
 {
 	auto& l_entity = m_pool->getEntity(p_id);
 	
-	if(m_componentAttacher->attachComponent(l_entity, p_componentType))
+	if(m_componentController->attachComponent(l_entity, p_componentType))
 	{
 		m_changeDistributor.distributeEntityChange(p_id);
 		return true;
@@ -60,7 +58,7 @@ bool EntityController::disconnectComponentFromEntity(EntityId p_id, ComponentTyp
 {
 	auto& l_entity = m_pool->getEntity(p_id);
 
-	if (m_componentDetacher->detachComponent(l_entity, p_componentType))
+	if (m_componentController->detachComponent(l_entity, p_componentType))
 	{
 		m_changeDistributor.distributeEntityChange(p_id);
 		return true;
@@ -75,7 +73,7 @@ bool EntityController::connectMultipleComponentsToEntity(EntityId p_id, const Co
 {
 	auto& l_entity = m_pool->getEntity(p_id);
 
-	if (m_componentAttacher->attachMultipleComponents(l_entity, p_components))
+	if (m_componentController->attachMultipleComponents(l_entity, p_components))
 	{
 		m_changeDistributor.distributeEntityChange(p_id);
 		return true;
@@ -90,7 +88,7 @@ bool EntityController::disconnectMultipleComponentsFromEntity(EntityId p_id, con
 {
 	auto& l_entity = m_pool->getEntity(p_id);
 
-	if (m_componentDetacher->dettachMultipleComponents(l_entity, p_components))
+	if (m_componentController->dettachMultipleComponents(l_entity, p_components))
 	{
 		m_changeDistributor.distributeEntityChange(p_id);
 		return true;

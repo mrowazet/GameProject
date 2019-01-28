@@ -4,8 +4,7 @@
 #include "EntityChangeDistributor.h"
 #include "IdGuard.h"
 #include "IEntityPool.h"
-#include "IComponentAttacher.h"
-#include "IComponentDetacher.h"
+#include "IComponentController.h"
 
 namespace engine
 {
@@ -13,10 +12,9 @@ namespace engine
 class EntityController : public IEntityController
 {
 public:
-	EntityController(std::unique_ptr<IEntityPool> p_entityPool,
-					 std::unique_ptr<IComponentAttacher> p_componentAttacher,
-					 std::unique_ptr<IComponentDetacher> p_componentDetacher,
-					 IEntityChangeDistributor& p_changeDistributor);
+	EntityController(std::unique_ptr<IEntityPool>,
+					 std::unique_ptr<IComponentController>,
+					 IEntityChangeDistributor&);
 
 	EntityId createEntity() override;
 	EntityId createEntityWithComponents(const ComponentIndicators&) override;
@@ -34,8 +32,7 @@ public:
 
 protected:
 	std::unique_ptr<IEntityPool> m_pool;
-	std::unique_ptr<IComponentAttacher> m_componentAttacher;
-	std::unique_ptr<IComponentDetacher> m_componentDetacher;
+	std::unique_ptr<IComponentController> m_componentController;
 	IEntityChangeDistributor& m_changeDistributor;
 
 private:

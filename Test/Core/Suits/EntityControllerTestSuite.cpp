@@ -9,8 +9,6 @@
 #include "EntityPoolMock.h"
 #include "ComponentTypes.h"
 #include "UniquePtrMockWrapper.h"
-#include "ComponentAttacherMock.h"
-#include "ComponentDetacherMock.h"
 
 using namespace testing;
 using namespace testTool;
@@ -30,7 +28,7 @@ class EntityControllerTestSuite : public Test
 public:
 	EntityControllerTestSuite()
 		: m_entity(ENTITY_ID),
-		m_sut(m_entityPoolMock.getPtr(), m_componentAttacherMock.getPtr(), m_componentDetacherMock.getPtr(), m_changeDistributorMock)
+		  m_sut(m_entityPoolMock.getPtr(), m_componentControllerMock.getPtr(), m_changeDistributorMock)
 	{
 	}
 
@@ -46,22 +44,22 @@ public:
 
 	void expectAttachComponent(const bool p_result)
 	{
-		EXPECT_CALL(*m_componentAttacherMock, attachComponent(Ref(m_entity), COMPONENT.type)).WillOnce(Return(p_result));
+		EXPECT_CALL(*m_componentControllerMock, attachComponent(Ref(m_entity), COMPONENT.type)).WillOnce(Return(p_result));
 	}
 
 	void expectDetachComponent(const bool p_result)
 	{
-		EXPECT_CALL(*m_componentDetacherMock, detachComponent(Ref(m_entity), COMPONENT.type)).WillOnce(Return(p_result));
+		EXPECT_CALL(*m_componentControllerMock, detachComponent(Ref(m_entity), COMPONENT.type)).WillOnce(Return(p_result));
 	}
 
 	void expectAttachMultipleComponents(const bool p_result)
 	{
-		EXPECT_CALL(*m_componentAttacherMock, attachMultipleComponents(Ref(m_entity), Ref(m_componentIndicators))).WillOnce(Return(p_result));
+		EXPECT_CALL(*m_componentControllerMock, attachMultipleComponents(Ref(m_entity), Ref(m_componentIndicators))).WillOnce(Return(p_result));
 	}
 
 	void expectDettachMultipleComponents(const bool p_result)
 	{
-		EXPECT_CALL(*m_componentDetacherMock, dettachMultipleComponents(Ref(m_entity), Ref(m_componentIndicators))).WillOnce(Return(p_result));
+		EXPECT_CALL(*m_componentControllerMock, dettachMultipleComponents(Ref(m_entity), Ref(m_componentIndicators))).WillOnce(Return(p_result));
 	}
 
 	bool connectComponent()
@@ -92,8 +90,7 @@ protected:
 
 	StrictMock<EntityChangeDistributorMock> m_changeDistributorMock;
 	UniqueStrictMock<EntityPoolMock> m_entityPoolMock;
-	UniqueStrictMock<ComponentAttacherMock> m_componentAttacherMock;
-	UniqueStrictMock<ComponentDetacherMock> m_componentDetacherMock;
+	UniqueStrictMock<ComponentControllerMock> m_componentControllerMock;
 
 	EntityController m_sut;
 };

@@ -15,8 +15,11 @@ public:
 	IComponentController() = default;
 	virtual ~IComponentController() = default;
 
-	virtual ComponentBase& createComponent(ComponentType) = 0;
-	virtual bool removeComponent(ComponentBase&) = 0;
+	virtual bool attachComponent(Entity&, ComponentType) = 0;
+	virtual bool attachMultipleComponents(Entity&, const ComponentIndicators&) = 0;
+
+	virtual bool detachComponent(Entity&, ComponentType) = 0;
+	virtual bool dettachMultipleComponents(Entity&, const ComponentIndicators&) = 0;
 };
 
 }
