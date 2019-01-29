@@ -16,14 +16,29 @@ public:
 		m_componentFlags.flip(static_cast<int>(p_type));
 	}
 
+	void set(ComponentType p_type, bool p_isSet = true)
+	{
+		m_componentFlags.set(static_cast<int>(p_type), p_isSet);
+	}
+
 	bool isSet(ComponentType p_type) const
 	{
 		return m_componentFlags.test(static_cast<int>(p_type));
 	}
 
-	bool hasAny() const
+	bool any() const
 	{
 		return m_componentFlags.any();
+	}
+
+	bool none() const
+	{
+		return m_componentFlags.none();
+	}
+
+	void reset()
+	{
+		m_componentFlags.reset();
 	}
 
 	u32 getNumOfSetComponents() const
@@ -44,6 +59,18 @@ public:
 	ComponentIndicators& operator=(const ComponentIndicators& p_componentIndicators)
 	{
 		m_componentFlags = p_componentIndicators.m_componentFlags;
+		return *this;
+	}
+
+	ComponentIndicators& operator&=(const ComponentIndicators& p_componentIndicators)
+	{
+		m_componentFlags = (m_componentFlags &= p_componentIndicators.m_componentFlags);
+		return *this;
+	}
+
+	ComponentIndicators& operator^=(const ComponentIndicators& p_componentIndicators)
+	{
+		m_componentFlags = (m_componentFlags ^= p_componentIndicators.m_componentFlags);
 		return *this;
 	}
 

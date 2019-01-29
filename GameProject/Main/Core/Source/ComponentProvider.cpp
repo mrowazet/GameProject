@@ -8,7 +8,7 @@ ComponentBase& ComponentProvider::createComponent(ComponentType)
 	return ComponentBase(ComponentType::POSITION);
 }
 
-bool removeComponent(ComponentBase&)
+bool ComponentProvider::removeComponent(ComponentBase&)
 {
 	return false;
 }

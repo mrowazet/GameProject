@@ -8,7 +8,7 @@ namespace testComponents
 	struct ComponentA : public ComponentBase
 	{
 		ComponentA()
-			:ComponentBase(ComponentType::VISIBLE)
+			:ComponentBase(ComponentType::POSITION)
 		{
 		}
 
@@ -28,7 +28,7 @@ namespace testComponents
 	struct ComponentC : public ComponentBase
 	{
 		ComponentC()
-			:ComponentBase(ComponentType::WITH_SI)
+			:ComponentBase(ComponentType::VISIBLE)
 		{
 		}
 
