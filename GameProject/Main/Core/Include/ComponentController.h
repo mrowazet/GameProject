@@ -22,6 +22,9 @@ private:
 	void attachToNextFreePosition(Entity&, ComponentBase&);
 	ComponentPtr* getNextFreeComponentPosition(Entity&);
 	void detachComponentFromEntity(Entity&, ComponentType);
+	ComponentIndicators getComponentsWhichAreNotAlreadyAttached(const Entity&, const ComponentIndicators&) const;
+	void attachRequestedComponentsToEntity(Entity&, const ComponentIndicators&);
+	ComponentType convertIndexToComponentType(ComponentIndex) const;
 
 	std::unique_ptr<IComponentProvider> m_componentProvider;
 };

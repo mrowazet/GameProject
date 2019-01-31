@@ -14,8 +14,6 @@ bool ComponentController::attachComponent(Entity& p_entity, ComponentType p_comp
 	if (!isComponentAlreadyAttached(p_entity, p_componentType))
 	{
 		attachComponentToEntity(p_entity, p_componentType);
-		p_entity.attachedComponents.flip(p_componentType);
-
 		return true;
 	}
 	else
@@ -24,9 +22,44 @@ bool ComponentController::attachComponent(Entity& p_entity, ComponentType p_comp
 	}
 }
 
-bool ComponentController::attachMultipleComponents(Entity&, const ComponentIndicators&)
+bool ComponentController::attachMultipleComponents(Entity& p_entity, const ComponentIndicators& p_componentIndicators)
 {
-	return false;
+	if (auto l_componentsToAttach = getComponentsWhichAreNotAlreadyAttached(p_entity, p_componentIndicators); l_componentsToAttach.any())
+	{
+		attachRequestedComponentsToEntity(p_entity, l_componentsToAttach);
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+void ComponentController::attachRequestedComponentsToEntity(Entity& p_entity, const ComponentIndicators& p_componentIndicators)
+{
+	for (auto i = 0u; i < LAST_VALID_COMPONENT_INDEX; i++)
+	{
+		if (auto l_componentType = convertIndexToComponentType(i); p_componentIndicators.isSet(l_componentType))
+		{
+			attachComponentToEntity(p_entity, l_componentType);
+			//todo should be optimized to not search for nextFreePosition for every component
+			//above function can be used if only one componentToAttach
+		}
+	}
+}
+
+ComponentType ComponentController::convertIndexToComponentType(ComponentIndex p_index) const
+{
+	return static_cast<ComponentType>(p_index);
+}
+
+ComponentIndicators ComponentController::getComponentsWhichAreNotAlreadyAttached(const Entity& p_entity, const ComponentIndicators& p_requestedComponents) const
+{
+	auto l_componentsToAttach = p_requestedComponents;
+	l_componentsToAttach = l_componentsToAttach ^= p_entity.attachedComponents;
+	l_componentsToAttach = l_componentsToAttach &= p_requestedComponents;
+
+	return l_componentsToAttach;
 }
 
 bool ComponentController::detachComponent(Entity& p_entity, ComponentType p_componentType)
@@ -34,8 +67,6 @@ bool ComponentController::detachComponent(Entity& p_entity, ComponentType p_comp
 	if (isComponentAlreadyAttached(p_entity, p_componentType))
 	{
 		detachComponentFromEntity(p_entity, p_componentType);
-		p_entity.attachedComponents.flip(p_componentType);
-
 		return true;
 	}
 	else
@@ -58,6 +89,7 @@ void ComponentController::attachComponentToEntity(Entity& p_entity, ComponentTyp
 {
 	auto& l_newComponent = m_componentProvider->createComponent(p_componentType);
 	attachToNextFreePosition(p_entity, l_newComponent);
+	p_entity.attachedComponents.flip(p_componentType);
 }
 
 void ComponentController::attachToNextFreePosition(Entity& p_entity, ComponentBase& p_newComponent)
@@ -96,6 +128,8 @@ void ComponentController::detachComponentFromEntity(Entity& p_entity, ComponentT
 			l_ptrToComponentPosition = &l_component.nextComponent;
 		}
 	}
+
+	p_entity.attachedComponents.flip(p_componentType);
 }
 
 }
