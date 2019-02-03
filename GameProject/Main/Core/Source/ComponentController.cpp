@@ -22,11 +22,11 @@ bool ComponentController::attachComponent(Entity& p_entity, ComponentType p_comp
 	}
 }
 
-bool ComponentController::attachMultipleComponents(Entity& p_entity, const ComponentIndicators& p_componentIndicators)
+bool ComponentController::attachMultipleComponents(Entity& p_entity, const ComponentIndicators& p_componentsRequestedToAttach)
 {
-	if (auto l_componentsToAttach = getComponentsWhichAreNotAlreadyAttached(p_entity, p_componentIndicators); l_componentsToAttach.any())
+	if (auto l_componentsToAttach = getComponentsWhichAreNotAlreadyAttached(p_entity, p_componentsRequestedToAttach); l_componentsToAttach.any())
 	{
-		attachRequestedComponentsToEntity(p_entity, l_componentsToAttach);
+		attachMultipleComponentsToEntity(p_entity, l_componentsToAttach);
 		return true;
 	}
 	else
@@ -35,22 +35,57 @@ bool ComponentController::attachMultipleComponents(Entity& p_entity, const Compo
 	}
 }
 
-void ComponentController::attachRequestedComponentsToEntity(Entity& p_entity, const ComponentIndicators& p_componentIndicators)
+void ComponentController::attachMultipleComponentsToEntity(Entity& p_entity, const ComponentIndicators& p_componentsToAttach)
+{
+	if (hasOnlyOneComponentToAttach(p_componentsToAttach))
+	{
+		auto l_component = getSingleSetComponent(p_componentsToAttach);
+		attachComponentToEntity(p_entity, l_component);
+	}
+	else
+	{
+		attachRequestedComponentsToEntity(p_entity, p_componentsToAttach);
+	}
+}
+
+bool ComponentController::hasOnlyOneComponentToAttach(const ComponentIndicators& p_componentsToAttach) const
+{
+	return p_componentsToAttach.getNumOfSetComponents() == 1;
+}
+
+ComponentType ComponentController::getSingleSetComponent(const ComponentIndicators& p_componentsToAttach) const
 {
 	for (auto i = 0u; i < LAST_VALID_COMPONENT_INDEX; i++)
 	{
-		if (auto l_componentType = convertIndexToComponentType(i); p_componentIndicators.isSet(l_componentType))
+		if (auto l_componentType = convertIndexToComponentType(i); p_componentsToAttach.isSet(l_componentType))
 		{
-			attachComponentToEntity(p_entity, l_componentType);
-			//todo should be optimized to not search for nextFreePosition for every component
-			//above function can be used if only one componentToAttach
+			return l_componentType;
 		}
 	}
+
+	return ComponentType::UndefinedComponent;
 }
 
 ComponentType ComponentController::convertIndexToComponentType(ComponentIndex p_index) const
 {
 	return static_cast<ComponentType>(p_index);
+}
+
+void ComponentController::attachRequestedComponentsToEntity(Entity& p_entity, const ComponentIndicators& p_componentsToAttach)
+{
+	auto l_positionForNextComponent = getNextFreeComponentPosition(p_entity);
+
+	for (auto i = 0u; i < LAST_VALID_COMPONENT_INDEX; i++)
+	{
+		if (auto l_componentType = convertIndexToComponentType(i); p_componentsToAttach.isSet(l_componentType))
+		{
+			auto& l_newComponent = m_componentProvider->createComponent(l_componentType);
+			attachComponentToPosition(l_newComponent, l_positionForNextComponent);
+			p_entity.attachedComponents.flip(l_componentType);
+
+			l_positionForNextComponent = getNextComponentPosition(l_newComponent);
+		}
+	}
 }
 
 ComponentIndicators ComponentController::getComponentsWhichAreNotAlreadyAttached(const Entity& p_entity, const ComponentIndicators& p_requestedComponents) const
@@ -95,19 +130,29 @@ void ComponentController::attachComponentToEntity(Entity& p_entity, ComponentTyp
 void ComponentController::attachToNextFreePosition(Entity& p_entity, ComponentBase& p_newComponent)
 {
 	auto l_positionForNewComponent = getNextFreeComponentPosition(p_entity);
-	*l_positionForNewComponent = &p_newComponent;
+	attachComponentToPosition(p_newComponent, l_positionForNewComponent);
 }
 
-ComponentPtr* ComponentController::getNextFreeComponentPosition(Entity& p_entity)
+ComponentPtr* ComponentController::getNextFreeComponentPosition(Entity& p_entity) const
 {
 	ComponentPtr* l_ptrToComponentPosition = &p_entity.components;
 
 	while (*l_ptrToComponentPosition != nullptr)
 	{
-		l_ptrToComponentPosition = &(*l_ptrToComponentPosition)->nextComponent;
+		l_ptrToComponentPosition = getNextComponentPosition(**l_ptrToComponentPosition);
 	}
 
 	return l_ptrToComponentPosition;
+}
+
+ComponentPtr* ComponentController::getNextComponentPosition(ComponentBase& p_component) const
+{
+	return &p_component.nextComponent;
+}
+
+void ComponentController::attachComponentToPosition(ComponentBase& p_componentToAttach, ComponentPtr* p_position)
+{
+	*p_position = &p_componentToAttach;
 }
 
 void ComponentController::detachComponentFromEntity(Entity& p_entity, ComponentType p_componentType)
@@ -125,7 +170,7 @@ void ComponentController::detachComponentFromEntity(Entity& p_entity, ComponentT
 		}
 		else
 		{
-			l_ptrToComponentPosition = &l_component.nextComponent;
+			l_ptrToComponentPosition = getNextComponentPosition(l_component);
 		}
 	}
 

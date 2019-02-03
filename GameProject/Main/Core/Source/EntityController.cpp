@@ -26,6 +26,7 @@ EntityId EntityController::createEntityWithComponents(const ComponentIndicators&
 
 bool EntityController::removeEntity(EntityId p_id)
 {
+	//TODO remove all attached components!
 	return m_pool->removeEntity(p_id);
 }
 

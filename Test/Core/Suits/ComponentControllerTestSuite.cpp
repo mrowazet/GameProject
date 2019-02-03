@@ -18,6 +18,7 @@ constexpr bool REMOVED = true;
 constexpr u32 ZERO_COMPONENTS = 0u;
 constexpr u32 ONE_COMPONENT = 1u;
 constexpr u32 TWO_COMPONENTS = 2u;
+constexpr u32 THREE_COMPONENTS = 3u;
 
 }
 
@@ -132,9 +133,17 @@ public:
 		EXPECT_FALSE(isComponentBitIsSet(p_component));
 	}
 
-	bool attachMultipleComponents()
+	bool attachMultipleComponents(const ComponentIndicators& p_componentsToAttach)
 	{
-		return m_sut.attachMultipleComponents(m_entity, createIndicatorsWithTwoComponents());
+		return m_sut.attachMultipleComponents(m_entity, p_componentsToAttach);
+	}
+
+	ComponentIndicators createIndicatorsWithThreeComponents()
+	{
+		auto l_componentsToAttach = createIndicatorsWithTwoComponents();
+		l_componentsToAttach.flip(COMPONENT_C.type);
+
+		return l_componentsToAttach;
 	}
 
 	ComponentIndicators createIndicatorsWithTwoComponents()
@@ -245,7 +254,7 @@ TEST_F(ComponentControllerTestSuite, shouldReturnFalseIfRequestedComponentIndica
 TEST_F(ComponentControllerTestSuite, shouldReturnFalseIfAllRequestedComponentsAreAlreadyAttached)
 {
 	addTwoComponents();
-	EXPECT_FALSE(attachMultipleComponents());
+	EXPECT_FALSE(attachMultipleComponents(createIndicatorsWithTwoComponents()));
 }
 
 TEST_F(ComponentControllerTestSuite, shouldAttachRequestedComponentsToEmptyEntity)
@@ -253,20 +262,34 @@ TEST_F(ComponentControllerTestSuite, shouldAttachRequestedComponentsToEmptyEntit
 	expectCreateComponent(COMPONENT_A);
 	expectCreateComponent(COMPONENT_B);
 
-	EXPECT_TRUE(attachMultipleComponents());
+	EXPECT_TRUE(attachMultipleComponents(createIndicatorsWithTwoComponents()));
 
 	checkNumberOfConnectedComponents(TWO_COMPONENTS);
 	checkComponentConnectedAsFirst(COMPONENT_A);
 	checkComponentConnectedAsSecond(COMPONENT_B);
 }
 
-TEST_F(ComponentControllerTestSuite, shouldAttachRequestedComponentsToEntityWhichIsNotEmpty)
+TEST_F(ComponentControllerTestSuite, shouldAttachSingleRequestedComponentsToEntityWhichIsNotEmpty)
 {
 	addOneComponent();
 	expectCreateComponent(COMPONENT_B);
 
-	EXPECT_TRUE(attachMultipleComponents());
+	EXPECT_TRUE(attachMultipleComponents(createIndicatorsWithTwoComponents()));
 
 	checkNumberOfConnectedComponents(TWO_COMPONENTS);
 	checkComponentConnectedAsSecond(COMPONENT_B);
+}
+
+TEST_F(ComponentControllerTestSuite, shouldAttachAllRequestedComponentsToEntityWhichIsNotEmpty)
+{
+	addOneComponent();
+	expectCreateComponent(COMPONENT_B);
+	expectCreateComponent(COMPONENT_C);
+
+	EXPECT_TRUE(attachMultipleComponents(createIndicatorsWithThreeComponents()));
+
+	checkNumberOfConnectedComponents(THREE_COMPONENTS);
+	checkComponentConnectedAsFirst(COMPONENT_A);
+	checkComponentConnectedAsSecond(COMPONENT_B);
+	checkComponentConnectedAsThird(COMPONENT_C);
 }

@@ -20,9 +20,14 @@ private:
 	bool isComponentAlreadyAttached(Entity&, ComponentType) const;
 	void attachComponentToEntity(Entity&, ComponentType);
 	void attachToNextFreePosition(Entity&, ComponentBase&);
-	ComponentPtr* getNextFreeComponentPosition(Entity&);
+	ComponentPtr* getNextComponentPosition(ComponentBase&) const;
+	void attachComponentToPosition(ComponentBase&, ComponentPtr*);
+	ComponentPtr* getNextFreeComponentPosition(Entity&) const;
 	void detachComponentFromEntity(Entity&, ComponentType);
 	ComponentIndicators getComponentsWhichAreNotAlreadyAttached(const Entity&, const ComponentIndicators&) const;
+	bool hasOnlyOneComponentToAttach(const ComponentIndicators&) const;
+	ComponentType getSingleSetComponent(const ComponentIndicators&) const;
+	void attachMultipleComponentsToEntity(Entity&, const ComponentIndicators&);
 	void attachRequestedComponentsToEntity(Entity&, const ComponentIndicators&);
 	ComponentType convertIndexToComponentType(ComponentIndex) const;
 

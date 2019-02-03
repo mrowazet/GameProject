@@ -10,6 +10,7 @@ enum class ComponentType : ComponentIndex
 	MOVABLE = 1,
 	VISIBLE = 2,
 	WITH_SI = 3,
+	UndefinedComponent = 255
 };
 
 }
