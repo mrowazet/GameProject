@@ -21,13 +21,21 @@ EntityId EntityController::createEntity()
 
 EntityId EntityController::createEntityWithComponents(const ComponentIndicators& p_components)
 {
-	return UNDEFINED_ENTITY_ID;
+	auto& l_entity = m_pool->create();
+	connectMultipleComponents(l_entity, p_components);
+	return l_entity.id;
 }
 
 bool EntityController::removeEntity(EntityId p_id)
 {
-	//TODO remove all attached components!
+	disconnectAllComponentsFromEntity(p_id);
 	return m_pool->removeEntity(p_id);
+}
+
+void EntityController::disconnectAllComponentsFromEntity(EntityId p_id)
+{
+	auto& l_entity = m_pool->getEntity(p_id);
+	disconnectMultipleComponents(l_entity, l_entity.attachedComponents);
 }
 
 bool EntityController::hasEntity(EntityId p_id)
@@ -73,10 +81,14 @@ bool EntityController::disconnectComponentFromEntity(EntityId p_id, ComponentTyp
 bool EntityController::connectMultipleComponentsToEntity(EntityId p_id, const ComponentIndicators& p_components)
 {
 	auto& l_entity = m_pool->getEntity(p_id);
+	return connectMultipleComponents(l_entity, p_components);
+}
 
-	if (m_componentController->attachMultipleComponents(l_entity, p_components))
+bool EntityController::connectMultipleComponents(Entity& p_entity, const ComponentIndicators& p_components)
+{
+	if (m_componentController->attachMultipleComponents(p_entity, p_components))
 	{
-		m_changeDistributor.distributeEntityChange(p_id);
+		m_changeDistributor.distributeEntityChange(p_entity.id);
 		return true;
 	}
 	else
@@ -88,10 +100,14 @@ bool EntityController::connectMultipleComponentsToEntity(EntityId p_id, const Co
 bool EntityController::disconnectMultipleComponentsFromEntity(EntityId p_id, const ComponentIndicators& p_components)
 {
 	auto& l_entity = m_pool->getEntity(p_id);
+	return disconnectMultipleComponents(l_entity, p_components);
+}
 
-	if (m_componentController->dettachMultipleComponents(l_entity, p_components))
+bool EntityController::disconnectMultipleComponents(Entity& p_entity, const ComponentIndicators& p_components)
+{
+	if (m_componentController->dettachMultipleComponents(p_entity, p_components))
 	{
-		m_changeDistributor.distributeEntityChange(p_id);
+		m_changeDistributor.distributeEntityChange(p_entity.id);
 		return true;
 	}
 	else

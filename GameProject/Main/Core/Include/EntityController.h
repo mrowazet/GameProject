@@ -30,12 +30,15 @@ public:
 	bool connectMultipleComponentsToEntity(EntityId, const ComponentIndicators&) override;
 	bool disconnectMultipleComponentsFromEntity(EntityId, const ComponentIndicators&) override;
 
-protected:
+private:
+	void disconnectAllComponentsFromEntity(EntityId);
+	bool connectMultipleComponents(Entity&, const ComponentIndicators&);
+	bool disconnectMultipleComponents(Entity&, const ComponentIndicators&);
+
 	std::unique_ptr<IEntityPool> m_pool;
 	std::unique_ptr<IComponentController> m_componentController;
 	IEntityChangeDistributor& m_changeDistributor;
 
-private:
 };
 
 }

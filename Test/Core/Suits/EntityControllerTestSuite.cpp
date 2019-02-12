@@ -37,6 +37,11 @@ public:
 		EXPECT_CALL(m_changeDistributorMock, distributeEntityChange(ENTITY_ID));
 	}
 
+	void expectCreateEntity()
+	{
+		EXPECT_CALL(*m_entityPoolMock, create()).WillOnce(ReturnRef(m_entity));
+	}
+
 	void expectGetEntityFromPool()
 	{
 		EXPECT_CALL(*m_entityPoolMock, getEntity(ENTITY_ID)).WillOnce(ReturnRef(m_entity));
@@ -54,12 +59,12 @@ public:
 
 	void expectAttachMultipleComponents(const bool p_result)
 	{
-		EXPECT_CALL(*m_componentControllerMock, attachMultipleComponents(Ref(m_entity), Ref(m_componentIndicators))).WillOnce(Return(p_result));
+		EXPECT_CALL(*m_componentControllerMock, attachMultipleComponents(Ref(m_entity), m_componentIndicators)).WillOnce(Return(p_result));
 	}
 
 	void expectDettachMultipleComponents(const bool p_result)
 	{
-		EXPECT_CALL(*m_componentControllerMock, dettachMultipleComponents(Ref(m_entity), Ref(m_componentIndicators))).WillOnce(Return(p_result));
+		EXPECT_CALL(*m_componentControllerMock, dettachMultipleComponents(Ref(m_entity), m_componentIndicators)).WillOnce(Return(p_result));
 	}
 
 	bool connectComponent()
@@ -97,15 +102,27 @@ protected:
 
 TEST_F(EntityControllerTestSuite, createEntityShouldCreateElementInPoolAndReturnProperId)
 {
-	EXPECT_CALL(*m_entityPoolMock, create()).WillOnce(ReturnRef(m_entity));
+	expectCreateEntity();
 
 	auto l_id = m_sut.createEntity();
 	EXPECT_EQ(ENTITY_ID, l_id);
 }
 
-TEST_F(EntityControllerTestSuite, removeEntityShouldRemoveElementFromPool)
+TEST_F(EntityControllerTestSuite, removeEnityWithMultipleComponentsShouldRemoveThemViaEntityControllerAndDistributeChange)
 {
-	EXPECT_CALL(*m_entityPoolMock, removeEntity(ENTITY_ID)).WillOnce(Return(not REMOVED));
+	expectGetEntityFromPool();
+	expectDettachMultipleComponents(DETACHED);
+	EXPECT_CALL(*m_entityPoolMock, removeEntity(ENTITY_ID)).WillOnce(Return(REMOVED));
+	expectDistributeChange();
+
+	m_sut.removeEntity(ENTITY_ID);
+}
+
+TEST_F(EntityControllerTestSuite, removeEnityWithMultipleComponentsShouldNotTriggerChangeDistributionIfNoComponentWasDetached)
+{
+	expectGetEntityFromPool();
+	expectDettachMultipleComponents(not DETACHED);
+	EXPECT_CALL(*m_entityPoolMock, removeEntity(ENTITY_ID)).WillOnce(Return(REMOVED));
 
 	m_sut.removeEntity(ENTITY_ID);
 }
@@ -193,4 +210,19 @@ TEST_F(EntityControllerTestSuite, shouldReturnFalseIfNoComponentHasNotBeenDiscon
 	EXPECT_FALSE(disconnectMultipleComponents());
 }
 
+TEST_F(EntityControllerTestSuite, shouldCreateEnityWithConnectedComponentsAndDistributeChangeWhenFunctionCalled)
+{
+	expectCreateEntity();
+	expectAttachMultipleComponents(ATTACHED);
+	expectDistributeChange();
 
+	m_sut.createEntityWithComponents(m_componentIndicators);
+}
+
+TEST_F(EntityControllerTestSuite, shouldCreateEnityFunctionCalledWithoutRequestedComponents)
+{
+	expectCreateEntity();
+	expectAttachMultipleComponents(not ATTACHED);
+
+	m_sut.createEntityWithComponents(m_componentIndicators);
+}

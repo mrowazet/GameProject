@@ -46,12 +46,12 @@ public:
 		return static_cast<u32>(m_componentFlags.count());
 	}
 
-	bool operator==(const ComponentIndicators& p_componentIndicators)
+	bool operator==(const ComponentIndicators& p_componentIndicators) const
 	{
 		return m_componentFlags == p_componentIndicators.m_componentFlags;
 	}
 
-	bool operator!=(const ComponentIndicators& p_componentIndicators)
+	bool operator!=(const ComponentIndicators& p_componentIndicators) const
 	{
 		return m_componentFlags != p_componentIndicators.m_componentFlags;
 	}
