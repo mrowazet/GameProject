@@ -13,7 +13,7 @@ public:
 	MOCK_METHOD2(attachMultipleComponents, bool(Entity&, const ComponentIndicators&));
 
 	MOCK_METHOD2(detachComponent, bool(Entity&, ComponentType));
-	MOCK_METHOD2(dettachMultipleComponents, bool(Entity&, const ComponentIndicators&));
+	MOCK_METHOD2(detachMultipleComponents, bool(Entity&, const ComponentIndicators&));
 };
 
 }

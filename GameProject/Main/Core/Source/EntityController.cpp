@@ -105,7 +105,7 @@ bool EntityController::disconnectMultipleComponentsFromEntity(EntityId p_id, con
 
 bool EntityController::disconnectMultipleComponents(Entity& p_entity, const ComponentIndicators& p_components)
 {
-	if (m_componentController->dettachMultipleComponents(p_entity, p_components))
+	if (m_componentController->detachMultipleComponents(p_entity, p_components))
 	{
 		m_changeDistributor.distributeEntityChange(p_entity.id);
 		return true;

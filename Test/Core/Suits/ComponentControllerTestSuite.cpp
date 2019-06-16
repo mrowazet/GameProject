@@ -84,8 +84,7 @@ public:
 
 	void addTwoComponents()
 	{
-		addComponentToEntity(COMPONENT_A);
-		checkComponentConnectedAsFirst(COMPONENT_A);
+		addOneComponent();
 
 		addComponentToComponentA(COMPONENT_B);
 		checkComponentConnectedAsSecond(COMPONENT_B);
@@ -93,11 +92,7 @@ public:
 
 	void addThreeComponents()
 	{
-		addComponentToEntity(COMPONENT_A);
-		checkComponentConnectedAsFirst(COMPONENT_A);
-
-		addComponentToComponentA(COMPONENT_B);
-		checkComponentConnectedAsSecond(COMPONENT_B);
+		addTwoComponents();
 
 		addComponentToComponentB(COMPONENT_C);
 		checkComponentConnectedAsThird(COMPONENT_C);
@@ -138,21 +133,33 @@ public:
 		return m_sut.attachMultipleComponents(m_entity, p_componentsToAttach);
 	}
 
+	bool detachMultipleComponents(const ComponentIndicators& p_componentsToDetach)
+	{
+		return m_sut.detachMultipleComponents(m_entity, p_componentsToDetach);
+	}
+
 	ComponentIndicators createIndicatorsWithThreeComponents()
 	{
-		auto l_componentsToAttach = createIndicatorsWithTwoComponents();
-		l_componentsToAttach.flip(COMPONENT_C.type);
+		auto l_componentsToProcess = createIndicatorsWithTwoComponents();
+		l_componentsToProcess.flip(COMPONENT_C.type);
 
-		return l_componentsToAttach;
+		return l_componentsToProcess;
 	}
 
 	ComponentIndicators createIndicatorsWithTwoComponents()
 	{
-		ComponentIndicators l_componentsToAttach;
-		l_componentsToAttach.flip(COMPONENT_A.type);
-		l_componentsToAttach.flip(COMPONENT_B.type);
+		auto l_componentsToProcess = createIndicatorsWithOneComponent();
+		l_componentsToProcess.flip(COMPONENT_B.type);
 
-		return l_componentsToAttach;
+		return l_componentsToProcess;
+	}
+
+	ComponentIndicators createIndicatorsWithOneComponent()
+	{
+		ComponentIndicators l_componentsToProcess;
+		l_componentsToProcess.flip(COMPONENT_A.type);
+
+		return l_componentsToProcess;
 	}
 
 protected:
@@ -214,7 +221,7 @@ TEST_F(ComponentControllerTestSuite, shouldCorrectlyDetachComponentFromEntityWhe
 	EXPECT_THAT(m_entity.components, IsNull());
 }
 
-TEST_F(ComponentControllerTestSuite, shouldCorrectlyDisconnectFirstComponentInTheMiddleFromEntity)
+TEST_F(ComponentControllerTestSuite, shouldCorrectlyDetachFirstComponentFromEntity)
 {
 	addTwoComponents();
 
@@ -292,4 +299,48 @@ TEST_F(ComponentControllerTestSuite, shouldAttachAllRequestedComponentsToEntityW
 	checkComponentConnectedAsFirst(COMPONENT_A);
 	checkComponentConnectedAsSecond(COMPONENT_B);
 	checkComponentConnectedAsThird(COMPONENT_C);
+}
+
+TEST_F(ComponentControllerTestSuite, shouldRetrunFalseIfEntityIsEmpty)
+{
+	EXPECT_FALSE(detachMultipleComponents(createIndicatorsWithTwoComponents()));
+}
+
+TEST_F(ComponentControllerTestSuite, shouldRetrunFalseIfNothingToDetach)
+{
+	addComponentToEntity(COMPONENT_B);
+	EXPECT_FALSE(detachMultipleComponents(createIndicatorsWithOneComponent()));
+}
+
+TEST_F(ComponentControllerTestSuite, shouldDetachSingleRequestedComponentFromEntityWithOneComponent)
+{
+	addTwoComponents();
+	expectRemoveComponent(COMPONENT_A);
+
+	EXPECT_TRUE(detachMultipleComponents(createIndicatorsWithOneComponent()));
+
+	checkNumberOfConnectedComponents(ONE_COMPONENT);
+	checkComponentConnectedAsFirst(COMPONENT_B);
+}
+
+TEST_F(ComponentControllerTestSuite, shouldDetachRequestedComponentsFromEntity)
+{
+	addThreeComponents();
+	expectRemoveComponent(COMPONENT_A);
+	expectRemoveComponent(COMPONENT_B);
+
+	EXPECT_TRUE(detachMultipleComponents(createIndicatorsWithTwoComponents()));
+	checkNumberOfConnectedComponents(ONE_COMPONENT);
+	checkComponentConnectedAsFirst(COMPONENT_C);
+}
+
+TEST_F(ComponentControllerTestSuite, shouldDetachAllComponentsConnectedToEntity)
+{
+	addTwoComponents();
+	expectRemoveComponent(COMPONENT_A);
+	expectRemoveComponent(COMPONENT_B);
+
+	EXPECT_TRUE(detachMultipleComponents(createIndicatorsWithThreeComponents()));
+	checkNumberOfConnectedComponents(ZERO_COMPONENTS);
+	EXPECT_THAT(m_entity.components, IsNull());
 }

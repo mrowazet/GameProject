@@ -9,6 +9,7 @@ using namespace engine;
 namespace
 {
 
+const u32 ONE_COMPONENT = 1u;
 const u32 TWO_COMPONENTS = 2u;
 const bool SET = true;
 const ComponentType COMPONENT_1 = ComponentType::POSITION;
@@ -100,7 +101,7 @@ TEST_F(ComponentIndicatorsTestSuite, andOperatorShouldStoreProperResultOnCalledO
 	l_anotherComponentIndicators.set(COMPONENT_1);
 	l_anotherComponentIndicators.set(COMPONENT_3);
 
-	m_sut = (m_sut &= l_anotherComponentIndicators);
+	m_sut &= l_anotherComponentIndicators;
 	EXPECT_EQ(TWO_COMPONENTS, m_sut.getNumOfSetComponents());
 	EXPECT_FALSE(m_sut.isSet(COMPONENT_2));
 }
@@ -114,7 +115,39 @@ TEST_F(ComponentIndicatorsTestSuite, xorOperatorShouldStoreProperResultOnCalledO
 	ComponentIndicators l_anotherComponentIndicators;
 	l_anotherComponentIndicators.set(COMPONENT_2);
 
-	m_sut = (m_sut ^= l_anotherComponentIndicators);
+	m_sut ^= l_anotherComponentIndicators;
 	EXPECT_EQ(TWO_COMPONENTS, m_sut.getNumOfSetComponents());
 	EXPECT_FALSE(m_sut.isSet(COMPONENT_2));
+}
+
+TEST_F(ComponentIndicatorsTestSuite, shouldCreateNewObjectWithResultOfAndOperator)
+{
+	ComponentIndicators l_componentIndicators;
+	l_componentIndicators.set(COMPONENT_1);
+	l_componentIndicators.set(COMPONENT_2);
+	l_componentIndicators.set(COMPONENT_3);
+
+	ComponentIndicators l_anotherComponentIndicators;
+	l_anotherComponentIndicators.set(COMPONENT_3);
+
+	auto l_result = l_componentIndicators & l_anotherComponentIndicators;
+
+	EXPECT_EQ(ONE_COMPONENT, l_result.getNumOfSetComponents());
+	EXPECT_TRUE(l_result.isSet(COMPONENT_3));
+}
+
+TEST_F(ComponentIndicatorsTestSuite, shouldCreateNewObjectWithResultOfXorOperator)
+{
+	ComponentIndicators l_componentIndicators;
+	l_componentIndicators.set(COMPONENT_1);
+	l_componentIndicators.set(COMPONENT_2);
+	l_componentIndicators.set(COMPONENT_3);
+
+	ComponentIndicators l_anotherComponentIndicators;
+	l_anotherComponentIndicators.set(COMPONENT_3);
+
+	auto l_result = l_componentIndicators ^ l_anotherComponentIndicators;
+
+	EXPECT_EQ(TWO_COMPONENTS, l_result.getNumOfSetComponents());
+	EXPECT_FALSE(l_result.isSet(COMPONENT_3));
 }

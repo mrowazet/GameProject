@@ -64,14 +64,28 @@ public:
 
 	ComponentIndicators& operator&=(const ComponentIndicators& p_componentIndicators)
 	{
-		m_componentFlags = (m_componentFlags &= p_componentIndicators.m_componentFlags);
+		m_componentFlags = m_componentFlags & p_componentIndicators.m_componentFlags;
 		return *this;
 	}
 
 	ComponentIndicators& operator^=(const ComponentIndicators& p_componentIndicators)
 	{
-		m_componentFlags = (m_componentFlags ^= p_componentIndicators.m_componentFlags);
+		m_componentFlags = m_componentFlags ^ p_componentIndicators.m_componentFlags;
 		return *this;
+	}
+
+	ComponentIndicators operator^(const ComponentIndicators& p_componentIndicators) const
+	{
+		ComponentIndicators l_result;
+		l_result.m_componentFlags = m_componentFlags ^ p_componentIndicators.m_componentFlags;
+		return l_result;
+	}
+
+	ComponentIndicators operator&(const ComponentIndicators& p_componentIndicators) const
+	{
+		ComponentIndicators l_result;
+		l_result.m_componentFlags = m_componentFlags & p_componentIndicators.m_componentFlags;
+		return l_result;
 	}
 
 private:

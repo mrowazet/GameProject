@@ -14,7 +14,7 @@ public:
 	bool attachMultipleComponents(Entity&, const ComponentIndicators&) override;
 
 	bool detachComponent(Entity&, ComponentType) override;
-	bool dettachMultipleComponents(Entity&, const ComponentIndicators&) override;
+	bool detachMultipleComponents(Entity&, const ComponentIndicators&) override;
 
 private:
 	bool isComponentAlreadyAttached(Entity&, ComponentType) const;
@@ -25,10 +25,13 @@ private:
 	ComponentPtr* getNextFreeComponentPosition(Entity&) const;
 	void detachComponentFromEntity(Entity&, ComponentType);
 	ComponentIndicators getComponentsWhichAreNotAlreadyAttached(const Entity&, const ComponentIndicators&) const;
-	bool hasOnlyOneComponentToAttach(const ComponentIndicators&) const;
+	ComponentIndicators getComponentsToDetach(const Entity&, const ComponentIndicators&) const;
+	bool hasOnlyOneComponentToProcess(const ComponentIndicators&) const;
 	ComponentType getSingleSetComponent(const ComponentIndicators&) const;
 	void attachMultipleComponentsToEntity(Entity&, const ComponentIndicators&);
 	void attachRequestedComponentsToEntity(Entity&, const ComponentIndicators&);
+	void detachMultipleComponentsFromEntity(Entity&, const ComponentIndicators&);
+	void detachRequestedComponentsFromEntity(Entity&, const ComponentIndicators&);
 	ComponentType convertIndexToComponentType(ComponentIndex) const;
 
 	std::unique_ptr<IComponentProvider> m_componentProvider;

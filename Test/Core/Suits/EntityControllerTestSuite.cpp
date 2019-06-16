@@ -64,7 +64,7 @@ public:
 
 	void expectDettachMultipleComponents(const bool p_result)
 	{
-		EXPECT_CALL(*m_componentControllerMock, dettachMultipleComponents(Ref(m_entity), m_componentIndicators)).WillOnce(Return(p_result));
+		EXPECT_CALL(*m_componentControllerMock, detachMultipleComponents(Ref(m_entity), m_componentIndicators)).WillOnce(Return(p_result));
 	}
 
 	bool connectComponent()

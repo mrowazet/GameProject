@@ -11,7 +11,7 @@ ComponentController::ComponentController(std::unique_ptr<IComponentProvider> p_c
 
 bool ComponentController::attachComponent(Entity& p_entity, ComponentType p_componentType)
 {
-	if (!isComponentAlreadyAttached(p_entity, p_componentType))
+	if (not isComponentAlreadyAttached(p_entity, p_componentType))
 	{
 		attachComponentToEntity(p_entity, p_componentType);
 		return true;
@@ -37,7 +37,7 @@ bool ComponentController::attachMultipleComponents(Entity& p_entity, const Compo
 
 void ComponentController::attachMultipleComponentsToEntity(Entity& p_entity, const ComponentIndicators& p_componentsToAttach)
 {
-	if (hasOnlyOneComponentToAttach(p_componentsToAttach))
+	if (hasOnlyOneComponentToProcess(p_componentsToAttach))
 	{
 		auto l_component = getSingleSetComponent(p_componentsToAttach);
 		attachComponentToEntity(p_entity, l_component);
@@ -48,7 +48,7 @@ void ComponentController::attachMultipleComponentsToEntity(Entity& p_entity, con
 	}
 }
 
-bool ComponentController::hasOnlyOneComponentToAttach(const ComponentIndicators& p_componentsToAttach) const
+bool ComponentController::hasOnlyOneComponentToProcess(const ComponentIndicators& p_componentsToAttach) const
 {
 	return p_componentsToAttach.getNumOfSetComponents() == 1;
 }
@@ -91,8 +91,8 @@ void ComponentController::attachRequestedComponentsToEntity(Entity& p_entity, co
 ComponentIndicators ComponentController::getComponentsWhichAreNotAlreadyAttached(const Entity& p_entity, const ComponentIndicators& p_requestedComponents) const
 {
 	auto l_componentsToAttach = p_requestedComponents;
-	l_componentsToAttach = l_componentsToAttach ^= p_entity.attachedComponents;
-	l_componentsToAttach = l_componentsToAttach &= p_requestedComponents;
+	l_componentsToAttach = l_componentsToAttach ^ p_entity.attachedComponents;
+	l_componentsToAttach = l_componentsToAttach & p_requestedComponents;
 
 	return l_componentsToAttach;
 }
@@ -110,9 +110,46 @@ bool ComponentController::detachComponent(Entity& p_entity, ComponentType p_comp
 	}
 }
 
-bool ComponentController::dettachMultipleComponents(Entity&, const ComponentIndicators&)
+bool ComponentController::detachMultipleComponents(Entity& p_entity, const ComponentIndicators& p_componentsRequestedToDetach)
 {
-	return false;
+	if (auto l_componentsToDetach = getComponentsToDetach(p_entity, p_componentsRequestedToDetach); l_componentsToDetach.any())
+	{
+		detachMultipleComponentsFromEntity(p_entity, l_componentsToDetach);
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+void ComponentController::detachMultipleComponentsFromEntity(Entity& p_entity, const ComponentIndicators& p_componentsToDetach)
+{
+	if (hasOnlyOneComponentToProcess(p_componentsToDetach))
+	{
+		auto l_component = getSingleSetComponent(p_componentsToDetach);
+		detachComponentFromEntity(p_entity, l_component);
+	}
+	else
+	{
+		detachRequestedComponentsFromEntity(p_entity, p_componentsToDetach);
+	}
+}
+
+void ComponentController::detachRequestedComponentsFromEntity(Entity& p_entity, const ComponentIndicators& p_componentsToDetach)
+{
+	for (auto i = 0u; i < LAST_VALID_COMPONENT_INDEX; i++)
+	{
+		if (auto l_componentType = convertIndexToComponentType(i); p_componentsToDetach.isSet(l_componentType))
+		{
+			detachComponentFromEntity(p_entity, l_componentType);
+		}
+	}
+}
+
+ComponentIndicators ComponentController::getComponentsToDetach(const Entity& p_entity, const ComponentIndicators& p_requestedComponents) const
+{
+	return p_entity.attachedComponents & p_requestedComponents;
 }
 
 bool ComponentController::isComponentAlreadyAttached(Entity& p_entity, ComponentType p_componentType) const
